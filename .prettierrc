@@ -1,0 +1,15 @@
+{
+	"trailingComma": "es5",
+	"useTabs": true,
+	"tabWidth": 2,
+	"semi": false,
+	"singleQuote": true,
+	"overrides": [
+    {
+      "files": "readme.md",
+      "options": {
+        "useTabs": false
+      }
+    }
+  ]
+}

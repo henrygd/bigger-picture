@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="shortcut icon" href="assets/favicon.png" />
+		<title>Bigger Picture</title>
+		<link rel="stylesheet" href="demo.css" />
+	</head>
+
+	<body>
+		<a class="github-link" href="https://github.com/henrygd/bigger-picture">
+			<svg viewBox="0 0 24 24">
+				<path
+					d="M12 .5C5.4.5 0 5.8 0 12.3c0 5.2 3.4 9.6 8.2 11.2.6 0 .8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.3-1.4-1.7-1.4-1.7-1-.7.1-.7.1-.7C5 16.9 5.6 18 5.6 18c1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.8 0-1.3.5-2.4 1.3-3.2-.2-.3-.6-1.5 0-3.1 0 0 1-.3 3.4 1.2a11.7 11.7 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8 0 3.1.9.8 1.3 1.9 1.3 3.2 0 4.5-2.8 5.5-5.5 5.8.5.3.9 1 .9 2.2v3.2c0 .3.1.7.8.6 4.8-1.6 8.2-6 8.2-11.2C24 5.8 18.6.5 12 .5z"
+				/>
+			</svg>
+			<span> henrygd/bigger-picture </span>
+		</a>
+		<main>
+			<section class="hero">
+				<div class="main">
+					<div class="inner-wrap">
+						<div class="logo logo-icon">
+							<img src="assets/bp.svg" alt="BigPicture" title="BigPicture" />
+						</div>
+						<div class="badges">
+							<span class="heading-badges">
+								<a href="https://www.npmjs.com/package/side-panel-menu-thing">
+									<img
+										src="https://badgen.net/npm/v/side-panel-menu-thing"
+										alt="NPM"
+									/>
+								</a>
+								<a
+									href="https://cdn.jsdelivr.net/npm/side-panel-menu-thing/dist/side-panel-menu-thing.min.js"
+								>
+									<img
+										src="https://badgen.net/badgesize/gzip/henrygd/side-panel-menu-thing/master/dist/side-panel-menu-thing.min.js?color=green"
+										alt="CDN link"
+									/>
+								</a>
+								<a
+									href="https://github.com/henrygd/bigger-picture/blob/main/license"
+								>
+									<img
+										src="https://badgen.net/github/license/henrygd/bigpicture?color=purple"
+										alt="MIT license"
+									/>
+								</a>
+							</span>
+						</div>
+						<p>
+							High performance JavaScript lightbox gallery with a small
+							footprint. Supports images, videos, iframes, and html with no
+							plugins necessary. Under 10kB gzip vanilla / much smaller if using
+							svelte.
+						</p>
+					</div>
+				</div>
+			</section>
+			<div class="sections">
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>Full Page Galleries</h2>
+							<p>
+								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
+								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+							<ul id="images" class="masonry">
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/joshua-sukoff-sZ5zbZMAYJs-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/joshua-sukoff-sZ5zbZMAYJs-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/joshua-sukoff-sZ5zbZMAYJs-unsplash_thumb.jpg"
+										data-height="2500"
+										data-width="1667"
+										data-alt="Antelope Canyon"
+									>
+										<span style="padding-bottom: 149.97%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/joshua-sukoff-sZ5zbZMAYJs-unsplash_thumb.jpg"
+											alt="Antelope Canyon"
+											loading="lazy"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/daniel-sessler-5El_7dJ0kKo-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/daniel-sessler-5El_7dJ0kKo-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/daniel-sessler-5El_7dJ0kKo-unsplash_thumb.jpg"
+										data-height="2400"
+										data-width="2400"
+										data-alt="brown and white mountain under gray sky"
+									>
+										<span style="padding-bottom: 100%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/daniel-sessler-5El_7dJ0kKo-unsplash_thumb.jpg"
+											loading="lazy"
+											alt="brown and white mountain under gray sky"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash_thumb.jpg"
+										data-height="2000"
+										data-width="3000"
+										data-alt="wildlife photography of brown bear cub"
+										><span style="padding-bottom: 66.666%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash_thumb.jpg"
+											alt="wildlife photography of brown bear cub"
+											loading="lazy"
+											alt="wildlife photography of brown bear cub"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
+										data-height="2000"
+										data-width="3000"
+										data-alt="green-and-brown palm trees under clear blue sky"
+										><span style="padding-bottom: 66.666%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
+											loading="lazy"
+											alt="green-and-brown palm trees under clear blue sky"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/andrew-pons-lylCw4zcA7I-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/andrew-pons-lylCw4zcA7I-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/andrew-pons-lylCw4zcA7I-unsplash_thumb.jpg"
+										data-height="2500"
+										data-width="1667"
+										data-alt="close up of a yellow and blue macaw"
+										><span style="padding-bottom: 149.97%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/andrew-pons-lylCw4zcA7I-unsplash_thumb.jpg"
+											loading="lazy"
+											alt="close up of a yellow and blue macaw"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/veeterzy-EYcvA56gSjU.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/veeterzy-EYcvA56gSjU.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/veeterzy-EYcvA56gSjU_thumb.jpg"
+										data-height="2400"
+										data-width="2400"
+										data-alt="mountains clouded in purple fog"
+										><span style="padding-bottom: 100%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/veeterzy-EYcvA56gSjU_thumb.jpg"
+											loading="lazy"
+											alt="mountains clouded in purple fog"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/harshil-gudka-9GptkQwAAsc-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/harshil-gudka-9GptkQwAAsc-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/harshil-gudka-9GptkQwAAsc-unsplash_thumb.jpg"
+										data-height="2400"
+										data-width="2400"
+										data-alt="three brown leopards hiding on grass field during daytime"
+										><span style="padding-bottom: 100%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/harshil-gudka-9GptkQwAAsc-unsplash_thumb.jpg"
+											loading="lazy"
+											alt="three brown leopards hiding on grass field during daytime"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash_thumb.jpg"
+										data-height="2000"
+										data-width="3000"
+										data-alt="people stand under unique trees on socotra"
+										><span style="padding-bottom: 66.666%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash_thumb.jpg"
+											loading="lazy"
+											alt="people stand under unique trees on socotra"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/johannes-andersson-UCd78vfC8vU-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/johannes-andersson-UCd78vfC8vU-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/johannes-andersson-UCd78vfC8vU-unsplash_thumb.jpg"
+										data-height="2500"
+										data-width="1667"
+										data-alt="two brown deer beside trees and mountain"
+										><span style="padding-bottom: 149.97%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/johannes-andersson-UCd78vfC8vU-unsplash_thumb.jpg"
+											loading="lazy"
+											alt="two brown deer beside trees and mountain"
+										/>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>Videos / iframes</h2>
+							<p>
+								While these are displayed individually, it's possible to create
+								galleries of any content type. You can also mix and match.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+							<ul class="masonry" id="vids">
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/videos/agent-327.webm"
+										data-width="1920"
+										data-height="804"
+										data-thumb="https://assets.henrygd.me/bp/images/agent-327.jpg"
+										data-video="https://assets.henrygd.me/bp/videos/agent-327.webm, https://assets.henrygd.me/bp/videos/agent-327.mp4"
+										data-tracks='[{"label": "English", "kind": "subtitles", "srclang": "en", "src": "assets/agent-327-en.vtt", "default": "true"}, {"label": "العربية", "kind": "subtitles", "srclang": "ar", "src": "assets/agent-327-ar.vtt", "default": "true"}, {"label": "Español", "kind": "subtitles", "srclang": "es", "src": "assets/agent-327-es.vtt"}, {"label": "日本語", "kind": "subtitles", "srclang": "ja", "src": "assets/agent-327-ja.vtt"}, {"label": "Монгол", "kind": "subtitles", "srclang": "mn", "src": "assets/agent-327-mn.vtt"}, {"label": "Português", "kind": "subtitles", "srclang": "pt", "src": "assets/agent-327-pt.vtt"}, {"label": "Türkçe", "kind": "subtitles", "srclang": "tr", "src": "assets/agent-327-tr.vtt"}]'
+										target="_blank"
+										><span style="padding-bottom: 41.875%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/agent-327.jpg"
+											alt="Agent 327: Operation Barbershop HTML5 video"
+											loading="lazy"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://www.youtube.com/watch?v=286jXjwdst0"
+										data-iframe="https://www.youtube.com/embed/286jXjwdst0?autoplay=1&playsinline=1"
+										data-width="1920"
+										data-height="1012"
+										data-thumb="https://assets.henrygd.me/bp/images/uebok.jpg"
+										target="_blank"
+										><span style="padding-bottom: 52.708%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/uebok.jpg"
+											alt="Uebok youtube iframe"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://soundcloud.com/yung-chomsky/neoliberalism"
+										data-width="1200"
+										data-height="1200"
+										data-thumb="https://i1.sndcdn.com/artworks-000366708345-myvy1k-t500x500.jpg"
+										data-iframe="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/465155907&color=%23ff5500&auto_play=true&hide_related=true&show_user=true&show_reposts=false&show_teaser=false&visual=true&show_comments=false"
+										target="_blank"
+									>
+										<span style="padding-bottom: 100%"></span>
+										<img
+											src="https://i1.sndcdn.com/artworks-000366708345-myvy1k-t500x500.jpg"
+											alt="yung chomsky - neoliberalism soundcloud iframe"
+											loading="lazy"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://vimeo.com/584907375"
+										data-width="1920"
+										data-height="1161"
+										data-thumb="https://i.vimeocdn.com/video/1210493119-933d6556d06380642c7d32968c64f6c7e92b04937f25d2672352a56553a00b5c-d_1280"
+										data-iframe="https://player.vimeo.com/video/584907375?h=c72acb0612&autoplay=1&title=0&byline=0&portrait=0"
+										target="_blank"
+										><span style="padding-bottom: 60.46875%"></span>
+										<img
+											src="https://i.vimeocdn.com/video/1210493119-933d6556d06380642c7d32968c64f6c7e92b04937f25d2672352a56553a00b5c-d_1280"
+											alt="Post Office vimeo iframe"
+											loading="lazy"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="#"
+										data-iframe="/"
+										data-thumb="https://assets.henrygd.me/bp/images/bp.png"
+										target="_blank"
+									>
+										<span style="padding-bottom: 56.25%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/bp.png"
+											alt="biggerpicture.henrygd.me iframe"
+											loading="lazy"
+										/>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>HTML</h2>
+							<p>
+								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
+								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>Basic Captions</h2>
+							<p>
+								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
+								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+							<ul class="masonry" id="captions">
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash_thumb.jpg"
+										data-caption="Photo by Janko Ferlič <a target='_blank' href='https://unsplash.com/photos/SDivo1PTBDs'>(Source)</a>"
+										data-height="2002"
+										data-width="3000"
+										data-alt="wildlife photography of brown bear cub"
+										><span style="padding-bottom: 66.666%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash_thumb.jpg"
+											loading="lazy"
+											alt="wildlife photography of brown bear cub"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
+										data-caption="Photo by Corey Agopian <a target='_blank' href='https://unsplash.com/photos/5y4ljzRrDFA'>(Source)</a>"
+										data-height="2000"
+										data-width="3000"
+										alt="green-and-brown palm trees under clear blue sky"
+										><span style="padding-bottom: 66.666%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
+											alt="green-and-brown palm trees under clear blue sky"
+											loading="lazy"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash.jpg"
+										target="_blank"
+										data-img="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash.jpg"
+										data-thumb="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash_thumb.jpg"
+										data-caption="Photo by Andrew Svk <a target='_blank' href='https://unsplash.com/photos/REwZEYzw19g'>(Source)</a>"
+										data-height="2000"
+										data-width="3000"
+										data-alt="people stand under unique trees on socotra"
+										><span style="padding-bottom: 66.666%"></span>
+										<img
+											src="https://assets.henrygd.me/bp/images/andrew-svk-REwZEYzw19g-unsplash_thumb.jpg"
+											alt="people stand under unique trees on socotra"
+											loading="lazy"
+										/>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>Inline Galleries</h2>
+							<p>
+								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
+								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+							<div class="inline-wrap">
+								<div class="inline-gallery" id="inline_gallery"></div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>Advanced Content Integration</h2>
+							<p>
+								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
+								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>Javascript Object Initialization</h2>
+							<p>
+								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
+								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+							<div class="masonry"></div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</main>
+
+		<footer>
+			<div class="main">
+				<div class="inner-wrap">
+					<p>
+						Agent 327: Operation Barbershop by Blender Studio (<a
+							href="https://creativecommons.org/licenses/by-nd/2.0/"
+							>CC BY-ND</a
+						>)
+					</p>
+				</div>
+			</div>
+		</footer>
+
+		<!-- bp html stuff -->
+		<div id="code_image_gallery" class="hide code-example">
+			<div>
+				<h3>Image Gallery Example Code</h3>
+				<p>
+					Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
+					modi dolor <code>tempora</code> nemo quisquam sint autem quasi facere
+					omnis sapiente veritatis, recusandae ex ea necessitatibus? Similique
+					perspiciatis quibusdam dolor placeat.
+				</p>
+				<pre
+					class="language-html"
+					tabindex="0"
+				><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span>
+		<span class="token attr-name">target</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>_blank<span class="token punctuation">"</span></span>
+		<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash.jpg<span class="token punctuation">"</span></span>
+		<span class="token attr-name">data-img</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash.jpg<span class="token punctuation">"</span></span>
+		<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash_thumb.jpg<span class="token punctuation">"</span></span>
+		<span class="token attr-name">data-alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Example<span class="token punctuation">"</span></span>
+		<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>2000<span class="token punctuation">"</span></span>
+		<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>3000<span class="token punctuation">"</span></span>
+	<span class="token punctuation">&gt;</span></span>
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span>
+			<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash_thumb.jpg<span class="token punctuation">"</span></span>
+			<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Example<span class="token punctuation">"</span></span>
+		<span class="token punctuation">/&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></code>
+</pre>
+				<pre
+					class="language-javascript"
+					tabindex="0"
+				><code class="language-javascript"><span class="token comment">// initialize BiggerPicture</span>
+<span class="token keyword">let</span> bp <span class="token operator">=</span> <span class="token function">BiggerPicture</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+	<span class="token literal-property property">target</span><span class="token operator">:</span> document<span class="token punctuation">.</span>body<span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token comment">// grab image links</span>
+<span class="token keyword">let</span> imageLinks <span class="token operator">=</span> imageSection<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">'#images &gt; a'</span><span class="token punctuation">)</span>
+
+<span class="token comment">// add click listener to open BiggerPicture</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> imageLinks<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	imageLinks<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> openGallery<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// open BiggerPicture</span>
+<span class="token keyword">function</span> <span class="token function">openGallery</span><span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	e<span class="token punctuation">.</span><span class="token function">preventDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	bp<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+		<span class="token literal-property property">items</span><span class="token operator">:</span> imageLinks<span class="token punctuation">,</span>
+		<span class="token literal-property property">el</span><span class="token operator">:</span> e<span class="token punctuation">.</span>currentTarget<span class="token punctuation">,</span>
+	<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code>
+</pre>
+				<p>
+					Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
+					aspernatur incidunt consectetur, porro placeat deserunt amet tempore
+					quas sapiente fugit nesciunt doloremque. Molestias odio deleniti
+					sapiente beatae numquam temporibus animi!
+				</p>
+			</div>
+		</div>
+
+		<script src="demo.js"></script>
+	</body>
+</html>

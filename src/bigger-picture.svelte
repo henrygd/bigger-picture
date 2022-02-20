@@ -1,0 +1,324 @@
+<svelte:options accessors={true} immutable={true} />
+
+<script>
+	import { fly, fade } from 'svelte/transition'
+	import { cubicOut } from 'svelte/easing'
+	import ImageItem from './components/image.svelte'
+	import Iframe from './components/iframe.svelte'
+	import Video from './components/video.svelte'
+	import Html from './components/html.svelte'
+	import { zoomed, closing } from './stores'
+	import { hideScroll, showScroll } from './hide-show-scroll'
+
+	export let items
+	export let position
+	export let target
+
+	let opts
+
+	let forward
+	let isOpen
+
+	let containerWidth, containerHeight
+	// let updateDimensions
+
+	// dom element to restore focus to on close
+	let focusTrigger
+	let container
+	let hideControls
+	let smallScreen
+	let inline
+
+	// update active element when position changes
+	let activeItem
+
+	$: if (items) {
+		activeItem = items[position]
+		container && opts.onUpdate && opts.onUpdate(container, activeItem)
+	}
+
+	let arrowSvg = `<svg viewBox="0 0 24 24"><path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/></svg>`
+	let closeSvg = `<svg viewBox="0 0 32 32"><path d="M24 10l-2-2-6 6-6-6-2 2 6 6-6 6 2 2 6-6 6 6 2-2-6-6z"/></svg>`
+
+	export const open = (options) => {
+		let openItems = options.items
+		focusTrigger = document.activeElement
+		// containerWidth = target.clientWidth
+		opts = options
+		inline = opts.inline
+		containerWidth = inline ? target.clientWidth : window.innerWidth
+		containerHeight = inline ? target.clientHeight : window.innerHeight
+		smallScreen = containerWidth < 769
+		position = opts.position || 0
+		// make array w/ dataset to work with
+		items = Array.isArray(openItems)
+			? openItems.map((item, i) => ({ ...item, ...{ u: i } }))
+			: [...(openItems.length ? openItems : [openItems])].reduce(
+					(arr, element, i) => {
+						// add unique id (u)
+						let obj = { element, u: i }
+						// set gallery position
+						if (element == opts.el) {
+							position = i
+						}
+						return [...arr, { ...obj, ...element.dataset }]
+					},
+					[]
+			  )
+	}
+
+	export const close = () => {
+		if (!opts.noClose) {
+			opts.onClose && opts.onClose()
+			$closing = 1
+			items = 0
+			focusTrigger && focusTrigger.focus({ preventScroll: true })
+		}
+	}
+
+	// previous gallery item
+	export const prev = () => {
+		forward = 0
+		updatePosition(-1)
+	}
+
+	// next gallery item
+	export const next = () => {
+		forward = 1
+		updatePosition(1)
+	}
+
+	// go to next item in gallery
+	const updatePosition = (movement) => {
+		position = getNextPosition(movement)
+	}
+
+	// get next gallery position
+	const getNextPosition = (movement) => {
+		let pos = position + movement
+		if (pos == items.length) {
+			pos = 0
+		} else if (pos < 0) {
+			pos = items.length - 1
+		} else {
+			pos = pos
+		}
+		return pos
+	}
+
+	const onKeydown = (e) => {
+		if (!isOpen) {
+			return
+		}
+		let { keyCode } = e
+		if (keyCode === 27) {
+			close()
+		} else if (keyCode == 39) {
+			next()
+		} else if (keyCode == 37) {
+			prev()
+		} else if (keyCode === 9 && !inline) {
+			// trap focus on tab press
+			const containerNodes = container.querySelectorAll('*')
+			const tabbable = Array.from(containerNodes).filter((n) => n.tabIndex >= 0)
+			if (tabbable.length) {
+				e.preventDefault()
+				let index = tabbable.indexOf(document.activeElement)
+				index += tabbable.length + (e.shiftKey ? -1 : 1)
+				index %= tabbable.length
+				tabbable[index].focus()
+			}
+		}
+	}
+
+	const calculateDimensions = (fullWidth, fullHeight, scale) => {
+		// if (opts.scale) {
+		// 	scale = opts.scale
+		// }
+		scale = opts.scale || 0.99
+		let width, height
+
+		fullWidth = fullWidth || 1920
+		fullHeight = fullHeight || 1080
+		// handle height / width / aspect / max width for iframe
+		const windowAspect = containerHeight / containerWidth
+
+		const iframeAspect = fullHeight / fullWidth
+
+		if (iframeAspect > windowAspect) {
+			height = Math.min(fullHeight, containerHeight * scale)
+			width = height / iframeAspect
+		} else {
+			width = Math.min(fullWidth, containerWidth * scale)
+			height = width * iframeAspect
+		}
+		return [width, height]
+	}
+
+	const loadImage = (item) => {
+		const img = new Image()
+		img.src = item.img
+		item.preload = img
+		return img.decode()
+	}
+
+	const preloadNext = () => {
+		let nextItem = items[getNextPosition(1)]
+		let prevItem = items[getNextPosition(-1)]
+		nextItem.img && !nextItem.preload && loadImage(nextItem)
+		prevItem.img && !prevItem.preload && loadImage(prevItem)
+	}
+
+	// animate media in when bp is first opened
+	const animateIn = (node) => {
+		if (!isOpen) {
+			isOpen = 1
+			// disable scroll if not inline gallery
+			inline || hideScroll()
+			opts.onOpen && opts.onOpen(container)
+			return opts.intro ? fly(node, { y: 10, easing: cubicOut }) : scaleIn(node)
+		} else {
+			return fly(node, {
+				x: forward ? 20 : -20,
+				easing: cubicOut,
+				duration: 300,
+			})
+		}
+	}
+
+	// animate media out when bp is closed
+	const animateOut = (node) => {
+		if (!items) {
+			return opts.intro
+				? fly(node, { y: -10, easing: cubicOut })
+				: scaleIn(node)
+		} else {
+			return fly(node, {
+				x: forward ? -20 : 20,
+				easing: cubicOut,
+				duration: 300,
+			})
+		}
+	}
+
+	// custom svelte transition for entrance zoom
+	const scaleIn = (node) => {
+		let { element } = activeItem
+
+		let bpItem = node.firstChild
+		let { clientWidth, clientHeight } = bpItem
+
+		let { top, left, width, height } = element.getBoundingClientRect()
+		let leftOffset = left - (containerWidth - width) / 2
+		let centerTop = top - (containerHeight - height) / 2
+		let scaleWidth = element.clientWidth / clientWidth
+		let scaleHeight = element.clientHeight / clientHeight
+
+		return {
+			duration: 480,
+			easing: cubicOut,
+			css: (t) => {
+				let tDiff = 1 - t
+				return `transform:translate3d(${leftOffset * tDiff}px, ${
+					centerTop * tDiff
+				}px, 0px) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${
+					scaleHeight + t * (1 - scaleHeight)
+				}, 1)`
+			},
+		}
+	}
+
+	const onResize = () => {
+		smallScreen = containerWidth < 769
+		opts.onResize && opts.onResize(activeItem)
+	}
+
+	const lifecycleMethods = () => {
+		window.addEventListener('resize', onResize)
+		return {
+			destroy() {
+				window.removeEventListener('resize', onResize)
+				$closing = isOpen = 0
+				showScroll()
+				opts.onClosed && opts.onClosed()
+			},
+		}
+	}
+
+	// toggle controls for small screen
+	const toggleControls = () => (hideControls = !hideControls)
+</script>
+
+<svelte:window on:keydown={onKeydown} />
+
+{#if items}
+	<div
+		bind:clientHeight={containerHeight}
+		bind:clientWidth={containerWidth}
+		bind:this={container}
+		use:lifecycleMethods
+		class="bp-wrap"
+		class:zoomed={$zoomed}
+		class:bp-inline={inline}
+	>
+		<div transition:fade={{ easing: cubicOut, duration: 480 }} />
+		{#key activeItem.u}
+			<div class="bp-inner" in:animateIn out:animateOut on:click|self={close}>
+				{#if activeItem.img}
+					<ImageItem
+						stuff={{
+							activeItem,
+							calculateDimensions,
+							toggleControls,
+							loadImage,
+							preloadNext,
+							next,
+							prev,
+							close,
+							opts,
+						}}
+						{containerWidth}
+						{containerHeight}
+						{smallScreen}
+					/>
+				{:else if activeItem.video}
+					<Video {activeItem} {calculateDimensions} />
+				{:else if activeItem.iframe}
+					<Iframe {activeItem} {calculateDimensions} />
+				{:else if activeItem.html}
+					<Html {activeItem} />
+				{/if}
+			</div>
+			{#if activeItem.caption}
+				<div class="bp-cap" transition:fade={{ duration: 200 }}>
+					{@html activeItem.caption}
+				</div>
+			{/if}
+		{/key}
+
+		{#if !smallScreen || !hideControls}
+			<div transition:fade={{ duration: 300 }}>
+				<!-- close button -->
+				{#if !opts.noClose}
+					<button class="bp-x" title="Close" on:click={close}>
+						{@html closeSvg}
+					</button>
+				{/if}
+
+				{#if items.length > 1}
+					<!-- counter -->
+					<div class="bp-count">
+						{position + 1} / {items.length}
+					</div>
+					<!-- foward / back buttons -->
+					<button class="bp-next" title="Next" on:click={next}>
+						{@html arrowSvg}
+					</button>
+					<button class="bp-prev" title="Previous" on:click={prev}>
+						{@html arrowSvg}
+					</button>
+				{/if}
+			</div>
+		{/if}
+	</div>
+{/if}
