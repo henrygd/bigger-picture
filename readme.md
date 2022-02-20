@@ -216,11 +216,12 @@ Type: `string` or `Node` or `selector`
 
 need to figure out what method works best here
 
+<!--
 ### element
 
 Type: `Node`
 
-If using the default transition, this defines the element the active item will scale out of and back into.
+If using the default transition, this defines the element the active item will scale out of and back into. -->
 
 ### alt
 
