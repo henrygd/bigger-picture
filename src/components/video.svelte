@@ -38,7 +38,7 @@
 			width:{dimensions[0]}px;
 			height:{dimensions[1]}px
 		"
-		on:loadeddata={() => (loaded = true)}
+		on:canplay={() => (loaded = true)}
 	>
 		{#each video as vid}
 			<source {...vid} />
