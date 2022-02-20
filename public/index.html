@@ -22,12 +22,24 @@
 				<div class="main">
 					<div class="inner-wrap">
 						<div class="logo logo-icon">
-							<img src="assets/bp.svg" alt="BigPicture" title="BigPicture" />
+							<picture>
+								<source
+									media="(max-width: 500px)"
+									srcset="assets/bp-stacked.svg"
+								/>
+								<source media="(min-width: 501px)" srcset="assets/bp.svg" />
+								<img
+									src="assets/bp.svg"
+									alt="BiggerPicture"
+									title="BiggerPicture"
+								/>
+							</picture>
 						</div>
 						<div class="badges">
 							<span class="heading-badges">
 								<a href="https://www.npmjs.com/package/side-panel-menu-thing">
 									<img
+										height="20"
 										src="https://badgen.net/npm/v/side-panel-menu-thing"
 										alt="NPM"
 									/>
@@ -36,6 +48,7 @@
 									href="https://cdn.jsdelivr.net/npm/side-panel-menu-thing/dist/side-panel-menu-thing.min.js"
 								>
 									<img
+										height="20"
 										src="https://badgen.net/badgesize/gzip/henrygd/side-panel-menu-thing/master/dist/side-panel-menu-thing.min.js?color=green"
 										alt="CDN link"
 									/>
@@ -44,6 +57,7 @@
 									href="https://github.com/henrygd/bigger-picture/blob/main/license"
 								>
 									<img
+										height="20"
 										src="https://badgen.net/github/license/henrygd/bigpicture?color=purple"
 										alt="MIT license"
 									/>

@@ -138,6 +138,16 @@ footer {
 	max-width: 950px;
 	text-align: right;
 	margin: 0 auto;
+	&:before {
+		content: '';
+		display: block;
+		padding-bottom: 15.3%;
+	}
+	img {
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
 }
 
 .sections {
@@ -456,5 +466,17 @@ footer {
 	}
 	#images .flexmasonry-item:last-of-type {
 		order: 2;
+	}
+}
+
+@media (max-width: 500px) {
+	.logo {
+		&:before {
+			padding-bottom: 41%;
+		}
+		img {
+			width: 90%;
+			left: 5%;
+		}
 	}
 }
