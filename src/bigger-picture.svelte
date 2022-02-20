@@ -37,9 +37,6 @@
 		container && opts.onUpdate && opts.onUpdate(container, activeItem)
 	}
 
-	let arrowSvg = `<svg viewBox="0 0 24 24"><path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/></svg>`
-	let closeSvg = `<svg viewBox="0 0 32 32"><path d="M24 10l-2-2-6 6-6-6-2 2 6 6-6 6 2 2 6-6 6 6 2-2-6-6z"/></svg>`
-
 	export const open = (options) => {
 		let openItems = options.items
 		focusTrigger = document.activeElement
@@ -300,9 +297,7 @@
 			<div transition:fade={{ duration: 300 }}>
 				<!-- close button -->
 				{#if !opts.noClose}
-					<button class="bp-x" title="Close" on:click={close}>
-						{@html closeSvg}
-					</button>
+					<button class="bp-x" title="Close" on:click={close} />
 				{/if}
 
 				{#if items.length > 1}
@@ -311,12 +306,8 @@
 						{position + 1} / {items.length}
 					</div>
 					<!-- foward / back buttons -->
-					<button class="bp-next" title="Next" on:click={next}>
-						{@html arrowSvg}
-					</button>
-					<button class="bp-prev" title="Previous" on:click={prev}>
-						{@html arrowSvg}
-					</button>
+					<button class="bp-next" title="Next" on:click={next} />
+					<button class="bp-prev" title="Previous" on:click={prev} />
 				{/if}
 			</div>
 		{/if}
