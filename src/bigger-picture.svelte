@@ -8,7 +8,7 @@
 	import Video from './components/video.svelte'
 	import Html from './components/html.svelte'
 	import { zoomed, closing } from './stores'
-	import { hideScroll, showScroll } from './hide-show-scroll'
+	import { hideScroll, showScroll } from 'hide-show-scroll'
 
 	export let items
 	export let position
