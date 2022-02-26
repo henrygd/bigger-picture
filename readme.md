@@ -1,16 +1,16 @@
+[npm-image]: https://flat.badgen.net/npm/v/bigger-picture
+[npm-url]: https://www.npmjs.com/package/bigger-picture
+[size-image]: https://flat.badgen.net/bundlephobia/minzip/bigger-picture?color=green
+[cdn-url]: https://cdn.jsdelivr.net/npm/bigger-picture/dist/bigger-picture.mjs
+[license-image]: https://flat.badgen.net/github/license/henrygd/bigger-picture?color=purple
+
 # Bigger Picture
+
+[![npm][npm-image]][npm-url] [![File Size][size-image]][cdn-url] ![License][license-image]
 
 ### IN DEVELOPMENT.
 
 Feel free to test. API will likely change before release and things are a bit sloppy right now. Please post any feedback in the discussion section.
-
-[npm-image]: https://badgen.net/npm/v/side-panel-menu-thing
-[npm-url]: https://www.npmjs.com/package/side-panel-menu-thing
-[size-image]: https://badgen.net/badgesize/gzip/henrygd/side-panel-menu-thing/master/dist/side-panel-menu-thing.min.js?color=green
-[cdn-url]: https://cdn.jsdelivr.net/npm/side-panel-menu-thing/dist/side-panel-menu-thing.min.js
-[license-image]: https://badgen.net/github/license/henrygd/bigpicture?color=purple
-
-<!-- [![npm][npm-image]][npm-url] [![File Size][size-image]][cdn-url] ![License][license-image] -->
 
 Demo: https://biggerpicture.henrygd.me
 
