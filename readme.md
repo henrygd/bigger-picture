@@ -16,7 +16,9 @@ Demo: https://biggerpicture.henrygd.me
 
 High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using svelte.
 
-_TODO insert video_
+
+https://user-images.githubusercontent.com/8519632/155907562-a8849399-51e4-4363-b377-b07b0fd12b82.mp4
+
 
 ## Install
 
