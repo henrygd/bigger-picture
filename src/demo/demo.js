@@ -1,5 +1,8 @@
 // import BiggerPicture from '../bigger-picture'
 import BiggerPicture from '../bigger-picture.svelte'
+import Firewatch from './components/firewatch.svelte'
+import Tweet from './components/tweet.svelte'
+import Dialog from './components/dialog.svelte'
 // import BiggerPictureThumbnails from './bp-thumbn/ails.svelte'
 // import Macy from 'macy'
 import FlexMasonry from 'flexmasonry/src/flexmasonry.js'
@@ -14,14 +17,18 @@ let imageLinks = document.querySelectorAll('#images a')
 let vidIframeLinks = document.querySelectorAll('#vids a')
 let htmlLinks = document.querySelectorAll('[data-html]')
 let captionLinks = document.querySelectorAll('#captions a')
+let inlineWrap = document.getElementById('inline_gallery')
 
-// masonry setup
-handleMasonry(document.querySelectorAll('.masonry'))
-
-// BiggerPicture setup
-handleNodes(imageLinks)
-handleNodes(captionLinks)
-handleIndividualNodes(vidIframeLinks)
+function initBodyBp() {
+	if (!bodyBp) {
+		bodyBp = new BiggerPicture({
+			target: document.body,
+			props: {
+				target: document.body,
+			},
+		})
+	}
+}
 
 function handleNodes(nodes) {
 	for (let i = 0; i < nodes.length; i++) {
@@ -47,14 +54,7 @@ function handleMasonry(sections) {
 
 function openBiggerPicture(items, e) {
 	e.preventDefault()
-	if (!bodyBp) {
-		bodyBp = new BiggerPicture({
-			target: document.body,
-			props: {
-				target: document.body,
-			},
-		})
-	}
+	initBodyBp()
 	bodyBp.open({
 		el: e.currentTarget,
 		// position: 3,
@@ -81,21 +81,12 @@ function openBiggerPicture(items, e) {
 
 function openBiggerIndividualPicture(e, node) {
 	e.preventDefault()
-	if (!bodyBp) {
-		bodyBp = new BiggerPicture({
-			target: document.body,
-			props: {
-				target: document.body,
-			},
-		})
-	}
+	initBodyBp()
 	bodyBp.open({
 		el: e.currentTarget,
 		items: node,
 	})
 }
-
-let inlineWrap = document.getElementById('inline_gallery')
 
 function initInlineGallery() {
 	if (!inlineBp) {
@@ -120,22 +111,17 @@ function initInlineGallery() {
 	})
 }
 
-for (let i = 0; i < htmlLinks.length; i++) {
-	htmlLinks[i].addEventListener('click', (e) => openHtml(e, htmlLinks[i]))
-}
-
-function openHtml(e, node) {
+function openCode(e, node) {
 	e.preventDefault()
-	if (!bodyBp) {
-		bodyBp = new BiggerPicture({
-			target: document.body,
-			props: {
-				target: document.body,
-			},
-		})
-	}
+	initBodyBp()
 	bodyBp.open({
-		items: node,
+		el: node,
+		items: [
+			{
+				html: document.getElementById(node.dataset.html).outerHTML,
+				element: node,
+			},
+		],
 		intro: 'fadeup',
 	})
 }
@@ -159,6 +145,71 @@ function createObserver() {
 	}, options)
 	observer.observe(inlineWrap)
 }
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+// masonry setup
+handleMasonry(document.querySelectorAll('.masonry'))
+
+// BiggerPicture setup
+handleNodes(imageLinks)
+handleNodes(captionLinks)
+handleIndividualNodes(vidIframeLinks)
+
+// code modals
+for (let i = 0; i < htmlLinks.length; i++) {
+	htmlLinks[i].addEventListener('click', (e) => openCode(e, htmlLinks[i]))
+}
+
+// firewatch parallax
+document.getElementById('firewatch').addEventListener('click', (e) => {
+	e.preventDefault()
+	initBodyBp()
+	bodyBp.open({
+		intro: 'fadeup',
+		items: [{ html: '' }],
+		onOpen: (container) => {
+			new Firewatch({
+				target: container.querySelector('.bp-inner'),
+			})
+		},
+	})
+})
+
+// dialog modal example
+document.getElementById('dialog').addEventListener('click', (e) => {
+	e.preventDefault()
+	initBodyBp()
+	bodyBp.open({
+		intro: 'fadeup',
+		items: [{ html: '' }],
+		onOpen: (container) => {
+			container.querySelector('.bp-x').remove()
+			container.classList.add('blur')
+			new Dialog({
+				target: container.querySelector('.bp-inner'),
+				props: { bp: bodyBp },
+			})
+		},
+	})
+})
+
+// tweet
+document.getElementById('tweet').addEventListener('click', (e) => {
+	e.preventDefault()
+	initBodyBp()
+	bodyBp.open({
+		intro: 'fadeup',
+		items: [{ html: '' }],
+		onOpen: (container) => {
+			new Tweet({
+				target: container.querySelector('.bp-inner'),
+			})
+		},
+	})
+})
 
 createObserver()
 

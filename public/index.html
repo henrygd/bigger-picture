@@ -67,7 +67,7 @@
 						<p>
 							High performance JavaScript lightbox gallery with a small
 							footprint. Supports images, videos, iframes, and html with no
-							plugins necessary. Under 10kB gzip vanilla / much smaller if using
+							plugins necessary. 10kB gzip vanilla / much smaller if using
 							svelte.
 						</p>
 					</div>
@@ -343,20 +343,73 @@
 						<div class="inner-wrap">
 							<h2>HTML</h2>
 							<p>
-								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
-								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								Do whatever you want with the most control.
 								<a href="#" data-html="code_image_gallery">View code snippet</a>
 							</p>
+							<ul class="html-grid">
+								<li>
+									<a
+										href="https://www.firewatchgame.com/"
+										target="_blank"
+										title="Firewatch parallax"
+										id="firewatch"
+									>
+										<img
+											src="https://assets.henrygd.me/bp/images/firewatch.png"
+											loading="lazy"
+											alt="firewatch"
+										/>
+									</a>
+								</li>
+								<li>
+									<a href="#" id="dialog" title="Modal example">
+										<img
+											src="https://assets.henrygd.me/bp/images/location-service.svg"
+											loading="lazy"
+											alt="firewatch"
+										/>
+									</a>
+								</li>
+								<li>
+									<a
+										href="https://twitter.com/ByYourLogic/status/1440089232630943750"
+										target="_blank"
+										id="tweet"
+										title="Tweet (forced script embed)"
+									>
+										<img
+											src="https://pbs.twimg.com/media/E_w5hlxUUAQIu_x?format=jpg&name=small"
+											loading="lazy"
+											alt="barney (twitter)"
+										/>
+									</a>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</section>
 				<section>
 					<div class="main">
 						<div class="inner-wrap">
-							<h2>Basic Captions</h2>
+							<h2>Inline Galleries</h2>
 							<p>
 								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
 								aut voluptates molestias perspiciatis laudantium deleniti vero.
+								<a href="#" data-html="code_image_gallery">View code snippet</a>
+							</p>
+							<div class="inline-wrap">
+								<div class="inline-gallery" id="inline_gallery"></div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="main">
+						<div class="inner-wrap">
+							<h2>Caption Support</h2>
+							<p>
+								Basic captions are built in and can be altered with CSS. Video
+								captions also supported.
 								<a href="#" data-html="code_image_gallery">View code snippet</a>
 							</p>
 							<ul class="masonry" id="captions">
@@ -415,21 +468,6 @@
 									</a>
 								</li>
 							</ul>
-						</div>
-					</div>
-				</section>
-				<section>
-					<div class="main">
-						<div class="inner-wrap">
-							<h2>Inline Galleries</h2>
-							<p>
-								Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas
-								aut voluptates molestias perspiciatis laudantium deleniti vero.
-								<a href="#" data-html="code_image_gallery">View code snippet</a>
-							</p>
-							<div class="inline-wrap">
-								<div class="inline-gallery" id="inline_gallery"></div>
-							</div>
 						</div>
 					</div>
 				</section>

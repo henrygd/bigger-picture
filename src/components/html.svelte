@@ -1,10 +1,7 @@
 <script>
 	export let activeItem
 
-	let { html, width } = activeItem
-	let content = document.getElementById(html).outerHTML
+	let { html } = activeItem
 </script>
 
-<div class="bp-item bp-html" style="width:{width}px">
-	{@html content}
-</div>
+{@html html}

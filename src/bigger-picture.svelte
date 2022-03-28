@@ -116,8 +116,9 @@
 			prev()
 		} else if (keyCode === 9 && !inline) {
 			// trap focus on tab press
-			const containerNodes = container.querySelectorAll('*')
-			const tabbable = Array.from(containerNodes).filter((n) => n.tabIndex >= 0)
+			const tabbable = Array.from(container.querySelectorAll('*')).filter(
+				(n) => n.tabIndex >= 0
+			)
 			if (tabbable.length) {
 				e.preventDefault()
 				let index = tabbable.indexOf(document.activeElement)
@@ -202,7 +203,7 @@
 	const scaleIn = (node) => {
 		let { element } = activeItem
 
-		let bpItem = node.firstChild
+		let bpItem = node.firstElementChild
 		let { clientWidth, clientHeight } = bpItem
 
 		let { top, left, width, height } = element.getBoundingClientRect()
@@ -282,7 +283,7 @@
 					<Video {activeItem} {calculateDimensions} />
 				{:else if activeItem.iframe}
 					<Iframe {activeItem} {calculateDimensions} />
-				{:else if activeItem.html}
+				{:else}
 					<Html {activeItem} />
 				{/if}
 			</div>

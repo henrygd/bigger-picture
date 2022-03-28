@@ -25,12 +25,6 @@
 		transform: translateZ(0);
 		// will-change: opacity;
 	}
-	button {
-		cursor: pointer;
-		position: absolute;
-		border: 0;
-		// will-change: opacity;
-	}
 	svg {
 		fill: #fff;
 		transform: translateZ(0);
@@ -98,6 +92,9 @@
 
 .bp-prev,
 .bp-next {
+	cursor: pointer;
+	position: absolute;
+	border: 0;
 	// background-color: rgba(50, 50, 50, 0.5);
 	background-color: rgba(0, 0, 0, 0.15);
 	// border-radius: 28px;
@@ -132,6 +129,9 @@
 	transform: scalex(-1);
 }
 .bp-x {
+	cursor: pointer;
+	position: absolute;
+	border: 0;
 	background: rgba(0, 0, 0, 0.15);
 	// backdrop-filter: blur(15px);
 	top: 0;

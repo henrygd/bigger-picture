@@ -16,9 +16,7 @@ Demo: https://biggerpicture.henrygd.me
 
 High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using svelte.
 
-
 https://user-images.githubusercontent.com/8519632/155907562-a8849399-51e4-4363-b377-b07b0fd12b82.mp4
-
 
 ## Install
 
@@ -214,16 +212,9 @@ If supplying data via Array, each video should be a separate string.
 
 ### html
 
-Type: `string` or `Node` or `selector`
+Type: `string`
 
-need to figure out what method works best here
-
-<!--
-### element
-
-Type: `Node`
-
-If using the default transition, this defines the element the active item will scale out of and back into. -->
+HTML to render in the modal. For advanced use, you can pass an empty string then mount a component into the container using the [`onOpen`](#onopen) or [`onUpdate`](#onupdate) methods. TODO: example link
 
 ### alt
 
@@ -252,7 +243,7 @@ Below is an example for passing English and Spanish captions. See the [MDN page 
 
 ## Passing Item Data via Object
 
-If you want to track the default open / close animation, also add a property `element` that contains a node on the page. If you're not using the default intro animation, this does not matter.
+If you want to track the default open / close animation, also add a property `element` that contains a node on the page. If you're not using the default intro animation, this is not needed.
 
 ```js
 let items = [
