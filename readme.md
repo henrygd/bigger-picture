@@ -214,7 +214,18 @@ If supplying data via Array, each video should be a separate string.
 
 Type: `string`
 
-HTML to render in the modal. For advanced use, you can pass an empty string then mount a component into the container using the [`onOpen`](#onopen) or [`onUpdate`](#onupdate) methods. TODO: example link
+HTML that will be rendered in the container.
+
+For advanced use, you can pass an empty string, then mount a component using the [`onOpen`](#onopen) or [`onUpdate`](#onupdate) methods:
+
+```js
+// mounting svelte component (firewatch example from demo site)
+onOpen: (container) => {
+  new Firewatch({
+    target: container.querySelector('.bp-inner'),
+  })
+},
+```
 
 ### alt
 
