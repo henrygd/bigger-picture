@@ -172,7 +172,7 @@ section h2 {
 }
 
 .masonry {
-	margin: 40px -4px -4px;
+	margin: 32px -4px 0;
 	display: flex;
 	flex-flow: column wrap;
 	align-content: space-between;
@@ -295,12 +295,11 @@ h3 {
 }
 
 .thumbnails {
-	height: 80px;
 	width: 100%;
-	// width: 130px;
-	// height: 100%;
+	height: 75px;
 	position: relative;
-	background: rgba(0, 0, 0, 0.8);
+	// background: rgba(0, 0, 0, 0.8);
+	background: #12161a;
 	// order: -1;
 	z-index: 9999;
 	transition: opacity 0.4s;
@@ -308,15 +307,21 @@ h3 {
 		opacity: 0;
 		pointer-events: none;
 	}
-	div {
-		display: flex;
-		// flex-direction: column;
+	> div {
+		display: table;
+		margin: 0 auto;
 		height: 100%;
-		overflow-x: auto;
-		overscroll-behavior-x: container;
-		scroll-snap-type: x mandatory;
-		scroll-behavior: smooth;
-		// justify-content: center;
+		// padding: 0 2px;
+		div {
+			display: flex;
+			padding: 4px 0;
+			overflow-x: auto;
+			overscroll-behavior-x: container;
+			scroll-snap-type: x mandatory;
+			scroll-behavior: smooth;
+			touch-action: none;
+			// justify-content: center;
+		}
 	}
 	button {
 		cursor: pointer;
@@ -326,9 +331,12 @@ h3 {
 		background: transparent;
 		border: 0;
 		padding: 0;
-		height: 100%;
-		width: 105px;
-		flex-grow: 1;
+		height: 67px;
+		width: 85px;
+		border-radius: 2px;
+		margin: 0 2px;
+		user-select: none;
+		// flex-grow: 1;
 		// width: 100%;
 		// height: 115px;
 		background-size: cover;
@@ -475,7 +483,7 @@ footer {
 
 	.foreground {
 		position: absolute;
-		top: 830px;
+		top: 825px;
 		left: 0;
 		width: 100%;
 		height: 100%;
@@ -508,7 +516,7 @@ footer {
 
 .dialog {
 	border-radius: 12px;
-	padding: 1.2rem 1.7rem 1.7rem;
+	padding: 1.4rem 1.7rem 1.7rem;
 	width: 400px;
 	background: #fff;
 	max-width: 95%;
@@ -533,9 +541,13 @@ footer {
 		border: none;
 		letter-spacing: 0.025em;
 		color: #6d6b87;
-		background-color: #eef1f7;
 		font-weight: 700;
 		cursor: pointer;
+		background-color: #e8ebf1;
+		transition: background-color 0.1s;
+		&:hover {
+			background-color: #ebeff5;
+		}
 		&:focus {
 			outline: none;
 			box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #6d6b87;
@@ -544,15 +556,18 @@ footer {
 	button.cta {
 		background-color: #0066fe;
 		color: white;
+		&:hover {
+			background-color: #1774ff;
+		}
 		&:focus {
 			box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #0066fe;
 		}
 	}
 	h2 {
-		margin: 21px 0 14px;
-		font-weight: 800;
+		margin: 25px 0 15px;
+		font-weight: 700;
 		line-height: 1.2;
-		color: #282738;
+		color: #312f42;
 	}
 	p {
 		color: #696870;
@@ -578,12 +593,12 @@ footer {
 	flex-wrap: wrap;
 	list-style: none;
 	padding: 0;
-	margin: 40px -4px -4px;
+	margin: 32px 0 4px;
 	li {
 		width: calc(33.33% - 8px);
 		margin: 4px;
 		position: relative;
-		&:nth-child(2) {
+		&:first-child {
 			img {
 				padding: 5%;
 			}
@@ -593,7 +608,7 @@ footer {
 		display: block;
 		width: 100%;
 		padding-bottom: 56.25%;
-		background: #d2d1dd;
+		background: #a6a3c5;
 	}
 	img {
 		@include fillall();
@@ -618,6 +633,58 @@ footer {
 	}
 }
 
+.tweet {
+	width: 550px;
+	max-width: 96%;
+	max-height: 98%;
+	overflow: auto;
+	background: #fff;
+	padding: 15px;
+	border-radius: 10px;
+	a {
+		display: inline-block;
+		&:focus {
+			outline: 2px solid;
+		}
+	}
+	p {
+		line-height: 1.35;
+		font-size: 1.1em;
+		margin: 0;
+	}
+	img {
+		border-radius: 10px;
+		margin: 17px 0 0;
+	}
+}
+
+.t-head {
+	display: flex;
+	font-size: 15px;
+	margin: 0 0 13px;
+	img {
+		border-radius: 50%;
+		margin: 0 9px 0 0;
+	}
+	a {
+		text-decoration: none;
+	}
+	span {
+		display: block;
+		color: #555;
+		&:first-child {
+			color: #222;
+			font-weight: 700;
+			margin: 5px 0 2px;
+		}
+	}
+	svg {
+		width: 25px;
+		fill: #1d9bf0;
+		margin: 0 0 auto auto;
+	}
+}
+
 @media (max-width: 700px) {
 	body {
 		font-size: 16px;
@@ -639,7 +706,8 @@ footer {
 		display: block;
 		margin: 5px -5px -5px;
 	}
-	#images .flexmasonry-item:last-of-type {
+	#images .flexmasonry-item:last-of-type,
+	#thumbnails .flexmasonry-item:last-of-type {
 		order: 2;
 	}
 	.html-grid {

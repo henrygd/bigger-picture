@@ -1,5 +1,5 @@
 <script>
-	let layers = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+	let layers = Array.from(Array(9))
 
 	let y
 
@@ -8,10 +8,10 @@
 
 <div class="firewatch">
 	<div class="parallax-container">
-		{#each layers as layer}
+		{#each layers as layer, i}
 			<img
-				style="transform: translate(0,{(-y * layer) / (layers.length - 1)}px)"
-				src="https://www.firewatchgame.com/images/parallax/parallax{layer}.png"
+				style="transform: translate(0,{(-y * i) / (layers.length - 1)}px)"
+				src="https://www.firewatchgame.com/images/parallax/parallax{i}.png"
 				alt="parallax layer {layer}"
 			/>
 		{/each}

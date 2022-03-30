@@ -16,6 +16,8 @@ Demo: https://biggerpicture.henrygd.me
 
 High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using svelte.
 
+Flexible enough to intergrate into custom layouts and easily customizable via CSS.
+
 https://user-images.githubusercontent.com/8519632/155907562-a8849399-51e4-4363-b377-b07b0fd12b82.mp4
 
 ## Install
@@ -28,11 +30,13 @@ Grab the [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) and 
 
 ## Usage
 
-This is a very basic example using HTML to supply data ([TODO view on codesandbox](#)). You don't need to initialize more than once unless you want multiple galleries with different targets.
+This is a very basic example using HTML to supply data. You don't need to initialize more than once unless you want multiple galleries with different targets.
 
 For passing data via object, see [Passing Item Data via Object](#passing-item-data-via-object).
 
 Using Svelte? See [Usage with Svelte](#usage-with-svelte).
+
+[![Edit bigger-picture-basic-gallery](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/bigger-picture-basic-gallery-o4kb82?fontsize=14&hidenavigation=1&theme=dark)
 
 ```js
 import BiggerPicture from 'bigger-picture'

@@ -16,7 +16,7 @@
 
 	let opts
 
-	let forward
+	let movement
 	let isOpen
 
 	let containerWidth, containerHeight
@@ -43,17 +43,20 @@
 		// containerWidth = target.clientWidth
 		opts = options
 		inline = opts.inline
-		containerWidth = inline ? target.clientWidth : window.innerWidth
-		containerHeight = inline ? target.clientHeight : window.innerHeight
+		// disable scroll if not inline gallery
+		inline || hideScroll()
+		containerWidth = target.offsetWidth
+		containerHeight =
+			target == document.body ? window.innerHeight : target.clientHeight
 		smallScreen = containerWidth < 769
 		position = opts.position || 0
 		// make array w/ dataset to work with
 		items = Array.isArray(openItems)
-			? openItems.map((item, i) => ({ ...item, ...{ u: i } }))
+			? openItems.map((item, i) => ({ ...item, ...{ i } }))
 			: [...(openItems.length ? openItems : [openItems])].reduce(
 					(arr, element, i) => {
 						// add unique id (u)
-						let obj = { element, u: i }
+						let obj = { element, i }
 						// set gallery position
 						if (element == opts.el) {
 							position = i
@@ -74,37 +77,29 @@
 	}
 
 	// previous gallery item
-	export const prev = () => {
-		forward = 0
-		updatePosition(-1)
-	}
+	export const prev = () => setPosition(position - 1)
 
 	// next gallery item
-	export const next = () => {
-		forward = 1
-		updatePosition(1)
-	}
+	export const next = () => setPosition(position + 1)
 
 	// go to next item in gallery
-	const updatePosition = (movement) => {
-		position = getNextPosition(movement)
+	export const setPosition = (index) => {
+		movement = index - position
+		position = getNextPosition(index)
 	}
 
 	// get next gallery position
-	const getNextPosition = (movement) => {
-		let pos = position + movement
-		if (pos == items.length) {
-			pos = 0
-		} else if (pos < 0) {
-			pos = items.length - 1
-		} else {
-			pos = pos
+	const getNextPosition = (index) => {
+		if (index == items.length) {
+			index = 0
+		} else if (index < 0) {
+			index = items.length - 1
 		}
-		return pos
+		return index
 	}
 
 	const onKeydown = (e) => {
-		if (!isOpen) {
+		if (!isOpen || inline) {
 			return
 		}
 		let { keyCode } = e
@@ -114,9 +109,9 @@
 			next()
 		} else if (keyCode == 37) {
 			prev()
-		} else if (keyCode === 9 && !inline) {
+		} else if (keyCode === 9) {
 			// trap focus on tab press
-			const tabbable = Array.from(container.querySelectorAll('*')).filter(
+			let tabbable = Array.from(container.querySelectorAll('*')).filter(
 				(n) => n.tabIndex >= 0
 			)
 			if (tabbable.length) {
@@ -171,13 +166,11 @@
 	const animateIn = (node) => {
 		if (!isOpen) {
 			isOpen = 1
-			// disable scroll if not inline gallery
-			inline || hideScroll()
 			opts.onOpen && opts.onOpen(container)
 			return opts.intro ? fly(node, { y: 10, easing: cubicOut }) : scaleIn(node)
 		} else {
 			return fly(node, {
-				x: forward ? 20 : -20,
+				x: movement > 0 ? 20 : -20,
 				easing: cubicOut,
 				duration: 300,
 			})
@@ -192,7 +185,7 @@
 				: scaleIn(node)
 		} else {
 			return fly(node, {
-				x: forward ? -20 : 20,
+				x: movement > 0 ? -20 : 20,
 				easing: cubicOut,
 				duration: 300,
 			})
@@ -260,7 +253,7 @@
 		class:bp-inline={inline}
 	>
 		<div transition:fade={{ easing: cubicOut, duration: 480 }} />
-		{#key activeItem.u}
+		{#key activeItem.i}
 			<div class="bp-inner" in:animateIn out:animateOut on:click|self={close}>
 				{#if activeItem.img}
 					<ImageItem

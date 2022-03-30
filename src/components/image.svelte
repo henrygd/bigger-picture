@@ -218,7 +218,7 @@
 				cancelEvents = true
 			}
 			// close if swipe up (don't close if inline)
-			if (y < -90 && !inline) {
+			if (y < -90) {
 				close()
 				cancelEvents = true
 			}
@@ -280,11 +280,9 @@
 
 		pointerDown = false
 
-		// if smallscreen
-		// single tap toggles controls, no click zoom
-		// if largescreen
-		// single tap zooms in / out
 		if (!smallScreen) {
+			// if largescreen
+			// single tap zooms in / out
 			if ($zoomed) {
 				hasDragged || changeZoom(e, -5)
 			} else {
@@ -292,7 +290,8 @@
 				dragPositions.length < 3 && !$zoomed && changeZoom(e)
 			}
 		} else {
-			// smallscreen - toggle controls on click or zoom on double click
+			// if smallscreen
+			// toggle controls on click / zoom on double click
 			if (!hasDragged) {
 				if (doubleClickTimeout) {
 					clearTimeout(doubleClickTimeout)
