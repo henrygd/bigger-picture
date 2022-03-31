@@ -224,12 +224,10 @@
 			}
 		}
 
-		// prevent inline from zooming on finger scroll
-		// hasDragged = inline
+		hasDragged = Math.hypot(x, y) > 10
 
 		// image drag when zoomed
-		if ($zoomed && Math.hypot(x, y) > 10) {
-			hasDragged = true
+		if ($zoomed && hasDragged) {
 			zoomDragTranslate.set(
 				boundTranslateValues([
 					dragStartTranslateX + x,
