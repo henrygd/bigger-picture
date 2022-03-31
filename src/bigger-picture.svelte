@@ -29,6 +29,9 @@
 	let smallScreen
 	let inline
 
+	// stores target on pointerdown (ref for overlay close)
+	let clickedEl
+
 	// update active element when position changes
 	let activeItem
 
@@ -254,7 +257,15 @@
 	>
 		<div transition:fade={{ easing: cubicOut, duration: 480 }} />
 		{#key activeItem.i}
-			<div class="bp-inner" in:animateIn out:animateOut on:click|self={close}>
+			<div
+				class="bp-inner"
+				in:animateIn
+				out:animateOut
+				on:pointerdown={({ target }) => (clickedEl = target)}
+				on:pointerup|self={({ target }) => {
+					target === clickedEl && close()
+				}}
+			>
 				{#if activeItem.img}
 					<ImageItem
 						stuff={{
