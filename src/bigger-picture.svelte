@@ -6,7 +6,7 @@
 	import ImageItem from './components/image.svelte'
 	import Iframe from './components/iframe.svelte'
 	import Video from './components/video.svelte'
-	import Html from './components/html.svelte'
+	// import Html from './components/html.svelte'
 	import { zoomed, closing } from './stores'
 	import { hideScroll, showScroll } from 'hide-show-scroll'
 
@@ -117,13 +117,10 @@
 			let tabbable = Array.from(container.querySelectorAll('*')).filter(
 				(n) => n.tabIndex >= 0
 			)
-			if (tabbable.length) {
-				e.preventDefault()
-				let index = tabbable.indexOf(document.activeElement)
-				index += tabbable.length + (e.shiftKey ? -1 : 1)
-				index %= tabbable.length
-				tabbable[index].focus()
-			}
+			let index = tabbable.indexOf(document.activeElement)
+			index += tabbable.length + (e.shiftKey ? -1 : 1)
+			index %= tabbable.length
+			tabbable[index].focus()
 		}
 	}
 
@@ -288,7 +285,7 @@
 				{:else if activeItem.iframe}
 					<Iframe {activeItem} {calculateDimensions} />
 				{:else}
-					<Html {activeItem} />
+					{@html activeItem.html}
 				{/if}
 			</div>
 			{#if activeItem.caption}
