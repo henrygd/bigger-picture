@@ -14,7 +14,7 @@ Feel free to test. API will likely change before release and things are a bit sl
 
 Demo: https://biggerpicture.henrygd.me
 
-High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using svelte.
+High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. 10kB gzip vanilla / much smaller if using svelte.
 
 Flexible enough to intergrate into custom layouts and easily customizable via CSS.
 
@@ -280,11 +280,13 @@ bp.open({
 
 This library was built using Svelte but doesn't require it to use.
 
-For those who _are_ using it, please import the svelte component rather than the processed bundle. If you're using rollup or webpack, this should happen automatically.
+For those who _are_ using it, please import the svelte component rather than the processed bundle. If you're using rollup or webpack, this should happen automatically. If it doesn't, import it directly as shown below.
 
 The only difference in usage is that you need to use `new`, like you would with other Svelte components, and pass `target` in props, as below.
 
 ```js
+import BiggerPicture from 'bigger-picture/src/bigger-picture.svelte'
+
 let bp = new BiggerPicture({
   target: document.body,
   props: {

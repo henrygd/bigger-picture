@@ -49,7 +49,7 @@ main {
 	position: relative;
 	text-align: center;
 	p {
-		width: 800px;
+		width: 880px;
 		max-width: 100%;
 		display: table;
 		margin: 0 auto 1em;
@@ -104,7 +104,7 @@ footer {
 }
 
 .hero {
-	padding: 90px 0 100px;
+	padding: 100px 0 110px;
 	position: relative;
 	text-align: center;
 	background: rgba(45, 46, 58, 0.91);
@@ -151,9 +151,6 @@ footer {
 }
 
 .sections {
-	> :first-child {
-		min-height: 999px;
-	}
 	section {
 		position: relative;
 		padding: 70px 0 90px;
@@ -685,7 +682,7 @@ footer {
 	}
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
 	body {
 		font-size: 16px;
 	}
@@ -700,7 +697,7 @@ footer {
 		}
 	}
 	.hero {
-		padding: 40px 0 47px;
+		padding: 60px 0 67px;
 	}
 	.heading-badges {
 		display: block;
@@ -715,9 +712,15 @@ footer {
 			width: calc(50% - 8px);
 		}
 	}
+	.sections section {
+		padding: 50px 0 70px;
+	}
 }
 
 @media (max-width: 500px) {
+	.hero {
+		padding: 40px 0 47px;
+	}
 	.logo {
 		&:before {
 			padding-bottom: 41%;

@@ -13,6 +13,7 @@
 				style="transform: translate(0,{(-y * i) / (layers.length - 1)}px)"
 				src="https://www.firewatchgame.com/images/parallax/parallax{i}.png"
 				alt="parallax layer {layer}"
+				decoding="async"
 			/>
 		{/each}
 	</div>

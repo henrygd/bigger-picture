@@ -38,16 +38,14 @@ function handleNodes(nodes) {
 }
 function handleIndividualNodes(nodes) {
 	for (let i = 0; i < nodes.length; i++) {
-		nodes[i].addEventListener('click', (e) =>
-			openBiggerIndividualPicture(e, nodes[i])
-		)
+		nodes[i].addEventListener('click', openBiggerPicture.bind(null, nodes[i]))
 	}
 }
 
 function handleMasonry(sections) {
 	FlexMasonry.init(sections, {
 		breakpointCols: {
-			'min-width: 701px': 3,
+			'min-width: 801px': 3,
 			'min-width: 0px': 2,
 		},
 	})
@@ -96,15 +94,6 @@ function openThumbnails(items, e) {
 		// intro: 'fadeup',
 		el: e.target,
 		items: thumbnails,
-	})
-}
-
-function openBiggerIndividualPicture(e, node) {
-	e.preventDefault()
-	initBodyBp()
-	bodyBp.open({
-		el: e.currentTarget,
-		items: node,
 	})
 }
 
