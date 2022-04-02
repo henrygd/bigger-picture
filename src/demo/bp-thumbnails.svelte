@@ -13,8 +13,9 @@
 	let containerWidth
 	let translate = tweened(0, { easing: cubicOut, duration: 300 })
 	let initialTranslate = 0
-	let isPointerDown, pointerDownPos, isDragging
+	let isPointerDown, pointerDownPos, hasDragged
 	let dragPositions = []
+	let focusWrap
 
 	export const open = (options) => {
 		opts = options
@@ -42,18 +43,18 @@
 		if (isPointerDown) {
 			let { clientX } = e
 			let dragAmount = (pointerDownPos - clientX) * -1
-			if (isDragging) {
+			if (hasDragged) {
 				translate.set(boundTranslate(initialTranslate + dragAmount), {
 					duration: 0,
 				})
 				dragPositions.push(clientX)
 			} else {
-				isDragging = Math.abs(dragAmount) > 5
+				hasDragged = Math.abs(dragAmount) > 5
 			}
 		}
 	}
-	function pointerUp() {
-		if (isDragging) {
+	function pointerUp(e) {
+		if (hasDragged) {
 			// drag inertia
 			dragPositions = dragPositions.slice(-3)
 			let xDiff = dragPositions[1] - dragPositions[2]
@@ -63,7 +64,7 @@
 			}
 		}
 		dragPositions = []
-		isPointerDown = isDragging = false
+		isPointerDown = hasDragged = false
 		initialTranslate = $translate
 	}
 
@@ -76,11 +77,12 @@
 		})
 		bp.open({
 			...opts,
+			focusWrap,
 			onUpdate: () => {
 				bpItems = bp.items
 				setTimeout(() => {
 					// set button to active
-					let activeBtn = document.querySelector('.active')
+					let activeBtn = focusWrap.querySelector('.active')
 					// move button into view if off screen
 					let { left, right, width } = activeBtn.getBoundingClientRect()
 					let margin = 3
@@ -104,6 +106,7 @@
 {#if opts}
 	<div
 		class="thumbnail-wrap"
+		bind:this={focusWrap}
 		bind:clientWidth={containerWidth}
 		on:pointermove={pointerMove}
 		on:pointerup={pointerUp}
@@ -120,13 +123,11 @@
 				<div>
 					{#each bpItems as element (element.i)}
 						<button
+							title={element.alt}
 							style="background-image:url({element.thumb})"
-							class:active={bp.position == element.i}
-							on:pointerup={() => {
-								if (!isDragging) {
-									bp.setPosition(element.i)
-								}
-							}}
+							class:active={bp.position === element.i}
+							on:pointerup={() => !hasDragged && bp.setPosition(element.i)}
+							on:keyup={(e) => e.key === 'Enter' && bp.setPosition(element.i)}
 						/>
 					{/each}
 				</div>
