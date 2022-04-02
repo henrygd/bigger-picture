@@ -1,20 +1,20 @@
-[npm-image]: https://flat.badgen.net/npm/v/bigger-picture
+[npm-image]: https://flat.badgen.net/npm/v/bigger-picture?color=blue
 [npm-url]: https://www.npmjs.com/package/bigger-picture
-[size-image]: https://flat.badgen.net/bundlephobia/minzip/bigger-picture?color=green
-[cdn-url]: https://cdn.jsdelivr.net/npm/bigger-picture/dist/bigger-picture.mjs
+[size-image]: https://flat.badgen.net/badgesize/gzip/henrygd/bigger-picture/master/dist/bigger-picture.mjs
 [license-image]: https://flat.badgen.net/github/license/henrygd/bigger-picture?color=purple
+[license-url]: /license
 
 # Bigger Picture
 
-[![npm][npm-image]][npm-url] [![File Size][size-image]][cdn-url] ![License][license-image]
+[![npm][npm-image]][npm-url] ![File Size][size-image] [![MIT license][license-image]][license-url]
 
 ### IN DEVELOPMENT.
 
-Feel free to test. API will likely change before release and things are a bit sloppy right now. Please post any feedback in the discussion section.
+Feel free to test. API may change before release. Please post any feedback in the discussion section.
 
 Demo: https://biggerpicture.henrygd.me
 
-High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. 10kB gzip vanilla / much smaller if using svelte.
+High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using svelte.
 
 Flexible enough to intergrate into custom layouts and easily customizable via CSS.
 
