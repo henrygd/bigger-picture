@@ -1,6 +1,6 @@
 [npm-image]: https://flat.badgen.net/npm/v/bigger-picture?color=blue
 [npm-url]: https://www.npmjs.com/package/bigger-picture
-[size-image]: https://flat.badgen.net/badgesize/gzip/henrygd/bigger-picture/master/dist/bigger-picture.mjs
+[size-image]: https://flat.badgen.net/badgesize/gzip/henrygd/bigger-picture/master/dist/bigger-picture.mjs?color=green
 [license-image]: https://flat.badgen.net/github/license/henrygd/bigger-picture?color=purple
 [license-url]: /license
 
