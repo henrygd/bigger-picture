@@ -139,6 +139,12 @@ Default: `false`
 
 Removes the close button and prevents the lightbox from closing. Recommended to use in combination with an inline gallery.
 
+### focusWrap
+
+Type: `node`
+
+Specify wrapper element to trap focus within on tab press. Useful when creating custom layouts.
+
 ### onOpen
 
 Type: `function`

@@ -20,7 +20,6 @@
 	let isOpen
 
 	let containerWidth, containerHeight
-	// let updateDimensions
 
 	// dom element to restore focus to on close
 	let focusTrigger
@@ -114,7 +113,9 @@
 			prev()
 		} else if (keyCode === 9) {
 			// trap focus on tab press
-			let tabbable = Array.from(container.querySelectorAll('*')).filter(
+			e.preventDefault()
+			let focusWrap = opts.focusWrap || container
+			let tabbable = [...focusWrap.querySelectorAll('*')].filter(
 				(n) => n.tabIndex >= 0
 			)
 			let index = tabbable.indexOf(document.activeElement)
@@ -125,9 +126,6 @@
 	}
 
 	const calculateDimensions = (fullWidth, fullHeight, scale) => {
-		// if (opts.scale) {
-		// 	scale = opts.scale
-		// }
 		scale = opts.scale || 0.99
 		let width, height
 
