@@ -1,4 +1,11 @@
 <script>
+	/*
+	This file uses @html instead of each blocks simply because this 
+	was the only place each blocks were being used and it inflated 
+	the vanilla bundle size. If each blocks are eventually used 
+	elsewhere, this file can be converted back to using each blocks.
+	*/
+
 	import Loading from './loading.svelte'
 
 	export let activeItem
@@ -11,14 +18,22 @@
 	// convert videos to array if passed via attribute
 	video = Array.isArray(video) ? video : video.split(', ')
 
-	// add type to videos
-	video = video.map((src) => ({
-		src,
-		type: `video/${src.match(/.(\w+)$/)[1]}`,
-	}))
-
 	// convert tracks to array if passed via attribute
 	tracks = Array.isArray(tracks) ? tracks : JSON.parse(tracks)
+
+	// make html string for video sources
+	video = video.map(
+		(src) => `<source src="${src}" type="video/${src.match(/.(\w+)$/)[1]}">`
+	)
+
+	// make html string for tracks
+	tracks = tracks.map(
+		(track) =>
+			`<track${Object.keys(track).reduce(
+				(str, key) => str + ` ${key}="${track[key]}"`,
+				''
+			)}>`
+	)
 
 	let dimensions = calculateDimensions(width, height)
 </script>
@@ -40,12 +55,7 @@
 		"
 		on:canplay={() => (loaded = true)}
 	>
-		{#each video as vid}
-			<source {...vid} />
-		{/each}
-		{#each tracks as track}
-			<track {...track} />
-		{/each}
+		{@html video + tracks}
 	</video>
 	<Loading {thumb} {loaded} />
 </div>
