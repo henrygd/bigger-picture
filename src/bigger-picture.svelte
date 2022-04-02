@@ -6,7 +6,6 @@
 	import ImageItem from './components/image.svelte'
 	import Iframe from './components/iframe.svelte'
 	import Video from './components/video.svelte'
-	// import Html from './components/html.svelte'
 	import { zoomed, closing } from './stores'
 	import { hideScroll, showScroll } from 'hide-show-scroll'
 
@@ -124,13 +123,14 @@
 		}
 	}
 
+	// calculate dimensions for all but html
 	const calculateDimensions = (fullWidth, fullHeight, scale) => {
 		scale = opts.scale || 0.99
 		let width, height
 
 		fullWidth = fullWidth || 1920
 		fullHeight = fullHeight || 1080
-		// handle height / width / aspect / max width for iframe
+
 		const windowAspect = containerHeight / containerWidth
 
 		const iframeAspect = fullHeight / fullWidth

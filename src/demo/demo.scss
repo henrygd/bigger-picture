@@ -111,6 +111,7 @@ footer {
 	color: #fff;
 	img {
 		max-width: 100%;
+		vertical-align: bottom;
 	}
 	p {
 		display: table;
@@ -123,12 +124,17 @@ footer {
 }
 
 .badges {
-	margin: 10px auto 25px;
-	a {
+	margin: 5px -4px 22px;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	a,
+	div {
 		text-decoration: none;
 		position: relative;
-		top: 3px;
-		margin: 0 0 0 4px;
+		// top: 3px;
+		margin: 4px;
+		// display: inline-block;
 	}
 }
 
@@ -699,10 +705,6 @@ footer {
 	.hero {
 		padding: 60px 0 67px;
 	}
-	.heading-badges {
-		display: block;
-		margin: 5px -5px -5px;
-	}
 	#images .flexmasonry-item:last-of-type,
 	#thumbnails .flexmasonry-item:last-of-type {
 		order: 2;
@@ -729,5 +731,14 @@ footer {
 			width: 90%;
 			left: 5%;
 		}
+	}
+	.badges {
+		margin: 10px -4px 15px;
+	}
+	.sections section {
+		padding: 35px 0 48px;
+	}
+	.inline-gallery {
+		margin: 28px 0 0;
 	}
 }
