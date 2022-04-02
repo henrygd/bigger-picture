@@ -49,7 +49,7 @@
 		inline || hideScroll()
 		containerWidth = target.offsetWidth
 		containerHeight =
-			target == document.body ? window.innerHeight : target.clientHeight
+			target === document.body ? window.innerHeight : target.clientHeight
 		smallScreen = containerWidth < 769
 		position = opts.position || 0
 		// make array w/ dataset to work with
@@ -60,7 +60,7 @@
 						// add unique id (u)
 						let obj = { element, i }
 						// set gallery position
-						if (element == opts.el) {
+						if (element === opts.el) {
 							position = i
 						}
 						return [...arr, { ...obj, ...element.dataset }]
@@ -92,7 +92,7 @@
 
 	// get next gallery position
 	const getNextPosition = (index) => {
-		if (index == items.length) {
+		if (index === items.length) {
 			index = 0
 		} else if (index < 0) {
 			index = items.length - 1
@@ -104,14 +104,14 @@
 		if (!isOpen || inline) {
 			return
 		}
-		let { keyCode } = e
-		if (keyCode === 27) {
+		let { key } = e
+		if (key === 'Escape') {
 			close()
-		} else if (keyCode == 39) {
+		} else if (key === 'ArrowRight') {
 			next()
-		} else if (keyCode == 37) {
+		} else if (key === 'ArrowLeft') {
 			prev()
-		} else if (keyCode === 9) {
+		} else if (key === 'Tab') {
 			// trap focus on tab press
 			e.preventDefault()
 			let focusWrap = opts.focusWrap || container
