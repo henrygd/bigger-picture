@@ -54,19 +54,18 @@
 		position = opts.position || 0
 		// make array w/ dataset to work with
 		items = Array.isArray(openItems)
-			? openItems.map((item, i) => ({ ...item, ...{ i } }))
-			: [...(openItems.length ? openItems : [openItems])].reduce(
-					(arr, element, i) => {
-						// add unique id (u)
-						let obj = { element, i }
-						// set gallery position
-						if (element === opts.el) {
-							position = i
-						}
-						return [...arr, { ...obj, ...element.dataset }]
-					},
-					[]
-			  )
+			? // array was passed
+			  openItems.map((item, i) => ({ ...item, ...{ i } }))
+			: // nodelist / node was passed
+			  [...(openItems.length ? openItems : [openItems])].map((element, i) => {
+					// add unique id (u)
+					let obj = { element, i }
+					// set gallery position
+					if (element === opts.el) {
+						position = i
+					}
+					return { ...obj, ...element.dataset }
+			  })
 	}
 
 	export const close = () => {
