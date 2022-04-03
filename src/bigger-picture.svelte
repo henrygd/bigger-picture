@@ -153,8 +153,8 @@
 	}
 
 	const preloadNext = () => {
-		let nextItem = items[getNextPosition(1)]
-		let prevItem = items[getNextPosition(-1)]
+		let nextItem = items[getNextPosition(position + 1)]
+		let prevItem = items[getNextPosition(position - 1)]
 		nextItem.img && !nextItem.preload && loadImage(nextItem)
 		prevItem.img && !prevItem.preload && loadImage(prevItem)
 	}
