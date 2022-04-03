@@ -29,6 +29,7 @@
 	let naturalHeight = +height
 	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
 
+	let wrap
 	let loaded
 	let eventCache = []
 	// store positions for drag inertia
@@ -276,6 +277,11 @@
 			return
 		}
 
+		// close if overlay is clicked
+		if (e.target === wrap && !inline) {
+			return close()
+		}
+
 		pointerDown = false
 
 		if (!smallScreen) {
@@ -351,28 +357,33 @@
 <svelte:window on:resize={() => setTimeout(onResize, 0)} />
 
 <div
-	use:onMount
-	class="bp-item bp-img"
+	class="bp-img-wrap"
+	bind:this={wrap}
+	on:wheel={onMousewheel}
+	on:pointerdown={onPointerDown}
+	on:pointermove={onPointerMove}
+	on:pointerup={onPointerUp}
+	on:pointercancel={onPointerUp}
 	class:dragging={pointerDown}
-	style="
+>
+	<div
+		use:onMount
+		class="bp-item bp-img"
+		style="
 		width:{$imageDimensions[0]}px;
 		height:{$imageDimensions[1]}px
 	"
->
-	<div
-		style="
+	>
+		<div
+			style="
 			background-image:url({thumb});
 			transform:translate3d({$zoomDragTranslate[0]}px, {$zoomDragTranslate[1]}px, 0px)
 		"
-		on:wheel={onMousewheel}
-		on:pointerdown={onPointerDown}
-		on:pointermove={onPointerMove}
-		on:pointerup={onPointerUp}
-		on:pointercancel={onPointerUp}
-	>
-		<Loading {thumb} {loaded} />
-		{#if loaded}
-			<img src={img} {alt} out:fade />
-		{/if}
+		>
+			<Loading {thumb} {loaded} />
+			{#if loaded}
+				<img src={img} {alt} out:fade />
+			{/if}
+		</div>
 	</div>
 </div>

@@ -193,7 +193,8 @@
 	const scaleIn = (node) => {
 		let { element } = activeItem
 
-		let bpItem = node.firstElementChild
+		let bpItem = node.querySelector('.bp-item')
+
 		let { clientWidth, clientHeight } = bpItem
 
 		let { top, left, width, height } = element.getBoundingClientRect()
