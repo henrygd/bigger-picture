@@ -28,11 +28,9 @@
 									srcset="assets/bp-stacked.svg"
 								/>
 								<source media="(min-width: 501px)" srcset="assets/bp.svg" />
-								<img
-									src="assets/bp.svg"
-									alt="BiggerPicture"
-									title="BiggerPicture"
-								/>
+								<h1>
+									<img src="assets/bp.svg" alt="Bigger Picture" />
+								</h1>
 							</picture>
 						</div>
 						<div class="badges">
@@ -47,7 +45,7 @@
 								<img
 									height="20"
 									src="https://flat.badgen.net/badgesize/gzip/henrygd/bigger-picture/master/dist/bigger-picture.mjs?color=green"
-									alt="CDN link"
+									alt="bundle size"
 								/>
 							</div>
 							<a
@@ -251,12 +249,14 @@
 							<ul class="masonry" id="vids">
 								<li>
 									<a
+										class="html"
 										href="https://assets.henrygd.me/bp/videos/agent-327.webm"
 										data-height="804"
 										data-thumb="https://assets.henrygd.me/bp/images/agent-327.jpg"
 										data-video="https://assets.henrygd.me/bp/videos/agent-327.webm, https://assets.henrygd.me/bp/videos/agent-327.mp4"
 										data-tracks='[{"label": "English", "kind": "subtitles", "srclang": "en", "src": "assets/agent-327-en.vtt", "default": "true"}, {"label": "العربية", "kind": "subtitles", "srclang": "ar", "src": "assets/agent-327-ar.vtt", "default": "true"}, {"label": "Español", "kind": "subtitles", "srclang": "es", "src": "assets/agent-327-es.vtt"}, {"label": "日本語", "kind": "subtitles", "srclang": "ja", "src": "assets/agent-327-ja.vtt"}, {"label": "Монгол", "kind": "subtitles", "srclang": "mn", "src": "assets/agent-327-mn.vtt"}, {"label": "Português", "kind": "subtitles", "srclang": "pt", "src": "assets/agent-327-pt.vtt"}, {"label": "Türkçe", "kind": "subtitles", "srclang": "tr", "src": "assets/agent-327-tr.vtt"}]'
 										target="_blank"
+										title="HTML video"
 										><span style="padding-bottom: 41.875%"></span>
 										<img
 											src="https://assets.henrygd.me/bp/images/agent-327.jpg"
@@ -267,11 +267,13 @@
 								</li>
 								<li>
 									<a
+										class="yt"
 										href="https://www.youtube.com/watch?v=286jXjwdst0"
 										data-iframe="https://www.youtube.com/embed/286jXjwdst0?autoplay=1&playsinline=1"
 										data-height="1012"
 										data-thumb="https://assets.henrygd.me/bp/images/uebok.jpg"
 										target="_blank"
+										title="Youtube embed"
 										><span style="padding-bottom: 52.708%"></span>
 										<img
 											src="https://assets.henrygd.me/bp/images/uebok.jpg"
@@ -281,32 +283,36 @@
 								</li>
 								<li>
 									<a
+										class="sc"
 										href="https://soundcloud.com/yung-chomsky/neoliberalism"
 										data-width="1200"
 										data-height="1200"
 										data-thumb="https://assets.henrygd.me/bp/images/neoliberalism.jpg"
 										data-iframe="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/465155907&color=%23ff5500&auto_play=true&hide_related=true&show_user=true&show_reposts=false&show_teaser=false&visual=true&show_comments=false"
 										target="_blank"
+										title="Soundcloud embed"
 									>
 										<span style="padding-bottom: 100%"></span>
 										<img
 											src="https://assets.henrygd.me/bp/images/neoliberalism.jpg"
-											alt="yung chomsky - neoliberalism soundcloud iframe"
+											alt="yung chomsky - neoliberalism soundcloud embed"
 											loading="lazy"
 										/>
 									</a>
 								</li>
 								<li>
 									<a
+										class="vimeo"
 										href="https://vimeo.com/584907375"
 										data-height="1161"
 										data-thumb="https://i.vimeocdn.com/video/1210493119-933d6556d06380642c7d32968c64f6c7e92b04937f25d2672352a56553a00b5c-d_1280"
 										data-iframe="https://player.vimeo.com/video/584907375?h=c72acb0612&autoplay=1&title=0&byline=0&portrait=0"
 										target="_blank"
+										title="Vimeo embed"
 										><span style="padding-bottom: 60.46875%"></span>
 										<img
 											src="https://i.vimeocdn.com/video/1210493119-933d6556d06380642c7d32968c64f6c7e92b04937f25d2672352a56553a00b5c-d_1280"
-											alt="Post Office vimeo iframe"
+											alt="Post Office vimeo embed"
 											loading="lazy"
 										/>
 									</a>
@@ -317,6 +323,7 @@
 										data-iframe="/"
 										data-thumb="https://assets.henrygd.me/bp/images/bp.png"
 										target="_blank"
+										title="This website"
 									>
 										<span style="padding-bottom: 56.25%"></span>
 										<img
@@ -348,7 +355,7 @@
 										<img
 											src="https://assets.henrygd.me/bp/images/location-service.svg"
 											loading="lazy"
-											alt="firewatch"
+											alt="dialog modal"
 										/>
 									</a>
 								</li>

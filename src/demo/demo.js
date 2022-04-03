@@ -36,9 +36,12 @@ function handleNodes(nodes) {
 		nodes[i].addEventListener('click', openBiggerPicture.bind(null, nodes))
 	}
 }
-function handleIndividualNodes(nodes) {
+function handleVids(nodes) {
 	for (let i = 0; i < nodes.length; i++) {
-		nodes[i].addEventListener('click', openBiggerPicture.bind(null, nodes[i]))
+		nodes[i].addEventListener(
+			'click',
+			openBiggerPictureVids.bind(null, nodes[i])
+		)
 	}
 }
 
@@ -75,6 +78,17 @@ function openBiggerPicture(items, e) {
 		// },
 		// onOpen: hideShowScroll.hide,
 		// onClosed: hideShowScroll.show,
+	})
+}
+function openBiggerPictureVids(items, e) {
+	e.preventDefault()
+	initBodyBp()
+	let { currentTarget } = e
+	bodyBp.open({
+		el: currentTarget,
+		items,
+		onOpen: () => currentTarget.classList.add('hide-icon'),
+		onClosed: () => currentTarget.classList.remove('hide-icon'),
 	})
 }
 
@@ -175,7 +189,7 @@ handleMasonry(document.querySelectorAll('.masonry'))
 // BiggerPicture setup
 handleNodes(imageLinks)
 handleNodes(captionLinks)
-handleIndividualNodes(vidIframeLinks)
+handleVids(vidIframeLinks)
 
 // code modals
 for (let i = 0; i < htmlLinks.length; i++) {
