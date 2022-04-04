@@ -162,16 +162,23 @@
 	const preloadNext = () => {
 		let nextItem = items[getNextPosition(position + 1)]
 		let prevItem = items[getNextPosition(position - 1)]
-		nextItem.img && !nextItem.preload && loadImage(nextItem)
-		prevItem.img && !prevItem.preload && loadImage(prevItem)
+		!nextItem.preload && loadImage(nextItem)
+		!prevItem.preload && loadImage(prevItem)
 	}
 
-	// loads image for item
+	// loads / decodes image for item
 	const loadImage = (item) => {
-		const img = new Image()
-		img.src = item.img
-		item.preload = img
-		return img.decode()
+		let { img, sizes } = item
+		if (!img) {
+			return
+		}
+		let image = new Image()
+		if (sizes) {
+			image.sizes = sizes
+		}
+		image.srcset = img
+		item.preload = image
+		return image.decode()
 	}
 
 	// animate media in when bp is first opened

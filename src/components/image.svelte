@@ -22,7 +22,7 @@
 		toggleControls,
 	} = stuff
 
-	let { img, thumb, alt, width, height } = activeItem
+	let { img: src, sizes, thumb, alt, width, height } = activeItem
 	let { inline } = opts
 
 	let naturalWidth = +width
@@ -169,7 +169,6 @@
 		if (inline && !$zoomed) {
 			return
 		}
-		e.preventDefault()
 		// change zoom on wheel
 		if (e.deltaY < 0) {
 			changeZoom(e, 0.2)
@@ -361,6 +360,9 @@
 
 	const onMount = () => {
 		loadImage(activeItem).then(() => {
+			let { width, height } = activeItem.preload
+			naturalWidth = width
+			naturalHeight = height
 			loaded = true
 			preloadNext()
 		})
@@ -372,7 +374,7 @@
 <div
 	class="bp-img-wrap"
 	bind:this={wrap}
-	on:wheel={onMousewheel}
+	on:wheel|passive={onMousewheel}
 	on:pointerdown={onPointerDown}
 	on:pointermove={onPointerMove}
 	on:pointerup={onPointerUp}
@@ -395,7 +397,7 @@
 		>
 			<Loading {thumb} {loaded} />
 			{#if loaded}
-				<img src={img} {alt} out:fade />
+				<img srcset={src} {sizes} {alt} out:fade />
 			{/if}
 		</div>
 	</div>

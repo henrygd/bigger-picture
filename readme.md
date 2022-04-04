@@ -214,7 +214,9 @@ URL or path to image used for thumbnail displayed before media loads.
 
 Type: `string`
 
-URL or path to full size image.
+URL or path to full image. Can be a `srcset` value.
+
+> Note: if using `srcset`, you may also set the [`sizes`](#sizes) value.
 
 ### vid
 
@@ -252,6 +254,12 @@ Image alternative text
 Type: `string`
 
 Basic text to be displayed using built in caption (style can be altered via CSS).
+
+### sizes
+
+Type: `string`
+
+Sets the sizes attribute if you're using `srcset`.
 
 ### tracks
 
@@ -305,7 +313,7 @@ let bp = new BiggerPicture({
 
 ## Internet Explorer Support
 
-IE support should be possible with the right polyfills. If you want an ES5 script and directions for polyfilling, please open an issue. If there's enough support I will try to figure it out.
+IE support should be possible with a few tweaks and the right polyfills. If you want an ES5 script and directions for polyfilling, please open an issue. If there's enough support I will try to figure it out.
 
 ## License
 
