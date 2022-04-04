@@ -4,9 +4,9 @@
 	export let activeItem
 	export let calculateDimensions
 
-	let loaded
-
 	let { iframe, thumb, title } = activeItem
+
+	let loaded
 
 	let dimensions
 

@@ -13,24 +13,34 @@
 	export let position
 	export let target
 
+	// options passed via open method
 	let opts
 
-	let movement
+	// bool tracks open state
 	let isOpen
-
-	let containerWidth, containerHeight
 
 	// dom element to restore focus to on close
 	let focusTrigger
-	let container
+
+	// container element
+	let container, containerWidth, containerHeight
+
+	// bool controlling visual state of controls
 	let hideControls
+
+	// bool true if containerWidth < 769
 	let smallScreen
+
+	// bool value of inline option passed in open method
 	let inline
+
+	// when position is set
+	let movement
 
 	// stores target on pointerdown (ref for overlay close)
 	let clickedEl
 
-	// update active element when position changes
+	// active item object
 	let activeItem
 
 	$: if (items) {
@@ -72,6 +82,7 @@
 			opts.onClose && opts.onClose()
 			$closing = 1
 			items = 0
+			// restore focus to trigger element
 			focusTrigger && focusTrigger.focus({ preventScroll: true })
 		}
 	}
@@ -145,18 +156,20 @@
 		return [width, height]
 	}
 
-	const loadImage = (item) => {
-		const img = new Image()
-		img.src = item.img
-		item.preload = img
-		return img.decode()
-	}
-
+	// preloads images for previous and next items in gallery
 	const preloadNext = () => {
 		let nextItem = items[getNextPosition(position + 1)]
 		let prevItem = items[getNextPosition(position - 1)]
 		nextItem.img && !nextItem.preload && loadImage(nextItem)
 		prevItem.img && !prevItem.preload && loadImage(prevItem)
+	}
+
+	// loads image for item
+	const loadImage = (item) => {
+		const img = new Image()
+		img.src = item.img
+		item.preload = img
+		return img.decode()
 	}
 
 	// animate media in when bp is first opened
@@ -217,6 +230,9 @@
 		}
 	}
 
+	// toggle controls for small screen
+	const toggleControls = () => (hideControls = !hideControls)
+
 	const onResize = () => {
 		smallScreen = containerWidth < 769
 		opts.onResize && opts.onResize(activeItem)
@@ -233,19 +249,16 @@
 			},
 		}
 	}
-
-	// toggle controls for small screen
-	const toggleControls = () => (hideControls = !hideControls)
 </script>
 
 <svelte:window on:keydown={onKeydown} />
 
 {#if items}
 	<div
+		use:lifecycleMethods
+		bind:this={container}
 		bind:clientHeight={containerHeight}
 		bind:clientWidth={containerWidth}
-		bind:this={container}
-		use:lifecycleMethods
 		class="bp-wrap"
 		class:zoomed={$zoomed}
 		class:bp-inline={inline}

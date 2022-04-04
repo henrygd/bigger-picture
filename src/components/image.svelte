@@ -29,22 +29,35 @@
 	let naturalHeight = +height
 	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
 
+	// .bp-img-wrap element
 	let wrap
+
+	// bool tracks load state of image
 	let loaded
+
+	// cache events to handle pinch
 	let eventCache = []
+
 	// store positions for drag inertia
 	let dragPositions = []
-	let prevDiff = 0
+
+	// bool true if multiple touch events
 	let isPinch
+
+	// track distance for pinch events
+	let prevDiff = 0
+
+	// bool ignore pointer events if true
 	let cancelEvents
+
 	let pointerDown, hasDragged
 	let dragStartX, dragStartY
+
 	// zoomDragTranslate values on start of drag
 	let dragStartTranslateX, dragStartTranslateY
-	// double click timeout (mobile)
-	let doubleClickTimeout
 
-	// $: loaded = ~$loadedImages.indexOf(activeItem.img)
+	// double click timeout (mobile controls)
+	let doubleClickTimeout
 
 	// tween to control image size
 	const imageDimensions = tweened(calculatedDimensions, {
