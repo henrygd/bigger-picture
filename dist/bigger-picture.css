@@ -25,7 +25,6 @@
 
 .bp-item {
   position: absolute;
-  will-change: transform;
 }
 
 .bp-inner {
@@ -202,7 +201,7 @@
 
 .bp-o {
   margin: auto;
-  border: 12px solid rgba(255, 255, 255, 0.2);
+  border: 10px solid rgba(255, 255, 255, 0.2);
   border-left-color: rgba(255, 255, 255, 0.9);
   animation: bp-o 1s infinite linear;
 }
@@ -251,8 +250,9 @@
     width: 50px;
   }
   .bp-x:before {
-    width: 35px;
-    top: 6px;
+    width: 34px;
+    top: 7px;
+    right: 7px;
   }
 
   .bp-count {
@@ -261,13 +261,20 @@
 
   .bp-prev,
 .bp-next {
-    margin-top: -30px;
-    height: 60px;
+    margin-top: -27px;
+    height: 57px;
     width: 50px;
   }
   .bp-prev:before,
 .bp-next:before {
     top: 8px;
-    width: 46px;
+    width: 43px;
+  }
+
+  .bp-o,
+.bp-o:after {
+    border-width: 8px;
+    width: 60px;
+    height: 60px;
   }
 }

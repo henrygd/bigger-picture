@@ -1,5 +1,4 @@
 @mixin fillall() {
-	// position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -10,20 +9,14 @@
 	@include fillall;
 	position: fixed;
 	z-index: 999;
-	// display: flex;
-	// overflow: hidden;
-
-	// will-change: opacity;
 	contain: layout style size;
 	touch-action: none;
-	// backface-visibility: hidden;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	> div:first-child {
 		position: absolute;
 		@include fillall;
 		background: rgba(0, 0, 0, 0.75);
 		transform: translateZ(0);
-		// will-change: opacity;
 	}
 	svg {
 		fill: #fff;
@@ -33,13 +26,6 @@
 
 .bp-item {
 	position: absolute;
-	will-change: transform;
-	// margin: auto;
-	// will-change: transform;
-	// touch-action: none;
-	// overflow: hidden;
-	// box-shadow: 0 0 3em rgba(0, 0, 0, 0.4);
-	// background: #111;
 }
 
 .bp-inner {
@@ -48,9 +34,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	// &[style^='a'] img {
-	// 	image-rendering: pixelated;
-	// }
 }
 
 .bp-img-wrap {
@@ -69,9 +52,6 @@
 .bp-img {
 	user-select: none;
 	cursor: zoom-in;
-	// > div {
-	// 	will-change: transform;
-	// }
 	div,
 	img {
 		position: absolute;
@@ -96,7 +76,6 @@
 	color: rgba(255, 255, 255, 0.9);
 	margin: 20px;
 	pointer-events: none;
-	// transform: scale3d(1, 1, 1);
 	transform: translateZ(0);
 }
 
@@ -105,9 +84,7 @@
 	cursor: pointer;
 	position: absolute;
 	border: 0;
-	// background-color: rgba(50, 50, 50, 0.5);
 	background-color: rgba(0, 0, 0, 0.15);
-	// border-radius: 28px;
 	top: 50%;
 	right: 0;
 	margin-top: -32px;
@@ -115,7 +92,6 @@
 	width: 58px;
 	transition: all 0.1s;
 	border-radius: 3px 0 0 3px;
-	// backdrop-filter: blur(15px);
 	opacity: 0.9;
 	&:hover {
 		background-color: rgba(0, 0, 0, 0.2);
@@ -143,7 +119,6 @@
 	position: absolute;
 	border: 0;
 	background: rgba(0, 0, 0, 0.15);
-	// backdrop-filter: blur(15px);
 	top: 0;
 	right: 0;
 	opacity: 0.9;
@@ -211,7 +186,7 @@
 }
 .bp-o {
 	margin: auto;
-	border: 12px solid rgba(255, 255, 255, 0.2);
+	border: 10px solid rgba(255, 255, 255, 0.2);
 	border-left-color: rgba(255, 255, 255, 0.9);
 	animation: bp-o 1s infinite linear;
 }
@@ -224,13 +199,6 @@
 		transform: rotate(360deg);
 	}
 }
-
-// .bp-html {
-// 	overflow: auto;
-// 	// width: 900px;
-// 	max-height: 98%;
-// 	max-width: 98%;
-// }
 
 .bp-cap {
 	position: absolute;
@@ -267,8 +235,9 @@
 		height: 50px;
 		width: 50px;
 		&:before {
-			width: 35px;
-			top: 6px;
+			width: 34px;
+			top: 7px;
+			right: 7px;
 		}
 	}
 	.bp-count {
@@ -276,12 +245,18 @@
 	}
 	.bp-prev,
 	.bp-next {
-		margin-top: -30px;
-		height: 60px;
+		margin-top: -27px;
+		height: 57px;
 		width: 50px;
 		&:before {
 			top: 8px;
-			width: 46px;
+			width: 43px;
 		}
+	}
+	.bp-o,
+	.bp-o:after {
+		border-width: 8px;
+		width: 60px;
+		height: 60px;
 	}
 }
