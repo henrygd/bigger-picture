@@ -67,7 +67,7 @@
 			  openItems.map((item, i) => ({ ...item, ...{ i } }))
 			: // nodelist / node was passed
 			  [...(openItems.length ? openItems : [openItems])].map((element, i) => {
-					// add unique id (u)
+					// add unique id (i)
 					let obj = { element, i }
 					// set gallery position
 					if (element === opts.el) {
