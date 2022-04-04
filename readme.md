@@ -73,17 +73,21 @@ bp.open({
 
 Opens the lightbox.
 
-### close
+### close()
 
 Closes the lightbox.
 
-### next
+### next()
 
 Changes to next item in gallery.
 
-### prev
+### prev()
 
 Changes to previous item in gallery.
+
+### setPosition(position)
+
+Changes to `position` item in gallery (zero-indexed).
 
 ## Options
 
@@ -224,7 +228,7 @@ If supplying data via Array, each video should be a separate string.
 
 Type: `string`
 
-HTML that will be rendered in the container.
+HTML that will be rendered in the container. When using HTML, please control dimensions with CSS. No need to pass `width` or `height`.
 
 For advanced use, you can pass an empty string, then mount a component using the [`onOpen`](#onopen) or [`onUpdate`](#onupdate) methods:
 
