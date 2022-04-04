@@ -304,7 +304,7 @@
 				hasDragged || changeZoom(e, -5)
 			} else {
 				// zoom in if not zoomed and drag scrolling page
-				dragPositions.length < 3 && !inline && !$zoomed && changeZoom(e)
+				dragPositions.length < 2 && !$zoomed && changeZoom(e)
 			}
 		} else {
 			// if smallscreen

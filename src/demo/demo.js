@@ -245,26 +245,27 @@ document.getElementById('dialog').addEventListener('click', (e) => {
 document.getElementById('tweet').addEventListener('click', (e) => {
 	e.preventDefault()
 	initBodyBp()
+	let tweets = [
+		{
+			html: makeTweetHtml(
+				'The Baller of the First Sin',
+				'ByYourLogic',
+				'1477900291475484674/FHyfowH4_normal.jpg',
+				`<p>this picture is so fucking iconic. this was when Barney was in the studio for 16 hour sessions perfecting "Clean Up." believe it or not, people were writing him off because he hadn't had a hit in a while. little did they know he was about to change everything<a href="https://t.co/AFwh7OkKvn" target="_blank"><img src="https://pbs.twimg.com/media/E_w5hlxUUAQIu_x?format=jpg&name=small" alt="barney at desk"/></a></p>`
+			),
+		},
+		{
+			html: makeTweetHtml(
+				'Human Mel',
+				'melhuman',
+				'1329824596288299011/m6MLoRZA_normal.jpg',
+				`<p>"There was no place like it, in the whole world, like Coney Island when I was a youngster. No place in the world like it, and it was so fabulous. Now it's shrunk down to almost nothing."<a href="https://t.co/f4qRyQ1y0W" target="_blank"><img src="https://pbs.twimg.com/media/EMPgxTbXUAEORMB?format=jpg&name=small" alt="bernie sanders against backdrop of godspeed you black emperor album"/></a></p>`
+			),
+		},
+	]
 	bodyBp.open({
 		intro: 'fadeup',
-		items: [
-			{
-				html: makeTweetHtml(
-					'The Baller of the First Sin',
-					'ByYourLogic',
-					'1477900291475484674/FHyfowH4_normal.jpg',
-					`<p>this picture is so fucking iconic. this was when Barney was in the studio for 16 hour sessions perfecting "Clean Up." believe it or not, people were writing him off because he hadn't had a hit in a while. little did they know he was about to change everything<a href="https://t.co/AFwh7OkKvn" target="_blank"><img src="https://pbs.twimg.com/media/E_w5hlxUUAQIu_x?format=jpg&name=small" alt="barney at desk"/></a></p>`
-				),
-			},
-			{
-				html: makeTweetHtml(
-					'Human Mel',
-					'melhuman',
-					'1329824596288299011/m6MLoRZA_normal.jpg',
-					`<p>"There was no place like it, in the whole world, like Coney Island when I was a youngster. No place in the world like it, and it was so fabulous. Now it's shrunk down to almost nothing."<a href="https://t.co/f4qRyQ1y0W" target="_blank"><img src="https://pbs.twimg.com/media/EMPgxTbXUAEORMB?format=jpg&name=small" alt="bernie sanders against backdrop of godspeed you black emperor album"/></a></p>`
-				),
-			},
-		],
+		items: window.innerWidth > 680 ? tweets : [tweets[0]],
 	})
 })
 

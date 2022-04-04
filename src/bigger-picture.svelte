@@ -61,6 +61,8 @@
 			target === document.body ? window.innerHeight : target.clientHeight
 		smallScreen = containerWidth < 769
 		position = opts.position || 0
+		// reset controls
+		hideControls = false
 		// make array w/ dataset to work with
 		items = Array.isArray(openItems)
 			? // array was passed
@@ -217,7 +219,8 @@
 		let scaleHeight = element.clientHeight / clientHeight
 
 		return {
-			duration: 480,
+			duration: 470,
+			delay: 10,
 			easing: cubicOut,
 			css: (t) => {
 				let tDiff = 1 - t
