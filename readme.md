@@ -73,15 +73,15 @@ bp.open({
 
 Opens the lightbox.
 
-### close()
+### close
 
 Closes the lightbox.
 
-### next()
+### next
 
 Changes to next item in gallery.
 
-### prev()
+### prev
 
 Changes to previous item in gallery.
 
@@ -288,11 +288,9 @@ bp.open({
 
 ## Usage with Svelte
 
-This library was built using Svelte but doesn't require it to use.
+For those using Svelte, please import the component rather than the processed bundle. If this doesn't happen automatically, change your import statement to match the one below.
 
-For those who _are_ using it, please import the svelte component rather than the processed bundle. If you're using rollup or webpack, this should happen automatically. If it doesn't, import it directly as shown below.
-
-The only difference in usage is that you need to use `new`, like you would with other Svelte components, and pass `target` in props, as below.
+The only difference in usage is that you need to use `new`, and pass `target` in props, as below.
 
 ```js
 import BiggerPicture from 'bigger-picture/src/bigger-picture.svelte'
@@ -305,23 +303,9 @@ let bp = new BiggerPicture({
 })
 ```
 
-## Internet Explorer Support TODO?
+## Internet Explorer Support
 
-(may need to make an image.decode polyfill or workaround)
-
-To use with IE, you need some polyfills. Easiest solution is to insert the script below in your html above where you're loading your other scripts. This will load the polyfills only in unsupported browsers.
-
-```html
-<script>
-  if (!('customElements' in window)) {
-    window.requestAnimationFrame = window.requestAnimationFrame.bind(window)
-    window.setTimeout = window.setTimeout.bind(window)
-    document.write(
-      '<script src="https://cdn.jsdelivr.net/combine/npm/promise-polyfill@8.1.0/dist/polyfill.min.js,npm/classlist-polyfill@1.2.0/src/index.js,npm/mdn-polyfills@5.19.0/Array.prototype.fill.js,npm/@webcomponents/webcomponentsjs@2.4.1/webcomponents-bundle.min.js"><\/script>'
-    )
-  }
-</script>
-```
+IE support should be possible with the right polyfills. If you want an ES5 script and directions for polyfilling, please open an issue. If there's enough support I will try to figure it out.
 
 ## License
 
