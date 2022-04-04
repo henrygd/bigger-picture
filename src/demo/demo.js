@@ -120,9 +120,8 @@ function initInlineGallery() {
 			},
 		})
 	}
-	let items = Array.from(imageLinks).map((link, id) => ({
+	let items = Array.from(imageLinks).map((link) => ({
 		...link.dataset,
-		id,
 	}))
 	inlineBp.open({
 		items,

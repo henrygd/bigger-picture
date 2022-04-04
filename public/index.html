@@ -22,16 +22,16 @@
 				<div class="main">
 					<div class="inner-wrap">
 						<div class="logo logo-icon">
-							<picture>
-								<source
-									media="(max-width: 500px)"
-									srcset="assets/bp-stacked.svg"
-								/>
-								<source media="(min-width: 501px)" srcset="assets/bp.svg" />
-								<h1>
+							<h1>
+								<picture>
+									<source
+										media="(max-width: 500px)"
+										srcset="assets/bp-stacked.svg"
+									/>
+									<source media="(min-width: 501px)" srcset="assets/bp.svg" />
 									<img src="assets/bp.svg" alt="Bigger Picture" />
-								</h1>
-							</picture>
+								</picture>
+							</h1>
 						</div>
 						<div class="badges">
 							<a href="https://www.npmjs.com/package/bigger-picture">
@@ -75,7 +75,7 @@
 							<p>
 								While this gallery is all images, any media type can be
 								included.
-								<a href="#" data-html="code_image_gallery">View code snippet</a>
+								<a href="#" data-html="code_image_gallery">View code example</a>
 							</p>
 							<ul id="images" class="masonry">
 								<li>
@@ -140,12 +140,12 @@
 										data-thumb="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
 										data-height="2000"
 										data-width="3000"
-										data-alt="green-and-brown palm trees under clear blue sky"
+										data-alt="palm trees under clear blue sky"
 										><span style="padding-bottom: 66.666%"></span>
 										<img
 											src="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
 											loading="lazy"
-											alt="green-and-brown palm trees under clear blue sky"
+											alt="palm trees under clear blue sky"
 										/>
 									</a>
 								</li>
@@ -244,7 +244,7 @@
 							<h2>Videos / iframes</h2>
 							<p>
 								Any iframe will work. Video captions are supported.
-								<a href="#" data-html="code_vid_gallery">View code snippet</a>
+								<a href="#" data-html="code_vid_gallery">View code example</a>
 							</p>
 							<ul class="masonry" id="vids">
 								<li>
@@ -398,7 +398,7 @@
 							<p>
 								BiggerPicture can be mounted in any element, making it simple to
 								create inline galleries.
-								<a href="#" data-html="code_image_gallery">View code snippet</a>
+								<a href="#" data-html="code_inline">View code example</a>
 							</p>
 							<div class="inline-wrap">
 								<div class="inline-gallery" id="inline_gallery"></div>
@@ -439,11 +439,11 @@
 										data-caption="Photo by Corey Agopian <a target='_blank' href='https://unsplash.com/photos/5y4ljzRrDFA'>(Source)</a>"
 										data-height="2000"
 										data-width="3000"
-										alt="green-and-brown palm trees under clear blue sky"
+										alt="palm trees under clear blue sky"
 										><span style="padding-bottom: 66.666%"></span>
 										<img
 											src="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
-											alt="green-and-brown palm trees under clear blue sky"
+											alt="palm trees under clear blue sky"
 											loading="lazy"
 										/>
 									</a>
@@ -478,7 +478,11 @@
 								Same gallery as above, now mounted inside a wrapper component to
 								add thumbnail functionality. There's no limit to the complexity
 								of custom layouts.
-								<a href="#" data-html="code_image_gallery">View code snippet</a>
+								<a
+									href="https://codesandbox.io/s/bigger-picture-thumbnails-vpszy7"
+									target="_blank"
+									>View on Code Sandbox</a
+								>
 							</p>
 							<ul id="thumbnails" class="masonry">
 								<li>
@@ -543,12 +547,12 @@
 										data-thumb="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
 										data-height="2000"
 										data-width="3000"
-										data-alt="green-and-brown palm trees under clear blue sky"
+										data-alt="palm trees under clear blue sky"
 										><span style="padding-bottom: 66.666%"></span>
 										<img
 											src="https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"
 											loading="lazy"
-											alt="green-and-brown palm trees under clear blue sky"
+											alt="palm trees under clear blue sky"
 										/>
 									</a>
 								</li>
@@ -808,6 +812,71 @@
     <span class="token literal-property property">el</span><span class="token operator">:</span> e<span class="token punctuation">.</span>currentTarget
   <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code>
+</pre>
+			</div>
+		</div>
+
+		<div id="code_inline" class="hide code-example">
+			<div>
+				<h3>Inline Gallery Example Code</h3>
+				<p>
+					The example below supplies data to BiggerPicture using a JavaScript
+					object.
+				</p>
+				<p>
+					To create an inline gallery, use the <code>inline</code> option.
+					You'll probably want to set the <code>scale</code>,
+					<code>intro</code>, and <code>noClose</code> options like below.
+				</p>
+				<a
+					href="https://codesandbox.io/s/bigger-picture-inline-gallery-zl8p2n"
+					target="_blank"
+				>
+					<img
+						alt="Edit bigger-picture-basic-gallery"
+						height="40"
+						src="https://codesandbox.io/static/img/play-codesandbox.svg"
+					/>
+				</a>
+				<pre
+					class="language-html"
+					tabindex="0"
+				><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>inline<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>inline-gallery<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></code>
+</pre>
+				<pre
+					class="language-javascript"
+					tabindex="0"
+				><code class="language-javascript"><span class="token comment">// example data</span>
+<span class="token keyword">let</span> items <span class="token operator">=</span> <span class="token punctuation">[</span>
+  <span class="token punctuation">{</span>
+    <span class="token literal-property property">img</span><span class="token operator">:</span> <span class="token string">"https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash.jpg"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">thumb</span><span class="token operator">:</span> <span class="token string">"https://assets.henrygd.me/bp/images/janko-ferlic-SDivo1PTBDs-unsplash_thumb.jpg"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">height</span><span class="token operator">:</span> <span class="token string">"2000"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">width</span><span class="token operator">:</span> <span class="token string">"3000"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">alt</span><span class="token operator">:</span> <span class="token string">"wildlife photography of brown bear cub"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">{</span>
+    <span class="token literal-property property">img</span><span class="token operator">:</span> <span class="token string">"https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash.jpg"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">thumb</span><span class="token operator">:</span> <span class="token string">"https://assets.henrygd.me/bp/images/corey-agopian-5y4ljzRrDFA-unsplash_thumb.jpg"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">height</span><span class="token operator">:</span> <span class="token string">"2000"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">width</span><span class="token operator">:</span> <span class="token string">"3000"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">alt</span><span class="token operator">:</span> <span class="token string">"palm trees under clear blue sky"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token comment">// initialize BiggerPicture</span>
+<span class="token keyword">let</span> bp <span class="token operator">=</span> <span class="token function">BiggerPicture</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token literal-property property">target</span><span class="token operator">:</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"inline"</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// open inline gallery</span>
+bp<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  items<span class="token punctuation">,</span>
+  <span class="token literal-property property">inline</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">scale</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">intro</span><span class="token operator">:</span> <span class="token string">"fadeup"</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">noClose</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code>
 </pre>
 			</div>
 		</div>

@@ -245,10 +245,8 @@ h3 {
 // }
 
 .bp-inner .code-example {
-	position: relative;
-	padding: 34px;
 	font-size: 16px;
-	background: #1d2226;
+	background: #1e242a;
 	color: #fff;
 	width: 96%;
 	max-width: 900px;
@@ -256,21 +254,31 @@ h3 {
 	overflow: auto;
 	display: block;
 	border-radius: 3px;
-	&:before {
-		content: '';
-		@include fillall;
-		background-image: url('../assets/pattern_waves.png');
-		opacity: 0.04;
-	}
 	> div {
 		position: relative;
+		padding: 34px;
+		&:before {
+			content: '';
+			@include fillall;
+			background-image: url('../assets/pattern_waves.png');
+			opacity: 0.05;
+		}
+		> * {
+			position: relative;
+		}
+		:last-child {
+			margin-bottom: 0;
+		}
+		> a {
+			margin: 1.5em 0;
+			display: table;
+		}
 	}
-	:first-child {
-		margin-top: 0;
+
+	p {
+		margin: 1.3em 0;
 	}
-	:last-child {
-		margin-bottom: 0;
-	}
+
 	// will-change: transform;
 	p code {
 		background: #2c343c;
@@ -364,18 +372,10 @@ h3 {
 	background: #666;
 	overflow: hidden;
 	margin: 50px 0 0;
-
-	// padding-bottom: 80px;
 	&:before {
 		content: '';
-		// padding-bottom: 56.25%;
 		padding-bottom: 66.66%;
-		// padding-bottom: 72.85%;
 		display: block;
-	}
-	.bp-wrap,
-	.thumbnail-wrap {
-		position: absolute;
 	}
 }
 
