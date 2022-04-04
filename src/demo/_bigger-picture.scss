@@ -252,10 +252,13 @@
 	}
 }
 
-.bp-inline:not(.zoomed) {
-	touch-action: pan-y;
-	.bp-img-wrap {
-		cursor: zoom-in;
+.bp-inline {
+	position: absolute;
+	&:not(.zoomed) {
+		touch-action: pan-y;
+		.bp-img-wrap {
+			cursor: zoom-in;
+		}
 	}
 }
 

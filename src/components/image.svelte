@@ -232,7 +232,7 @@
 				cancelEvents = true
 			}
 			// close if swipe up (don't close if inline)
-			if (y < -90) {
+			if (y < -90 && !inline) {
 				close()
 				cancelEvents = true
 			}
