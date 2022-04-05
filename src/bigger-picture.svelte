@@ -121,7 +121,7 @@
 		if (!isOpen || inline) {
 			return
 		}
-		let { key } = e
+		let { key, shiftKey } = e
 		if (key === 'Escape') {
 			close()
 		} else if (key === 'ArrowRight') {
@@ -132,14 +132,14 @@
 			// trap focus on tab press
 			let { activeElement } = document
 			// allow browser to handle tab into video controls only
-			if (!activeElement.controls) {
+			if (shiftKey || !activeElement.controls) {
 				e.preventDefault()
 				let focusWrap = opts.focusWrap || container
 				let tabbable = [...focusWrap.querySelectorAll('*')].filter(
 					(n) => n.tabIndex >= 0
 				)
 				let index = tabbable.indexOf(activeElement)
-				index += tabbable.length + (e.shiftKey ? -1 : 1)
+				index += tabbable.length + (shiftKey ? -1 : 1)
 				index %= tabbable.length
 				tabbable[index].focus()
 			}
