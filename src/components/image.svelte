@@ -124,17 +124,12 @@
 	}
 
 	const changeZoom = (e, amt = 5) => {
-		// opts.onZoom && opts.onZoom(amt)
-
 		let newWidth = $imageDimensions[0] + $imageDimensions[0] * amt
 		let newHeight = $imageDimensions[1] + $imageDimensions[1] * amt
 
 		if (amt > 0 && newWidth > naturalWidth) {
 			newWidth = naturalWidth
 			newHeight = naturalHeight
-
-			// $imageDimensions = [naturalWidth, naturalHeight]
-			// return
 		} else if (amt < 0) {
 			let cd = calculateDimensions(naturalWidth, naturalHeight)
 			if (newWidth < cd[0]) {
@@ -146,12 +141,6 @@
 
 		$imageDimensions = [newWidth, newHeight]
 
-		if (amt < 1) {
-			// pinch / mousewheel - just zooming to center
-			$zoomDragTranslate = boundTranslateValues($zoomDragTranslate)
-			return
-		}
-
 		let { x, y, width, height } = e.target.getBoundingClientRect()
 
 		// distance clicked from center of image
@@ -161,19 +150,25 @@
 		x = offsetX * -1 * (newWidth / width) + offsetX
 		y = offsetY * -1 * (newHeight / height) + offsetY
 
-		$zoomDragTranslate = boundTranslateValues([x, y])
+		$zoomDragTranslate = boundTranslateValues([
+			$zoomDragTranslate[0] + x,
+			$zoomDragTranslate[1] + y,
+		])
 	}
 
-	const onMousewheel = (e) => {
+	const onWheel = (e) => {
 		// return if scrolling past inline gallery w/ wheel
 		if (inline && !$zoomed) {
 			return
 		}
+		// preventDefault to stop scrolling on zoomed inline image
+		e.preventDefault()
 		// change zoom on wheel
-		if (e.deltaY < 0) {
-			changeZoom(e, 0.2)
+		let deltaY = e.deltaY / -300
+		if (deltaY < 0) {
+			changeZoom(e, deltaY)
 		} else {
-			changeZoom(e, -0.2)
+			changeZoom(e, deltaY)
 		}
 	}
 
@@ -266,7 +261,7 @@
 		}
 
 		// scale image
-		changeZoom(e, (prevDiff - curDiff) * -0.02)
+		changeZoom(e, (prevDiff - curDiff) * -0.015)
 
 		// Cache the distance for the next move event
 		prevDiff = curDiff
@@ -374,7 +369,7 @@
 <div
 	class="bp-img-wrap"
 	bind:this={wrap}
-	on:wheel|passive={onMousewheel}
+	on:wheel={onWheel}
 	on:pointerdown={onPointerDown}
 	on:pointermove={onPointerMove}
 	on:pointerup={onPointerUp}
