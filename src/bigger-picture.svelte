@@ -49,13 +49,19 @@
 	}
 
 	export const open = (options) => {
-		let openItems = options.items
+		opts = options
+		// disable scroll if not inline gallery
+		inline = opts.inline
+		inline || hideScroll()
+		// use setTimeout to queue func behind hideScroll render and avoid reflow
+		setTimeout(openPartDeux, 0)
+	}
+
+	const openPartDeux = () => {
+		let openItems = opts.items
+		// update trigger element to restore focus
 		focusTrigger = document.activeElement
 		// containerWidth = target.clientWidth
-		opts = options
-		inline = opts.inline
-		// disable scroll if not inline gallery
-		inline || hideScroll()
 		containerWidth = target.offsetWidth
 		containerHeight =
 			target === document.body ? window.innerHeight : target.clientHeight
@@ -195,7 +201,7 @@
 			return fly(node, {
 				x: movement > 0 ? 20 : -20,
 				easing: cubicOut,
-				duration: 300,
+				duration: 250,
 			})
 		}
 	}
@@ -210,7 +216,7 @@
 			return fly(node, {
 				x: movement > 0 ? -20 : 20,
 				easing: cubicOut,
-				duration: 300,
+				duration: 250,
 			})
 		}
 	}
@@ -230,8 +236,7 @@
 		let scaleHeight = element.clientHeight / clientHeight
 
 		return {
-			duration: 470,
-			delay: 10,
+			duration: 480,
 			easing: cubicOut,
 			css: (t) => {
 				let tDiff = 1 - t
