@@ -124,15 +124,19 @@
 			prev()
 		} else if (key === 'Tab') {
 			// trap focus on tab press
-			e.preventDefault()
-			let focusWrap = opts.focusWrap || container
-			let tabbable = [...focusWrap.querySelectorAll('*')].filter(
-				(n) => n.tabIndex >= 0
-			)
-			let index = tabbable.indexOf(document.activeElement)
-			index += tabbable.length + (e.shiftKey ? -1 : 1)
-			index %= tabbable.length
-			tabbable[index].focus()
+			let { activeElement } = document
+			// allow browser to handle tab into video controls only
+			if (!activeElement.controls) {
+				e.preventDefault()
+				let focusWrap = opts.focusWrap || container
+				let tabbable = [...focusWrap.querySelectorAll('*')].filter(
+					(n) => n.tabIndex >= 0
+				)
+				let index = tabbable.indexOf(activeElement)
+				index += tabbable.length + (e.shiftKey ? -1 : 1)
+				index %= tabbable.length
+				tabbable[index].focus()
+			}
 		}
 	}
 
@@ -329,8 +333,8 @@
 						{position + 1} / {items.length}
 					</div>
 					<!-- foward / back buttons -->
-					<button class="bp-next" title="Next" on:click={next} />
 					<button class="bp-prev" title="Previous" on:click={prev} />
+					<button class="bp-next" title="Next" on:click={next} />
 				{/if}
 			</div>
 		{/if}

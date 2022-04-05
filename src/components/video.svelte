@@ -49,6 +49,7 @@
 		playsinline
 		controls
 		autoplay
+		tabindex="0"
 		style="
 			width:{dimensions[0]}px;
 			height:{dimensions[1]}px
