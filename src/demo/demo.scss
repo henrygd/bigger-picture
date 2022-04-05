@@ -520,6 +520,28 @@ footer {
 	margin: 0 !important;
 }
 
+body:not(.using-mouse) {
+	.bp-wrap :not(video):focus,
+	.thumbnails button:focus {
+		outline: none;
+		box-shadow: 0 0 0 1px #fff;
+	}
+
+	.dialog {
+		button:focus {
+			box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #6d6b87;
+		}
+		button.cta:focus {
+			box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #0066fe;
+		}
+	}
+	.tweet {
+		a:focus {
+			box-shadow: 0 0 0 1px #111;
+		}
+	}
+}
+
 .dialog {
 	border-radius: 12px;
 	padding: 1.4rem 1.7rem 1.7rem;
@@ -554,19 +576,12 @@ footer {
 		&:hover {
 			background-color: #ebeff5;
 		}
-		&:focus {
-			outline: none;
-			box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #6d6b87;
-		}
 	}
 	button.cta {
 		background-color: #0066fe;
 		color: white;
 		&:hover {
 			background-color: #1774ff;
-		}
-		&:focus {
-			box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #0066fe;
 		}
 	}
 	h2 {
@@ -649,9 +664,6 @@ footer {
 	border-radius: 10px;
 	a {
 		display: inline-block;
-		&:focus {
-			outline: 2px solid;
-		}
 	}
 	p {
 		line-height: 1.35;

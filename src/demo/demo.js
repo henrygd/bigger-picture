@@ -12,6 +12,8 @@ import plausible from './plausible'
 
 let bodyBp, inlineBp, bpThumbnails
 
+let { body } = document
+
 let imageLinks = document.querySelectorAll('#images a')
 let vidIframeLinks = document.querySelectorAll('#vids a')
 let htmlLinks = document.querySelectorAll('[data-html]')
@@ -23,9 +25,9 @@ let thumbnails = document.querySelectorAll('#thumbnails a')
 function initBodyBp() {
 	if (!bodyBp) {
 		bodyBp = new BiggerPicture({
-			target: document.body,
+			target: body,
 			props: {
-				target: document.body,
+				target: body,
 			},
 		})
 	}
@@ -96,9 +98,9 @@ function openThumbnails(items, e) {
 	e.preventDefault()
 	if (!bpThumbnails) {
 		bpThumbnails = new BiggerPictureThumbnails({
-			target: document.body,
+			target: body,
 			props: {
-				target: document.body,
+				target: body,
 			},
 		})
 	}
@@ -274,9 +276,9 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 // 	e.preventDefault()
 // 	if (!bpThumbnails) {
 // 		bpThumbnails = new BiggerPictureThumbnails({
-// 			target: document.body,
+// 			target: body,
 // 			props: {
-// 				target: document.body,
+// 				target: body,
 // 			},
 // 		})
 // 	}
@@ -297,3 +299,6 @@ createObserver()
 
 // plausible analytics
 plausible()
+
+body.addEventListener('mousedown', () => body.classList.add('using-mouse'))
+body.addEventListener('keydown', () => body.classList.remove('using-mouse'))

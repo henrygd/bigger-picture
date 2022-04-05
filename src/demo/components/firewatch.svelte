@@ -22,7 +22,7 @@
 
 	<div class="firewatch-scroll" on:scroll={onScroll}>
 		<div class="foreground">
-			You have scrolled {y} pixels
+			You have scrolled {Math.round(y)} pixels
 		</div>
 	</div>
 </div>
