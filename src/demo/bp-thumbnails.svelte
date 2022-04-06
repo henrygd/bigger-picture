@@ -112,9 +112,11 @@
 		on:pointerup={pointerUp}
 		on:pointercancel={pointerUp}
 	>
-		<div transition:fade={{ easing: cubicOut }} />
 		<div class="thumbnail-bp" use:onMount />
-		<div class="thumbnails" transition:fade={{ easing: cubicOut }}>
+		<div
+			class="thumbnails"
+			transition:fade={{ easing: cubicOut, duration: 480 }}
+		>
 			<div
 				style="transform: translatex({$translate}px)"
 				bind:clientWidth={thumbsWidth}
