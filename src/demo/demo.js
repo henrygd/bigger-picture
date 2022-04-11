@@ -21,6 +21,7 @@ let captionLinks = document.querySelectorAll('#captions a')
 let inlineWrap = document.getElementById('inline_gallery')
 let firewatch = document.getElementById('firewatch')
 let thumbnails = document.querySelectorAll('#thumbnails a')
+let responsiveExample = document.querySelectorAll('#responsive_example')
 
 function initBodyBp() {
 	if (!bodyBp) {
@@ -63,8 +64,8 @@ function openBiggerPicture(items, e) {
 		el: e.currentTarget,
 		// position: 3,
 		items,
-		// scale: .8,
-		// prevents close - only use if gallery is inline or you are manually controlling close
+		maxZoom: 4,
+		// scale: 0.8,
 		// noClose: true,
 		// onOpen: (container) => {
 		// console.log('container', container)
@@ -94,7 +95,7 @@ function openBiggerPictureVids(items, e) {
 	})
 }
 
-function openThumbnails(items, e) {
+function openThumbnails(e) {
 	e.preventDefault()
 	if (!bpThumbnails) {
 		bpThumbnails = new BiggerPictureThumbnails({
@@ -110,6 +111,7 @@ function openThumbnails(items, e) {
 		// intro: 'fadeup',
 		el: e.target,
 		items: thumbnails,
+		maxZoom: 4,
 	})
 }
 
@@ -132,6 +134,7 @@ function initInlineGallery() {
 		intro: 'fadeup',
 		noClose: true,
 		inline: true,
+		maxZoom: 4,
 	})
 }
 
@@ -190,6 +193,7 @@ handleMasonry(document.querySelectorAll('.masonry'))
 // BiggerPicture setup
 handleNodes(imageLinks)
 handleNodes(captionLinks)
+handleNodes(responsiveExample)
 handleVids(vidIframeLinks)
 
 // code modals
@@ -292,7 +296,7 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 // })
 
 for (let i = 0; i < thumbnails.length; i++) {
-	thumbnails[i].addEventListener('click', openThumbnails.bind(null, thumbnails))
+	thumbnails[i].addEventListener('click', openThumbnails)
 }
 
 createObserver()

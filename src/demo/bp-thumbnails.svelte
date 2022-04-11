@@ -11,7 +11,7 @@
 
 	let thumbsWidth
 	let containerWidth
-	let translate = tweened(0, { easing: cubicOut, duration: 300 })
+	let translate = tweened(0, { easing: cubicOut, duration: 250 })
 	let initialTranslate = 0
 	let isPointerDown, pointerDownPos, hasDragged
 	let dragPositions = []
