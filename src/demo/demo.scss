@@ -49,8 +49,8 @@ main {
 	position: relative;
 	text-align: center;
 	p {
-		width: 880px;
-		max-width: 100%;
+		width: 100%;
+		max-width: 880px;
 		display: table;
 		margin: 0 auto 1em;
 	}
@@ -119,7 +119,8 @@ footer {
 	p {
 		display: table;
 		margin: 0 auto;
-		width: 600px;
+		width: 100%;
+		max-width: 600px;
 	}
 	button {
 		margin-top: 5px;
@@ -695,6 +696,7 @@ body:not(.using-mouse) {
 	}
 	svg {
 		width: 25px;
+		height: 25px;
 		fill: #1d9bf0;
 		margin: 0 0 auto auto;
 	}
