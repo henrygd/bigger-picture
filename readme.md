@@ -314,7 +314,7 @@ bp.open({
 
 ## Usage with Svelte
 
-For those using Svelte, please import the component rather than the processed bundle. If this doesn't happen automatically, change your import statement to match the one below.
+Please import the component rather than the processed bundle. If this doesn't happen automatically, change your import statement to match the one below. Adding [svelte-fast-dimension](https://github.com/bluwy/svelte-fast-dimension) to your build process is recommended but not required.
 
 The only difference in usage is that you need to use `new`, and pass `target` in props, as below.
 
