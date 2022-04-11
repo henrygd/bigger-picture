@@ -147,7 +147,16 @@ Removes the close button and prevents the lightbox from closing. Recommended to 
 
 Type: `node`
 
-Specify wrapper element to trap focus within on tab press. Useful when creating custom layouts.
+Specify wrapper element to trap focus within on tab press. Useful when mounting a gallery inside a custom layout.
+
+### maxZoom
+
+Type: `number`<br>
+Default: `10`
+
+Restricts an image's maximum zoom level to `maxZoom` times the starting size, even if the item's `width` / `height` is larger. For example, a `maxZoom` of 2 on an image that is 800px wide when zoomed out would limit the image to a maximum zoom of 1600px width.
+
+> Note: If `maxZoom` is set on an individual item it will override the value set in options.
 
 ### onOpen
 
@@ -216,7 +225,7 @@ Type: `string`
 
 URL or path to full image. Can be a `srcset` value.
 
-> Note: if using `srcset`, you may also set the [`sizes`](#sizes) value.
+When using `srcset`, the `sizes` value will update automatically when an image is zoomed. You may override this behavior by setting the [`sizes`](#sizes) value.
 
 ### vid
 
@@ -260,6 +269,15 @@ Basic text to be displayed using built in caption (style can be altered via CSS)
 Type: `string`
 
 Sets the sizes attribute if you're using `srcset`.
+
+### maxZoom
+
+Type: `number`<br>
+Default: `10`
+
+Restricts an image's maximum zoom level to `maxZoom` times the starting size, even if the item's `width` / `height` is larger. For example, a `maxZoom` of 2 on an image that is 800px wide when zoomed out would limit the image to a maximum zoom of 1600px width.
+
+> Note: If `maxZoom` is set on an individual item it will override the value set in options. Attribute name is `data-max-zoom`.
 
 ### tracks
 

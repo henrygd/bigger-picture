@@ -165,7 +165,7 @@
 			width = Math.min(fullWidth, containerWidth * scale)
 			height = width * iframeAspect
 		}
-		return [width, height]
+		return [Math.round(width), Math.round(height)]
 	}
 
 	// preloads images for previous and next items in gallery
@@ -178,14 +178,12 @@
 
 	// loads / decodes image for item
 	const loadImage = (item) => {
-		let { img, sizes } = item
+		let { img, width, height } = item
 		if (!img) {
 			return
 		}
 		let image = new Image()
-		if (sizes) {
-			image.sizes = sizes
-		}
+		image.sizes = opts.sizes || `${calculateDimensions(width, height)[0]}px`
 		image.srcset = img
 		item.preload = image
 		return image.decode()

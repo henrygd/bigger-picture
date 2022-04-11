@@ -22,12 +22,15 @@
 		toggleControls,
 	} = stuff
 
-	let { img: src, sizes, thumb, alt, width, height } = activeItem
 	let { inline } = opts
+	let { img: srcset, thumb, alt, width, height } = activeItem
+
+	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10
 
 	let naturalWidth = +width
 	let naturalHeight = +height
 	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
+	let sizes = calculatedDimensions[0]
 
 	// .bp-img-wrap element
 	let wrap
@@ -76,10 +79,10 @@
 	}
 
 	// calculate translate position with bounds
-	const boundTranslateValues = ([x, y]) => {
+	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
 		// image drag translate bounds
-		let maxTranslateX = ($imageDimensions[0] - containerWidth) / 2
-		let maxTranslateY = ($imageDimensions[1] - containerHeight) / 2
+		let maxTranslateX = (newDimensions[0] - containerWidth) / 2
+		let maxTranslateY = (newDimensions[1] - containerHeight) / 2
 		// x max drag
 		if (maxTranslateX < 0) {
 			x = 0
@@ -124,22 +127,33 @@
 	}
 
 	const changeZoom = (e, amt = 5) => {
-		let newWidth = $imageDimensions[0] + $imageDimensions[0] * amt
-		let newHeight = $imageDimensions[1] + $imageDimensions[1] * amt
+		let cd = calculateDimensions(naturalWidth, naturalHeight)
+		let maxWidth = cd[0] * maxZoom
 
-		if (amt > 0 && newWidth > naturalWidth) {
-			newWidth = naturalWidth
-			newHeight = naturalHeight
+		let [currentImageWidth, currentImageHeight] = $imageDimensions
+
+		let newWidth = currentImageWidth + currentImageWidth * amt
+		let newHeight = currentImageHeight + currentImageHeight * amt
+
+		if (amt > 0) {
+			if (newWidth > maxWidth) {
+				// requesting size large than max zoom
+				newWidth = maxWidth
+				newHeight = cd[1] * maxZoom
+			}
+			if (newWidth > naturalWidth) {
+				// if requesting zoom larger than natural size
+				newWidth = naturalWidth
+				newHeight = naturalHeight
+			}
 		} else if (amt < 0) {
-			let cd = calculateDimensions(naturalWidth, naturalHeight)
 			if (newWidth < cd[0]) {
+				// if requesting image smaller than starting size
 				$imageDimensions = cd
 				$zoomDragTranslate = [0, 0]
 				return
 			}
 		}
-
-		$imageDimensions = [newWidth, newHeight]
 
 		let { x, y, width, height } = e.target.getBoundingClientRect()
 
@@ -150,10 +164,20 @@
 		x = offsetX * -1 * (newWidth / width) + offsetX
 		y = offsetY * -1 * (newHeight / height) + offsetY
 
-		$zoomDragTranslate = boundTranslateValues([
-			$zoomDragTranslate[0] + x,
-			$zoomDragTranslate[1] + y,
-		])
+		let newDimensions = [newWidth, newHeight]
+
+		// set new dimensions and update sizes property
+		imageDimensions.set(newDimensions).then(() => {
+			sizes = Math.round(Math.max(sizes, newWidth))
+		})
+
+		// update translate value
+		zoomDragTranslate.set(
+			boundTranslateValues(
+				[$zoomDragTranslate[0] + x, $zoomDragTranslate[1] + y],
+				newDimensions
+			)
+		)
 	}
 
 	const onWheel = (e) => {
@@ -333,7 +357,7 @@
 			} else {
 				coords = $zoomDragTranslate
 			}
-			$zoomDragTranslate = boundTranslateValues(coords)
+			zoomDragTranslate.set(boundTranslateValues(coords))
 		}
 
 		// reset pointer states
@@ -348,16 +372,13 @@
 		// adjust image only if not smaller container
 		// some mobile browsers trigger resize constantly if dragging / pinching
 		if (!smallScreen) {
-			$imageDimensions = calculatedDimensions
-			$zoomDragTranslate = [0, 0]
+			imageDimensions.set(calculatedDimensions)
+			zoomDragTranslate.set([0, 0])
 		}
 	}
 
 	const onMount = () => {
 		loadImage(activeItem).then(() => {
-			let { width, height } = activeItem.preload
-			naturalWidth = width
-			naturalHeight = height
 			loaded = true
 			preloadNext()
 		})
@@ -392,7 +413,7 @@
 		>
 			<Loading {thumb} {loaded} />
 			{#if loaded}
-				<img srcset={src} {sizes} {alt} out:fade />
+				<img {srcset} sizes={opts.sizes || `${sizes}px`} {alt} out:fade />
 			{/if}
 		</div>
 	</div>
