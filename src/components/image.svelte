@@ -146,13 +146,11 @@
 				newWidth = naturalWidth
 				newHeight = naturalHeight
 			}
-		} else if (amt < 0) {
-			if (newWidth < cd[0]) {
-				// if requesting image smaller than starting size
-				$imageDimensions = cd
-				$zoomDragTranslate = [0, 0]
-				return
-			}
+		} else if (newWidth < cd[0]) {
+			// if requesting image smaller than starting size
+			imageDimensions.set(cd)
+			zoomDragTranslate.set([0, 0])
+			return
 		}
 
 		let { x, y, width, height } = e.target.getBoundingClientRect()
@@ -342,7 +340,7 @@
 		}
 
 		// add drag inertia / snap back to bounds
-		if (dragPositions.length > 2) {
+		if (hasDragged) {
 			dragPositions = dragPositions.slice(-3)
 			let coords
 			let xDiff = dragPositions[1].x - dragPositions[2].x
