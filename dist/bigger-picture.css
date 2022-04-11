@@ -79,7 +79,7 @@
 .bp-count {
   position: absolute;
   color: rgba(255, 255, 255, 0.9);
-  margin: 20px;
+  margin: 16px;
   pointer-events: none;
   transform: translateZ(0);
 }
@@ -253,10 +253,6 @@
     width: 34px;
     top: 7px;
     right: 7px;
-  }
-
-  .bp-count {
-    margin: 16px;
   }
 
   .bp-prev,
