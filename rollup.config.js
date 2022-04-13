@@ -2,7 +2,6 @@ import svelte from 'rollup-plugin-svelte'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
-// import buble from '@rollup/plugin-buble'
 import filesize from 'rollup-plugin-filesize'
 import { fastDimension } from 'svelte-fast-dimension'
 import modify from 'rollup-plugin-modify'
@@ -34,9 +33,14 @@ const terserOptions = {
 }
 
 /*
-rm unneeded svelte stuff for dist scripts (hacky but saves a few bytes)
-may need to modify in the future if changes are made
+rm unneeded svelte stuff for vanilla scripts (hacky but saves a few bytes)
+need to re-test / modify if svelte is updated
 */
+const tagsRegex1 = /(>)[\s]*([<{])/g
+const tagsRegex2 = /({[/:][a-z]+})[\s]*([<{])/g
+const tagsRegex3 = /({[#:][a-z]+ .+?})[\s]*([<{])/g
+const tagsRegex4 = /([>}])[\s]+(<|{[/#:][a-z][^}]*})/g
+const tagsReplace = '$1$2'
 const findReplace = {
 	find: /^\s*validate_store.+$|throw.+interpolate.+$/gm,
 	replace: '',
@@ -49,9 +53,24 @@ const findReplace3 = {
 	find: /if \(type === 'object'\) {(.|\n)+if \(type === 'number'\)/gm,
 	replace: `if (type === 'number')`,
 }
+const findReplace4 = {
+	find: `: blank_object()`,
+	replace: `: {}`,
+}
+const findReplace5 = {
+	find: `typeof window !== 'undefined'`,
+	replace: `true`,
+}
+const findReplace6 = {
+	find: /^.+globals \=[^;]+;/gm,
+	replace: `const globals = window;`,
+}
+const findReplace7 = {
+	find: /get_root_for_style\(node\),/g,
+	replace: 'document,',
+}
 
 let config = [
-	// demo js
 	{
 		input: 'src/demo/demo.js',
 		output: {
@@ -61,19 +80,32 @@ let config = [
 		plugins: [
 			commonjs(),
 			svelte({
-				preprocess: [fastDimension()],
+				preprocess: [
+					{
+						markup: ({ content }) => {
+							const code = content
+								.replace(tagsRegex1, tagsReplace)
+								.replace(tagsRegex2, tagsReplace)
+								.replace(tagsRegex3, tagsReplace)
+								.replace(tagsRegex4, tagsReplace)
+							return { code }
+						},
+					},
+					fastDimension(),
+				],
 				compilerOptions: {
 					dev: !production,
 				},
 			}),
-			resolve(),
-			production && modify(findReplace),
-			production && modify(findReplace2),
-			production && modify(findReplace3),
+			resolve({ browser: true }),
+			modify(findReplace),
+			modify(findReplace2),
+			modify(findReplace3),
+			modify(findReplace4),
+			modify(findReplace5),
+			modify(findReplace6),
+			modify(findReplace7),
 			production && terser(terserOptions),
-			// buble({
-			// 	transforms: { forOf: false },
-			// }),
 		],
 	},
 ]
@@ -82,22 +114,13 @@ if (production) {
 	config.push({
 		input: 'src/bigger-picture.js',
 		output: [
-			// {
-			// dist
-			// 	format: 'iife',
-			// 	name: 'BiggerPicture',
-			// 	file: 'public/bigger-picture.js',
-			// 	strict: false,
-			// },
 			{
-				// dist file
 				format: 'iife',
 				name: 'BiggerPicture',
 				file: 'dist/bigger-picture.min.js',
 				strict: false,
 			},
 			{
-				// dist file
 				format: 'umd',
 				name: 'BiggerPicture',
 				file: 'dist/bigger-picture.umd.js',
@@ -110,17 +133,29 @@ if (production) {
 		],
 		plugins: [
 			svelte({
-				preprocess: [fastDimension()],
+				preprocess: [
+					{
+						markup: ({ content }) => {
+							const code = content
+								.replace(tagsRegex1, tagsReplace)
+								.replace(tagsRegex2, tagsReplace)
+								.replace(tagsRegex3, tagsReplace)
+								.replace(tagsRegex4, tagsReplace)
+							return { code }
+						},
+					},
+					fastDimension(),
+				],
 			}),
-			resolve(),
+			resolve({ browser: true }),
 			modify(findReplace),
 			modify(findReplace2),
 			modify(findReplace3),
+			modify(findReplace4),
+			modify(findReplace5),
+			modify(findReplace6),
+			modify(findReplace7),
 			terser(terserOptions),
-			// production &&
-			// 	buble({
-			// 		transforms: { forOf: false },
-			// 	}),
 			filesize({
 				showMinifiedSize: !production,
 			}),
