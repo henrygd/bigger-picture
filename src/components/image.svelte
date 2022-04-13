@@ -1,7 +1,7 @@
 <script>
 	import { tweened } from 'svelte/motion'
 	import { cubicOut } from 'svelte/easing'
-	import { zoomed, closing } from '../stores'
+	import { zoomed, closing, prefersReducedMotion } from '../stores'
 	import { fade } from 'svelte/transition'
 	import Loading from './loading.svelte'
 
@@ -62,14 +62,16 @@
 	// double click timeout (mobile controls)
 	let doubleClickTimeout
 
+	// options for tweens - no animation if prefers reduced motion
+	let tweenOptions = {
+		easing: cubicOut,
+		duration: prefersReducedMotion ? 0 : 400,
+	}
+
 	// tween to control image size
-	const imageDimensions = tweened(calculatedDimensions, {
-		easing: cubicOut,
-	})
+	const imageDimensions = tweened(calculatedDimensions, tweenOptions)
 	// translate transform for pointerDown
-	const zoomDragTranslate = tweened([0, 0], {
-		easing: cubicOut,
-	})
+	const zoomDragTranslate = tweened([0, 0], tweenOptions)
 
 	$: $zoomed = $imageDimensions[0] > calculatedDimensions[0]
 
