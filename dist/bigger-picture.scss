@@ -230,6 +230,12 @@
 	}
 }
 
+@media (prefers-reduced-motion) {
+	.bp-wrap * {
+		animation-duration: 0s !important;
+	}
+}
+
 @media (max-width: 500px) {
 	.bp-x {
 		height: 50px;
