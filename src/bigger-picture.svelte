@@ -327,7 +327,12 @@
 			<div transition:fade={{ duration: 300 }}>
 				<!-- close button -->
 				{#if !opts.noClose}
-					<button class="bp-x" title="Close" on:click={close} />
+					<button
+						class="bp-x"
+						title="Close"
+						aria-label="Close"
+						on:click={close}
+					/>
 				{/if}
 
 				{#if items.length > 1}
@@ -336,8 +341,18 @@
 						{position + 1} / {items.length}
 					</div>
 					<!-- foward / back buttons -->
-					<button class="bp-prev" title="Previous" on:click={prev} />
-					<button class="bp-next" title="Next" on:click={next} />
+					<button
+						class="bp-prev"
+						title="Previous"
+						aria-label="Previous"
+						on:click={prev}
+					/>
+					<button
+						class="bp-next"
+						title="Next"
+						aria-label="Next"
+						on:click={next}
+					/>
 				{/if}
 			</div>
 		{/if}
