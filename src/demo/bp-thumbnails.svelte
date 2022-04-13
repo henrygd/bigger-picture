@@ -3,6 +3,7 @@
 	import { tweened } from 'svelte/motion'
 	import { fade } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
+	import { prefersReducedMotion } from '../stores'
 
 	let opts
 
@@ -11,7 +12,10 @@
 
 	let thumbsWidth
 	let containerWidth
-	let translate = tweened(0, { easing: cubicOut, duration: 250 })
+	let translate = tweened(0, {
+		easing: cubicOut,
+		duration: prefersReducedMotion ? 0 : 250,
+	})
 	let initialTranslate = 0
 	let isPointerDown, pointerDownPos, hasDragged
 	let dragPositions = []
@@ -115,7 +119,10 @@
 		<div class="thumbnail-bp" use:onMount />
 		<div
 			class="thumbnails"
-			transition:fade={{ easing: cubicOut, duration: 480 }}
+			transition:fade={{
+				easing: cubicOut,
+				duration: prefersReducedMotion ? 0 : 480,
+			}}
 		>
 			<div
 				style="transform: translatex({$translate}px)"
@@ -126,6 +133,7 @@
 					{#each bpItems as element (element.i)}
 						<button
 							title={element.alt}
+							aria-label={element.alt}
 							style="background-image:url({element.thumb})"
 							class:active={bp.position === element.i}
 							on:pointerup={() => !hasDragged && bp.setPosition(element.i)}

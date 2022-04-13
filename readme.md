@@ -8,13 +8,13 @@
 
 [![npm][npm-image]][npm-url] ![File Size][size-image] [![MIT license][license-image]][license-url]
 
-### IN DEVELOPMENT.
+### IN DEVELOPMENT
 
 Feel free to test. API may change before release. Please post any feedback in the discussion section.
 
 Demo: https://biggerpicture.henrygd.me
 
-High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using svelte.
+High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using Svelte.
 
 Flexible enough to intergrate into custom layouts and easily customizable via CSS.
 
@@ -134,7 +134,7 @@ Overrides the default intro animation. Currently `fadeup` is the only alternativ
 Type: `boolean`<br>
 Default: `false`
 
-Specifies that the lighbox is inline. Interaction events are modified to allow users to scroll past without hijacking.
+Specifies that the lightbox is inline. Interaction events are modified to avoid hijacking scroll and tab press.
 
 ### noClose
 
