@@ -9,7 +9,7 @@
 	@include fillall;
 	position: fixed;
 	z-index: 999;
-	contain: layout style size;
+	contain: strict;
 	touch-action: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	> div:first-child {
@@ -20,7 +20,6 @@
 	}
 	svg {
 		fill: #fff;
-		transform: translateZ(0);
 	}
 }
 
@@ -34,11 +33,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	contain: layout size;
 }
 
 .bp-img-wrap {
+	@include fillall;
 	position: absolute;
-	@include fillall();
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -76,7 +76,6 @@
 	color: rgba(255, 255, 255, 0.9);
 	margin: 16px;
 	pointer-events: none;
-	transform: translateZ(0);
 }
 
 .bp-prev,
@@ -93,6 +92,7 @@
 	transition: all 0.1s;
 	border-radius: 3px 0 0 3px;
 	opacity: 0.9;
+	contain: content;
 	&:hover {
 		background-color: rgba(0, 0, 0, 0.2);
 		opacity: 1;
