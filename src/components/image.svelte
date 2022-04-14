@@ -35,8 +35,8 @@
 	// .bp-img-wrap element
 	let wrap
 
-	// bool tracks load state of image
-	let loaded
+	// tracks load state of image
+	let loaded, showLoader
 
 	// cache events to handle pinch
 	let eventCache = []
@@ -128,6 +128,7 @@
 		return [x, y]
 	}
 
+	// updates zoom level in or out based on amt value
 	const changeZoom = (e, amt = 5) => {
 		let cd = calculateDimensions(naturalWidth, naturalHeight)
 		let maxWidth = cd[0] * maxZoom
@@ -213,7 +214,6 @@
 		}
 	}
 
-	// let pinch
 	// on drag, update image translate val
 	const onPointerMove = (e) => {
 		// e.preventDefault()
@@ -378,10 +378,15 @@
 	}
 
 	const onMount = () => {
+		// decode initial image before rendering
 		loadImage(activeItem).then(() => {
 			loaded = true
 			preloadNext()
 		})
+		// show loading indicator if needed
+		setTimeout(() => {
+			showLoader = !loaded
+		}, 90)
 	}
 </script>
 
@@ -411,9 +416,9 @@
 			transform:translate3d({$zoomDragTranslate[0]}px, {$zoomDragTranslate[1]}px, 0px)
 		"
 		>
-			<Loading {thumb} {loaded} />
-			{#if loaded}
-				<img {srcset} sizes={opts.sizes || `${sizes}px`} {alt} out:fade />
+			<img {srcset} sizes={opts.sizes || `${sizes}px`} {alt} out:fade />
+			{#if showLoader}
+				<Loading {thumb} {loaded} />
 			{/if}
 		</div>
 	</div>
