@@ -44,19 +44,23 @@
 	let activeItem
 
 	$: if (items) {
+		// update active item when position changes
 		activeItem = items[position]
-		container && opts.onUpdate && opts.onUpdate(container, activeItem)
+		// run onUpdate when items updated
+		opts.onUpdate && opts.onUpdate(container, activeItem)
 	}
 
+	// receives options and opens gallery
 	export const open = (options) => {
 		opts = options
 		// disable scroll if not inline gallery
 		inline = opts.inline
 		inline || hideScroll()
-		// use setTimeout to queue func behind hideScroll render and avoid reflow
+		// setTimeout to queue behind hideScroll render and avoid reflow
 		setTimeout(openPartDeux, 0)
 	}
 
+	// continuation of open function, delayed to avoid reflow
 	const openPartDeux = () => {
 		let openItems = opts.items
 		// update trigger element to restore focus
@@ -101,7 +105,7 @@
 	// next gallery item
 	export const next = () => setPosition(position + 1)
 
-	// go to next item in gallery
+	// go to specific item in gallery
 	export const setPosition = (index) => {
 		movement = index - position
 		position = getNextPosition(index)
@@ -146,7 +150,7 @@
 		}
 	}
 
-	// calculate dimensions for all but html
+	// calculates dimensions within window for given height / width
 	const calculateDimensions = (fullWidth, fullHeight, scale) => {
 		scale = opts.scale || 0.99
 		let width, height

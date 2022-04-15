@@ -9,6 +9,8 @@
 	@include fillall;
 	position: fixed;
 	z-index: 999;
+	/* If you're mounting on a portion of the screen and need visible
+	overflow on .bp-wrap, change contain to "style layout" on that instance */
 	contain: strict;
 	touch-action: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -215,6 +217,7 @@
 	width: -moz-fit-content;
 	display: table;
 	transition: opacity 0.3s;
+	contain: strict;
 	a {
 		color: inherit;
 	}

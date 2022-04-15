@@ -1,9 +1,13 @@
 import BiggerPicture from './bigger-picture.svelte'
 
-export default (options) => {
+/**
+ * Initializes BiggerPicture
+ * @param {{target: string}} options
+ * @returns BiggerPicture instance
+ */
+export default function (options) {
 	return new BiggerPicture({
 		...options,
-		intro: true,
 		props: options,
 	})
 }
