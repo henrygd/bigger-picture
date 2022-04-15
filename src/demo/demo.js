@@ -1,5 +1,4 @@
-// import BiggerPicture from '../bigger-picture'
-import BiggerPicture from '../bigger-picture.svelte'
+import BiggerPicture from '../bigger-picture'
 import Firewatch from './components/firewatch.svelte'
 import Dialog from './components/dialog.svelte'
 import BiggerPictureThumbnails from './bp-thumbnails.svelte'
@@ -25,11 +24,8 @@ let responsiveExample = document.querySelectorAll('#responsive_example')
 
 function initBodyBp() {
 	if (!bodyBp) {
-		bodyBp = new BiggerPicture({
+		bodyBp = BiggerPicture({
 			target: body,
-			props: {
-				target: body,
-			},
 		})
 	}
 }
@@ -100,9 +96,6 @@ function openThumbnails(e) {
 	if (!bpThumbnails) {
 		bpThumbnails = new BiggerPictureThumbnails({
 			target: body,
-			props: {
-				target: body,
-			},
 		})
 	}
 	bpThumbnails.open({
@@ -119,9 +112,6 @@ function initInlineGallery() {
 	if (!inlineBp) {
 		inlineBp = new BiggerPicture({
 			target: inlineWrap,
-			props: {
-				target: inlineWrap,
-			},
 		})
 	}
 	let items = Array.from(imageLinks).map((link) => ({
@@ -257,7 +247,7 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 				'The Baller of the First Sin',
 				'ByYourLogic',
 				'1477900291475484674/FHyfowH4_normal.jpg',
-				`<p>this picture is so fucking iconic. this was when Barney was in the studio for 16 hour sessions perfecting "Clean Up." believe it or not, people were writing him off because he hadn't had a hit in a while. little did they know he was about to change everything<a href="https://t.co/AFwh7OkKvn" target="_blank"><img src="https://pbs.twimg.com/media/E_w5hlxUUAQIu_x?format=jpg&name=small" alt="barney at desk"/></a></p>`
+				`<p>this picture is so fucking iconic. this was when Barney was in the studio for 16 hour sessions perfecting "Clean Up." believe it or not, people were writing him off because he hadn't had a hit in a while. little did they know he was about to change everything<a href="https://t.co/AFwh7OkKvn" target="_blank"><img src="https://assets.henrygd.me/bp/images/barney.jpg" alt="barney at desk"/></a></p>`
 			),
 		},
 		{
@@ -265,7 +255,7 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 				'Human Mel',
 				'melhuman',
 				'1329824596288299011/m6MLoRZA_normal.jpg',
-				`<p>"There was no place like it, in the whole world, like Coney Island when I was a youngster. No place in the world like it, and it was so fabulous. Now it's shrunk down to almost nothing."<a href="https://t.co/f4qRyQ1y0W" target="_blank"><img src="https://pbs.twimg.com/media/EMPgxTbXUAEORMB?format=jpg&name=small" alt="bernie sanders against backdrop of godspeed you black emperor album"/></a></p>`
+				`<p>"There was no place like it, in the whole world, like Coney Island when I was a youngster. No place in the world like it, and it was so fabulous. Now it's shrunk down to almost nothing."<a href="https://t.co/f4qRyQ1y0W" target="_blank"><img src="https://assets.henrygd.me/bp/images/bernie.jpg" alt="bernie sanders against backdrop of godspeed you black emperor album"/></a></p>`
 			),
 		},
 	]

@@ -10,7 +10,7 @@
 	position: fixed;
 	z-index: 999;
 	/* If you're mounting on a portion of the screen and need visible
-	overflow on .bp-wrap, change contain to "style layout" on that instance */
+	overflow on .bp-wrap, change contain to "layout size" on that instance */
 	contain: strict;
 	touch-action: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);

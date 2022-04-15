@@ -34,6 +34,23 @@
 		return int
 	}
 
+	// moves active thumb button into view
+	function scrollToButton(button) {
+		// set button to active
+		let activeBtn = button || focusWrap.querySelector('.active')
+		// move button into view if off screen (changing translate value)
+		let { left, right, width } = activeBtn.getBoundingClientRect()
+		let margin = 3
+		let { offsetLeft } = activeBtn
+		if (left + width > containerWidth) {
+			$translate = boundTranslate(
+				offsetLeft * -1 - width + containerWidth - margin
+			)
+		} else if (right - width < 0) {
+			$translate = boundTranslate(offsetLeft * -1 + margin)
+		}
+	}
+
 	function pointerDown(e) {
 		if (thumbsWidth < containerWidth) {
 			return
@@ -57,7 +74,7 @@
 			}
 		}
 	}
-	function pointerUp(e) {
+	function pointerUp() {
 		if (hasDragged) {
 			// drag inertia
 			dragPositions = dragPositions.slice(-3)
@@ -84,21 +101,7 @@
 			focusWrap,
 			onUpdate: () => {
 				bpItems = bp.items
-				setTimeout(() => {
-					// set button to active
-					let activeBtn = focusWrap.querySelector('.active')
-					// move button into view if off screen
-					let { left, right, width } = activeBtn.getBoundingClientRect()
-					let margin = 3
-					let { offsetLeft } = activeBtn
-					if (left + width > containerWidth) {
-						$translate = boundTranslate(
-							offsetLeft * -1 - width + containerWidth - margin
-						)
-					} else if (right - width < 0) {
-						$translate = boundTranslate(offsetLeft * -1 + margin)
-					}
-				}, 0)
+				setTimeout(scrollToButton, 0)
 			},
 			onClose: () => (opts = null),
 		})
@@ -136,6 +139,7 @@
 							aria-label={element.alt}
 							style="background-image:url({element.thumb})"
 							class:active={bp.position === element.i}
+							on:focus={(e) => scrollToButton(e.target)}
 							on:pointerup={() => !hasDragged && bp.setPosition(element.i)}
 							on:keyup={(e) => e.key === 'Enter' && bp.setPosition(element.i)}
 						/>
