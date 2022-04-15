@@ -8,15 +8,11 @@
 
 [![npm][npm-image]][npm-url] ![File Size][size-image] [![MIT license][license-image]][license-url]
 
-### IN DEVELOPMENT
-
-Feel free to test. API may change before release. Please post any feedback in the discussion section.
-
-Demo: https://biggerpicture.henrygd.me
-
 High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using Svelte.
 
 Flexible enough to intergrate into custom layouts and easily customizable via CSS.
+
+Demo: https://biggerpicture.henrygd.me
 
 https://user-images.githubusercontent.com/8519632/155907562-a8849399-51e4-4363-b377-b07b0fd12b82.mp4
 
@@ -314,19 +310,10 @@ bp.open({
 
 ## Usage with Svelte
 
-Please import the component rather than the processed bundle. If this doesn't happen automatically, change your import statement to match the one below. Adding [svelte-fast-dimension](https://github.com/bluwy/svelte-fast-dimension) to your build process is recommended but not required.
-
-The only difference in usage is that you need to use `new`, and pass `target` in props, as below.
+Please import `src/bigger-picture.js`, which uses the uncompiled Svelte files. Depending on your setup this may happen automatically, but to be sure you can use the import statement below. Adding [svelte-fast-dimension](https://github.com/bluwy/svelte-fast-dimension) to your build process is recommended but not required.
 
 ```js
-import BiggerPicture from 'bigger-picture/src/bigger-picture.svelte'
-
-let bp = new BiggerPicture({
-  target: document.body,
-  props: {
-    target: document.body,
-  },
-})
+import BiggerPicture from 'bigger-picture/src/bigger-picture.js'
 ```
 
 ## Internet Explorer Support

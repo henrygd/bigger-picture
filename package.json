@@ -3,7 +3,7 @@
 	"version": "0.0.14",
 	"main": "dist/bigger-picture.umd.js",
 	"module": "dist/bigger-picture.mjs",
-	"svelte": "src/bigger-picture.svelte",
+	"svelte": "src/bigger-picture.js",
 	"description": "Javascript photo / video / iframe / html lightbox gallery",
 	"license": "MIT",
 	"repository": {
