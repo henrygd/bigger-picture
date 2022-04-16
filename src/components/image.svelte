@@ -51,7 +51,7 @@
 	let prevDiff = 0
 
 	// bool ignore pointer events if true
-	let cancelEvents
+	let imageOutroStarted
 
 	let pointerDown, hasDragged
 	let dragStartX, dragStartY
@@ -96,7 +96,6 @@
 					: maxTranslateX
 				if (x > maxTranslateX + 20) {
 					// previous item if dragged past threshold
-					cancelEvents = true
 					prev()
 				}
 			} else {
@@ -110,7 +109,6 @@
 					: maxTranslateX * -1
 				if (x < maxTranslateX * -1 - 20) {
 					// next item if dragged past threshold
-					cancelEvents = true
 					next()
 				}
 			} else {
@@ -224,7 +222,7 @@
 			return handlePinch(e)
 		}
 
-		if (cancelEvents || !pointerDown) {
+		if (imageOutroStarted || !pointerDown) {
 			return
 		}
 
@@ -242,17 +240,14 @@
 			// previous if swipe left
 			if (x > 40) {
 				prev()
-				cancelEvents = true
 			}
 			// next if swipe right
 			if (x < -40) {
 				next()
-				cancelEvents = true
 			}
 			// close if swipe up (don't close if inline)
 			if (y < -90 && !inline) {
 				close()
-				cancelEvents = true
 			}
 		}
 
@@ -304,7 +299,7 @@
 		}
 
 		// make sure pointer events don't carry over to next image
-		if (cancelEvents || !pointerDown) {
+		if (imageOutroStarted || !pointerDown) {
 			return
 		}
 
@@ -386,7 +381,7 @@
 		// show loading indicator if needed
 		setTimeout(() => {
 			showLoader = !loaded
-		}, 90)
+		}, 250)
 	}
 </script>
 
@@ -416,7 +411,13 @@
 			transform:translate3d({$zoomDragTranslate[0]}px, {$zoomDragTranslate[1]}px, 0px)
 		"
 		>
-			<img {srcset} sizes={opts.sizes || `${sizes}px`} {alt} out:fade />
+			<img
+				{srcset}
+				sizes={opts.sizes || `${sizes}px`}
+				{alt}
+				out:fade
+				on:outrostart={() => (imageOutroStarted = true)}
+			/>
 			{#if showLoader}
 				<Loading {thumb} {loaded} />
 			{/if}
