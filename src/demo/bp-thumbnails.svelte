@@ -9,6 +9,7 @@
 
 	let bp
 	let bpItems = []
+	let position
 
 	let thumbsWidth
 	let containerWidth
@@ -99,8 +100,9 @@
 		bp.open({
 			...opts,
 			focusWrap,
-			onUpdate: () => {
-				bpItems = bp.items
+			onOpen: () => (bpItems = bp.items),
+			onUpdate() {
+				position = bp.position
 				setTimeout(scrollToButton, 0)
 			},
 			onClose: () => (opts = null),
@@ -138,7 +140,7 @@
 							title={element.alt}
 							aria-label={element.alt}
 							style="background-image:url({element.thumb})"
-							class:active={bp.position === element.i}
+							class:active={element.i === position}
 							on:focus={(e) => scrollToButton(e.target)}
 							on:pointerup={() => !hasDragged && bp.setPosition(element.i)}
 							on:keyup={(e) => e.key === 'Enter' && bp.setPosition(element.i)}
