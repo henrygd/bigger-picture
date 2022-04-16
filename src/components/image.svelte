@@ -128,6 +128,10 @@
 
 	// updates zoom level in or out based on amt value
 	const changeZoom = (e, amt = 5) => {
+		if (imageOutroStarted) {
+			return
+		}
+
 		let cd = calculateDimensions(naturalWidth, naturalHeight)
 		let maxWidth = cd[0] * maxZoom
 
