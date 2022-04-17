@@ -9,9 +9,11 @@
 	import { zoomed, closing } from './stores'
 	import { hideScroll, showScroll } from 'hide-show-scroll'
 
-	export let items
-	export let position
-	export let target
+	export let items = undefined
+	export let target = undefined
+
+	// index of current active item
+	let position
 
 	// options passed via open method
 	let opts
@@ -47,7 +49,7 @@
 		// update active item when position changes
 		activeItem = items[position]
 		// run onUpdate when items updated
-		opts.onUpdate && opts.onUpdate(container, activeItem)
+		isOpen && opts.onUpdate && opts.onUpdate(container, activeItem)
 	}
 
 	// receives options and opens gallery
@@ -113,7 +115,7 @@
 
 	// get next gallery position
 	const getNextPosition = (index) => {
-		if (index === items.length) {
+		if (index >= items.length) {
 			index = 0
 		} else if (index < 0) {
 			index = items.length - 1
@@ -176,8 +178,8 @@
 	const preloadNext = () => {
 		let nextItem = items[getNextPosition(position + 1)]
 		let prevItem = items[getNextPosition(position - 1)]
-		!nextItem.preload && loadImage(nextItem)
-		!prevItem.preload && loadImage(prevItem)
+		nextItem && !nextItem.preload && loadImage(nextItem)
+		prevItem && !prevItem.preload && loadImage(prevItem)
 	}
 
 	// loads / decodes image for item
