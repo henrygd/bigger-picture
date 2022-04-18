@@ -63,7 +63,7 @@
 	let doubleClickTimeout
 
 	// options for tweens - no animation if prefers reduced motion
-	let tweenOptions = {
+	const tweenOptions = {
 		easing: cubicOut,
 		duration: prefersReducedMotion ? 0 : 400,
 	}
@@ -83,8 +83,8 @@
 	// calculate translate position with bounds
 	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
 		// image drag translate bounds
-		let maxTranslateX = (newDimensions[0] - containerWidth) / 2
-		let maxTranslateY = (newDimensions[1] - containerHeight) / 2
+		const maxTranslateX = (newDimensions[0] - containerWidth) / 2
+		const maxTranslateY = (newDimensions[1] - containerHeight) / 2
 		// x max drag
 		if (maxTranslateX < 0) {
 			x = 0
@@ -94,10 +94,8 @@
 				x = pointerDown
 					? maxTranslateX + (x - maxTranslateX) / 10
 					: maxTranslateX
-				if (x > maxTranslateX + 20) {
-					// previous item if dragged past threshold
-					prev()
-				}
+				// previous item if dragged past threshold
+				x > maxTranslateX + 20 && prev()
 			} else {
 				x = maxTranslateX
 			}
@@ -107,10 +105,8 @@
 				x = pointerDown
 					? maxTranslateX * -1 - (maxTranslateX * -1 - x) / 10
 					: maxTranslateX * -1
-				if (x < maxTranslateX * -1 - 20) {
-					// next item if dragged past threshold
-					next()
-				}
+				// next item if dragged past threshold
+				x < maxTranslateX * -1 - 20 && next()
 			} else {
 				x = maxTranslateX * -1
 			}
@@ -127,15 +123,15 @@
 	}
 
 	// updates zoom level in or out based on amt value
-	const changeZoom = (e, amt = 5) => {
+	const changeZoom = (e, amt = maxZoom) => {
 		if (imageOutroStarted) {
 			return
 		}
 
-		let cd = calculateDimensions(naturalWidth, naturalHeight)
-		let maxWidth = cd[0] * maxZoom
+		const cd = calculateDimensions(naturalWidth, naturalHeight)
+		const maxWidth = cd[0] * maxZoom
 
-		let [currentImageWidth, currentImageHeight] = $imageDimensions
+		const [currentImageWidth, currentImageHeight] = $imageDimensions
 
 		let newWidth = currentImageWidth + currentImageWidth * amt
 		let newHeight = currentImageHeight + currentImageHeight * amt
@@ -161,13 +157,13 @@
 		let { x, y, width, height } = e.target.getBoundingClientRect()
 
 		// distance clicked from center of image
-		let offsetX = e.clientX - x - width / 2
-		let offsetY = e.clientY - y - height / 2
+		const offsetX = e.clientX - x - width / 2
+		const offsetY = e.clientY - y - height / 2
 
 		x = offsetX * -1 * (newWidth / width) + offsetX
 		y = offsetY * -1 * (newHeight / height) + offsetY
 
-		let newDimensions = [newWidth, newHeight]
+		const newDimensions = [newWidth, newHeight]
 
 		// set new dimensions and update sizes property
 		imageDimensions.set(newDimensions).then(() => {
@@ -191,15 +187,9 @@
 		// preventDefault to stop scrolling on zoomed inline image
 		e.preventDefault()
 		// change zoom on wheel
-		let deltaY = e.deltaY / -300
-		if (deltaY < 0) {
-			changeZoom(e, deltaY)
-		} else {
-			changeZoom(e, deltaY)
-		}
+		const deltaY = e.deltaY / -300
+		changeZoom(e, deltaY)
 	}
-
-	const getPointerPosition = (e) => [e.clientX, e.clientY]
 
 	// on drag start, store initial position and image translate values
 	const onPointerDown = (e) => {
@@ -208,7 +198,7 @@
 			e.preventDefault()
 			pointerDown = true
 			eventCache.push(e)
-			let [x, y] = getPointerPosition(e)
+			const [x, y] = [e.clientX, e.clientY]
 			dragStartX = x
 			dragStartY = y
 			dragStartTranslateX = $zoomDragTranslate[0]
@@ -230,7 +220,7 @@
 			return
 		}
 
-		let [x, y] = getPointerPosition(e)
+		let [x, y] = [e.clientX, e.clientY]
 
 		// store positions for inertia
 		dragPositions.push({ x, y })
@@ -274,10 +264,10 @@
 		eventCache = eventCache.map((ev) => (ev.pointerId == e.pointerId ? e : ev))
 
 		// Calculate the distance between the two pointers
-		let [p1, p2] = eventCache
-		let dx = p1.clientX - p2.clientX
-		let dy = p1.clientY - p2.clientY
-		let curDiff = Math.hypot(dx, dy)
+		const [p1, p2] = eventCache
+		const dx = p1.clientX - p2.clientX
+		const dy = p1.clientY - p2.clientY
+		const curDiff = Math.hypot(dx, dy)
 
 		if (!prevDiff) {
 			prevDiff = curDiff

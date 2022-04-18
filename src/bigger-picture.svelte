@@ -8,6 +8,7 @@
 	import Video from './components/video.svelte'
 	import { zoomed, closing } from './stores'
 	import { hideScroll, showScroll } from 'hide-show-scroll'
+	import { listen, element as createEl } from 'svelte/internal'
 
 	export let items = undefined
 	export let target = undefined
@@ -64,7 +65,7 @@
 
 	// continuation of open function, delayed to avoid reflow
 	const openPartDeux = () => {
-		let openItems = opts.items
+		const openItems = opts.items
 		// update trigger element to restore focus
 		focusTrigger = document.activeElement
 		// containerWidth = target.clientWidth
@@ -82,7 +83,7 @@
 			: // nodelist / node was passed
 			  [...(openItems.length ? openItems : [openItems])].map((element, i) => {
 					// add unique id (i)
-					let obj = { element, i }
+					const obj = { element, i }
 					// set gallery position
 					if (element === opts.el) {
 						position = i
@@ -127,7 +128,7 @@
 		if (!isOpen || inline) {
 			return
 		}
-		let { key, shiftKey } = e
+		const { key, shiftKey } = e
 		if (key === 'Escape') {
 			close()
 		} else if (key === 'ArrowRight') {
@@ -136,12 +137,12 @@
 			prev()
 		} else if (key === 'Tab') {
 			// trap focus on tab press
-			let { activeElement } = document
+			const { activeElement } = document
 			// allow browser to handle tab into video controls only
 			if (shiftKey || !activeElement.controls) {
 				e.preventDefault()
-				let focusWrap = opts.focusWrap || container
-				let tabbable = [...focusWrap.querySelectorAll('*')].filter(
+				const focusWrap = opts.focusWrap || container
+				const tabbable = [...focusWrap.querySelectorAll('*')].filter(
 					(n) => n.tabIndex >= 0
 				)
 				let index = tabbable.indexOf(activeElement)
@@ -153,42 +154,42 @@
 	}
 
 	// calculates dimensions within window for given height / width
-	const calculateDimensions = (fullWidth, fullHeight, scale) => {
-		scale = opts.scale || 0.99
-		let width, height
-
+	const calculateDimensions = (fullWidth, fullHeight) => {
 		fullWidth = fullWidth || 1920
 		fullHeight = fullHeight || 1080
 
+		const scale = opts.scale || 0.99
+
+		let width, height
+
 		const windowAspect = containerHeight / containerWidth
+		const mediaAspect = fullHeight / fullWidth
 
-		const iframeAspect = fullHeight / fullWidth
-
-		if (iframeAspect > windowAspect) {
+		if (mediaAspect > windowAspect) {
 			height = Math.min(fullHeight, containerHeight * scale)
-			width = height / iframeAspect
+			width = height / mediaAspect
 		} else {
 			width = Math.min(fullWidth, containerWidth * scale)
-			height = width * iframeAspect
+			height = width * mediaAspect
 		}
 		return [Math.round(width), Math.round(height)]
 	}
 
 	// preloads images for previous and next items in gallery
 	const preloadNext = () => {
-		let nextItem = items[getNextPosition(position + 1)]
-		let prevItem = items[getNextPosition(position - 1)]
+		const nextItem = items[getNextPosition(position + 1)]
+		const prevItem = items[getNextPosition(position - 1)]
 		nextItem && !nextItem.preload && loadImage(nextItem)
 		prevItem && !prevItem.preload && loadImage(prevItem)
 	}
 
 	// loads / decodes image for item
 	const loadImage = (item) => {
-		let { img, width, height } = item
+		const { img, width, height } = item
 		if (!img) {
 			return
 		}
-		let image = new Image()
+		const image = createEl('img')
 		image.sizes = opts.sizes || `${calculateDimensions(width, height)[0]}px`
 		image.srcset = img
 		item.preload = image
@@ -201,13 +202,12 @@
 			isOpen = 1
 			opts.onOpen && opts.onOpen(container)
 			return opts.intro ? fly(node, { y: 10, easing: cubicOut }) : scaleIn(node)
-		} else {
-			return fly(node, {
-				x: movement > 0 ? 20 : -20,
-				easing: cubicOut,
-				duration: 250,
-			})
 		}
+		return fly(node, {
+			x: movement > 0 ? 20 : -20,
+			easing: cubicOut,
+			duration: 250,
+		})
 	}
 
 	// animate media out when bp is closed
@@ -216,34 +216,33 @@
 			return opts.intro
 				? fly(node, { y: -10, easing: cubicOut })
 				: scaleIn(node)
-		} else {
-			return fly(node, {
-				x: movement > 0 ? -20 : 20,
-				easing: cubicOut,
-				duration: 250,
-			})
 		}
+		return fly(node, {
+			x: movement > 0 ? -20 : 20,
+			easing: cubicOut,
+			duration: 250,
+		})
 	}
 
 	// custom svelte transition for entrance zoom
 	const scaleIn = (node) => {
-		let { element } = activeItem
+		const { element } = activeItem
 
-		let bpItem = node.querySelector('.bp-item')
+		const bpItem = node.querySelector('.bp-item')
 
-		let { clientWidth, clientHeight } = bpItem
+		const { clientWidth, clientHeight } = bpItem
 
-		let { top, left, width, height } = element.getBoundingClientRect()
-		let leftOffset = left - (containerWidth - width) / 2
-		let centerTop = top - (containerHeight - height) / 2
-		let scaleWidth = element.clientWidth / clientWidth
-		let scaleHeight = element.clientHeight / clientHeight
+		const { top, left, width, height } = element.getBoundingClientRect()
+		const leftOffset = left - (containerWidth - width) / 2
+		const centerTop = top - (containerHeight - height) / 2
+		const scaleWidth = element.clientWidth / clientWidth
+		const scaleHeight = element.clientHeight / clientHeight
 
 		return {
 			duration: 480,
 			easing: cubicOut,
 			css: (t) => {
-				let tDiff = 1 - t
+				const tDiff = 1 - t
 				return `transform:translate3d(${leftOffset * tDiff}px, ${
 					centerTop * tDiff
 				}px, 0px) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${
@@ -262,10 +261,10 @@
 	}
 
 	const lifecycleMethods = () => {
-		window.addEventListener('resize', onResize)
+		let removeResizeListener = listen(window, 'resize', onResize)
 		return {
 			destroy() {
-				window.removeEventListener('resize', onResize)
+				removeResizeListener()
 				$closing = isOpen = 0
 				showScroll()
 				opts.onClosed && opts.onClosed()
@@ -290,6 +289,7 @@
 		{#key activeItem.i}
 			<div
 				class="bp-inner"
+				class:bp-html={activeItem.hasOwnProperty('html')}
 				in:animateIn
 				out:animateOut
 				on:pointerdown={({ target }) => (clickedEl = target)}
@@ -315,9 +315,9 @@
 						{smallScreen}
 					/>
 				{:else if activeItem.video}
-					<Video {activeItem} {calculateDimensions} />
+					<Video stuff={{ activeItem, calculateDimensions }} />
 				{:else if activeItem.iframe}
-					<Iframe {activeItem} {calculateDimensions} />
+					<Iframe stuff={{ activeItem, calculateDimensions }} />
 				{:else}
 					{@html activeItem.html}
 				{/if}
@@ -330,7 +330,7 @@
 		{/key}
 
 		{#if !smallScreen || !hideControls}
-			<div transition:fade={{ duration: 300 }}>
+			<div class="bp-controls" transition:fade={{ duration: 300 }}>
 				<!-- close button -->
 				{#if !opts.noClose}
 					<button
@@ -344,7 +344,7 @@
 				{#if items.length > 1}
 					<!-- counter -->
 					<div class="bp-count">
-						{position + 1} / {items.length}
+						{`${position + 1} / ${items.length}`}
 					</div>
 					<!-- foward / back buttons -->
 					<button

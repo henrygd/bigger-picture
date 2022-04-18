@@ -1,8 +1,9 @@
 <script>
 	import Loading from './loading.svelte'
 
-	export let activeItem
-	export let calculateDimensions
+	export let stuff
+
+	let { activeItem, calculateDimensions } = stuff
 
 	let { iframe, thumb, title } = activeItem
 

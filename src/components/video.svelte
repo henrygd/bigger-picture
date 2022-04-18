@@ -8,10 +8,11 @@
 
 	import Loading from './loading.svelte'
 
-	export let activeItem
-	export let calculateDimensions
+	export let stuff
 
 	let loaded
+
+	let { activeItem, calculateDimensions } = stuff
 
 	let { video, thumb, tracks = [], width, height } = activeItem
 
@@ -44,16 +45,18 @@
 
 <!-- svelte-ignore a11y-media-has-caption -->
 
-<div class="bp-item bp-vid">
+<div
+	class="bp-item bp-vid"
+	style="
+			width:{dimensions[0]}px;
+			height:{dimensions[1]}px
+		"
+>
 	<video
 		playsinline
 		controls
 		autoplay
 		tabindex="0"
-		style="
-			width:{dimensions[0]}px;
-			height:{dimensions[1]}px
-		"
 		on:canplay={() => (loaded = true)}
 	>
 		{@html video + tracks}
