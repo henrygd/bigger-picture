@@ -400,21 +400,23 @@
 			transform:translate3d({$zoomDragTranslate[0]}px, {$zoomDragTranslate[1]}px, 0px)
 		"
 	>
-		<img
-			{srcset}
-			sizes={opts.sizes || `${sizes}px`}
-			{alt}
-			out:fade
-			on:outrostart={() => {
-				imageOutroStarted = true
-				// if zoomed while closing, zoom out image and add class
-				// to change contain value on .bp-wrap to avoid cropping
-				if ($closing && $zoomed && !opts.intro) {
-					closingWhileZoomed = true
-					$zoomDragTranslate = [0, 0]
-				}
-			}}
-		/>
+		{#if loaded}
+			<img
+				{srcset}
+				sizes={opts.sizes || `${sizes}px`}
+				{alt}
+				out:fade
+				on:outrostart={() => {
+					imageOutroStarted = true
+					// if zoomed while closing, zoom out image and add class
+					// to change contain value on .bp-wrap to avoid cropping
+					if ($closing && $zoomed && !opts.intro) {
+						closingWhileZoomed = true
+						$zoomDragTranslate = [0, 0]
+					}
+				}}
+			/>
+		{/if}
 		{#if showLoader}
 			<Loading {thumb} {loaded} />
 		{/if}
