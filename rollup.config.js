@@ -2,22 +2,25 @@ import svelte from 'rollup-plugin-svelte'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
-import filesize from 'rollup-plugin-filesize'
+import size from 'rollup-plugin-size'
 import { fastDimension } from 'svelte-fast-dimension'
 import modify from 'rollup-plugin-modify'
 
 const production = !process.env.ROLLUP_WATCH
 
 const terserOptions = {
-	format: {
-		ecma: 2015,
+	ecma: 2015,
+	mangle: {
+		properties: {
+			regex:
+				/^(duration|easing|delay|activeItem|containerWidth|containerHeight|fragment|calculateDimensions|dirty|tick|preloadNext|toggleControls|loadImage|smallScreen|stuff)$/,
+		},
 	},
 	compress: {
 		booleans_as_integers: true,
 		pure_getters: true,
 		drop_console: true,
 		unsafe: true,
-		hoist_vars: true,
 		unsafe_arrows: true,
 		unsafe_comps: true,
 		unsafe_Function: true,
@@ -27,8 +30,7 @@ const terserOptions = {
 		unsafe_proto: true,
 		unsafe_regexp: true,
 		unsafe_undefined: true,
-		ecma: 2015,
-		passes: 2,
+		passes: 3,
 	},
 }
 
@@ -62,12 +64,16 @@ const findReplace5 = {
 	replace: `true`,
 }
 const findReplace6 = {
-	find: /^.+globals \=[^;]+;/gm,
-	replace: `const globals = window;`,
+	find: 'const doc = get_root_for_style(node)',
+	replace: 'const doc = document',
 }
 const findReplace7 = {
 	find: /get_root_for_style\(node\),/g,
 	replace: 'document,',
+}
+const findReplace8 = {
+	find: /^\sset .+{$\n\s+this.+[^}]+}/gm,
+	replace: '',
 }
 
 let config = [
@@ -95,6 +101,8 @@ let config = [
 				],
 				compilerOptions: {
 					dev: !production,
+					immutable: true,
+					css: false,
 				},
 			}),
 			resolve({ browser: true }),
@@ -105,6 +113,7 @@ let config = [
 			modify(findReplace5),
 			modify(findReplace6),
 			modify(findReplace7),
+			modify(findReplace8),
 			production && terser(terserOptions),
 		],
 	},
@@ -132,6 +141,7 @@ if (production) {
 			},
 		],
 		plugins: [
+			commonjs(),
 			svelte({
 				preprocess: [
 					{
@@ -146,19 +156,22 @@ if (production) {
 					},
 					fastDimension(),
 				],
+				compilerOptions: {
+					immutable: true,
+					css: false,
+				},
 			}),
 			resolve({ browser: true }),
 			modify(findReplace),
 			modify(findReplace2),
 			modify(findReplace3),
-			modify(findReplace4),
 			modify(findReplace5),
+			modify(findReplace4),
 			modify(findReplace6),
 			modify(findReplace7),
+			modify(findReplace8),
 			terser(terserOptions),
-			filesize({
-				showMinifiedSize: !production,
-			}),
+			size(),
 		],
 	})
 }
