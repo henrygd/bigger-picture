@@ -223,7 +223,7 @@ URL or path to full image. Can be a `srcset` value.
 
 When using `srcset`, the `sizes` value will update automatically when an image is zoomed. You may override this behavior by setting the [`sizes`](#sizes) value.
 
-### vid
+### video
 
 Type: `string` or `Array`
 
