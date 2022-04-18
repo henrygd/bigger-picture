@@ -10,18 +10,17 @@
 	position: fixed;
 	z-index: 999;
 	/* If you're mounting on a portion of the screen and need visible
-	overflow on .bp-wrap, change contain to "layout size" on that instance */
+	overflow on .bp-wrap, change contain to "layout" on that instance */
 	contain: strict;
 	touch-action: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	* {
+		contain: strict;
+	}
 	> div:first-child {
 		position: absolute;
 		@include fillall;
 		background: rgba(0, 0, 0, 0.75);
-		transform: translateZ(0);
-	}
-	svg {
-		fill: #fff;
 	}
 }
 
@@ -38,27 +37,37 @@
 	contain: layout size;
 }
 
+.bp-html {
+	* {
+		contain: unset;
+	}
+}
+
 .bp-img-wrap {
 	@include fillall;
 	position: absolute;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	&.dragging {
+	&.bp-drag {
 		.bp-img {
 			cursor: grabbing;
 		}
 	}
 }
 
+// when closing a zoomed image contain: strict hides overflow
+.bp-close {
+	contain: layout size;
+}
+
 .bp-img {
 	user-select: none;
 	cursor: zoom-in;
-	div,
+	background-size: 100% 100%;
 	img {
 		position: absolute;
 		@include fillall;
-		background-size: 100% 100%;
 	}
 	.bp-o {
 		display: none;
@@ -70,6 +79,33 @@
 	}
 	.bp-cap {
 		opacity: 0;
+		animation: none !important;
+	}
+}
+
+.bp-controls {
+	position: absolute;
+	@include fillall;
+	pointer-events: none;
+	text-align: left;
+	// weird bug w/ contain strict on firefox 91 kali linux
+	contain: size;
+	button {
+		pointer-events: auto;
+		cursor: pointer;
+		position: absolute;
+		border: 0;
+		background: rgba(0, 0, 0, 0.15);
+		opacity: 0.9;
+		transition: all 0.1s;
+		contain: content;
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.2);
+			opacity: 1;
+		}
+	}
+	svg {
+		fill: #fff;
 	}
 }
 
@@ -77,27 +113,19 @@
 	position: absolute;
 	color: rgba(255, 255, 255, 0.9);
 	margin: 16px;
-	pointer-events: none;
+	height: 50px;
+	width: 100px;
 }
 
 .bp-prev,
 .bp-next {
-	cursor: pointer;
-	position: absolute;
-	border: 0;
-	background-color: rgba(0, 0, 0, 0.15);
 	top: 50%;
 	right: 0;
 	margin-top: -32px;
 	height: 64px;
 	width: 58px;
-	transition: all 0.1s;
 	border-radius: 3px 0 0 3px;
-	opacity: 0.9;
-	contain: content;
 	&:hover {
-		background-color: rgba(0, 0, 0, 0.2);
-		opacity: 1;
 		&:before {
 			transform: translateX(-2px);
 		}
@@ -117,14 +145,8 @@
 	transform: scalex(-1);
 }
 .bp-x {
-	cursor: pointer;
-	position: absolute;
-	border: 0;
-	background: rgba(0, 0, 0, 0.15);
 	top: 0;
 	right: 0;
-	opacity: 0.9;
-	transition: all 0.1s;
 	height: 55px;
 	width: 58px;
 	border-radius: 0 0 0 3px;
@@ -135,20 +157,16 @@
 		top: 8px;
 		right: 10px;
 	}
-	&:hover {
-		background-color: rgba(0, 0, 0, 0.2);
-		opacity: 1;
-	}
 }
 
 .bp-if,
 .bp-vid {
 	iframe,
+	video,
 	div {
 		@include fillall;
 		position: absolute;
 		border: 0;
-		backface-visibility: hidden;
 	}
 }
 
@@ -158,8 +176,7 @@
 
 .bp-load {
 	display: flex;
-	background-size: cover;
-	background-position: center;
+	background-size: 100% 100%;
 	overflow: hidden;
 }
 .bp-bar {
@@ -180,6 +197,7 @@
 		transform: translateX(0);
 	}
 }
+
 .bp-o,
 .bp-o:after {
 	border-radius: 50%;
@@ -192,7 +210,6 @@
 	border-left-color: rgba(255, 255, 255, 0.9);
 	animation: bp-o 1s infinite linear;
 }
-
 @keyframes bp-o {
 	0% {
 		transform: rotate(0deg);
@@ -217,7 +234,6 @@
 	width: -moz-fit-content;
 	display: table;
 	transition: opacity 0.3s;
-	contain: strict;
 	a {
 		color: inherit;
 	}
@@ -261,7 +277,7 @@
 	}
 	.bp-o,
 	.bp-o:after {
-		border-width: 8px;
+		border-width: 6px;
 		width: 60px;
 		height: 60px;
 	}

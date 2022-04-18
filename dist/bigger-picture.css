@@ -6,10 +6,13 @@
   position: fixed;
   z-index: 999;
   /* If you're mounting on a portion of the screen and need visible
-  overflow on .bp-wrap, change contain to "layout size" on that instance */
+  overflow on .bp-wrap, change contain to "layout" on that instance */
   contain: strict;
   touch-action: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+.bp-wrap * {
+  contain: strict;
 }
 .bp-wrap > div:first-child {
   position: absolute;
@@ -18,10 +21,6 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.75);
-  transform: translateZ(0);
-}
-.bp-wrap svg {
-  fill: #fff;
 }
 
 .bp-item {
@@ -40,6 +39,10 @@
   contain: layout size;
 }
 
+.bp-html * {
+  contain: unset;
+}
+
 .bp-img-wrap {
   top: 0;
   left: 0;
@@ -50,22 +53,25 @@
   justify-content: center;
   align-items: center;
 }
-.bp-img-wrap.dragging .bp-img {
+.bp-img-wrap.bp-drag .bp-img {
   cursor: grabbing;
+}
+
+.bp-close {
+  contain: layout size;
 }
 
 .bp-img {
   user-select: none;
   cursor: zoom-in;
+  background-size: 100% 100%;
 }
-.bp-img div,
 .bp-img img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-size: 100% 100%;
 }
 .bp-img .bp-o {
   display: none;
@@ -76,35 +82,53 @@
 }
 .zoomed .bp-cap {
   opacity: 0;
+  animation: none !important;
+}
+
+.bp-controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  text-align: left;
+  contain: size;
+}
+.bp-controls button {
+  pointer-events: auto;
+  cursor: pointer;
+  position: absolute;
+  border: 0;
+  background: rgba(0, 0, 0, 0.15);
+  opacity: 0.9;
+  transition: all 0.1s;
+  contain: content;
+}
+.bp-controls button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+.bp-controls svg {
+  fill: #fff;
 }
 
 .bp-count {
   position: absolute;
   color: rgba(255, 255, 255, 0.9);
   margin: 16px;
-  pointer-events: none;
+  height: 50px;
+  width: 100px;
 }
 
 .bp-prev,
 .bp-next {
-  cursor: pointer;
-  position: absolute;
-  border: 0;
-  background-color: rgba(0, 0, 0, 0.15);
   top: 50%;
   right: 0;
   margin-top: -32px;
   height: 64px;
   width: 58px;
-  transition: all 0.1s;
   border-radius: 3px 0 0 3px;
-  opacity: 0.9;
-  contain: content;
-}
-.bp-prev:hover,
-.bp-next:hover {
-  background-color: rgba(0, 0, 0, 0.2);
-  opacity: 1;
 }
 .bp-prev:hover:before,
 .bp-next:hover:before {
@@ -127,14 +151,8 @@
 }
 
 .bp-x {
-  cursor: pointer;
-  position: absolute;
-  border: 0;
-  background: rgba(0, 0, 0, 0.15);
   top: 0;
   right: 0;
-  opacity: 0.9;
-  transition: all 0.1s;
   height: 55px;
   width: 58px;
   border-radius: 0 0 0 3px;
@@ -146,14 +164,12 @@
   top: 8px;
   right: 10px;
 }
-.bp-x:hover {
-  background-color: rgba(0, 0, 0, 0.2);
-  opacity: 1;
-}
 
 .bp-if iframe,
+.bp-if video,
 .bp-if div,
 .bp-vid iframe,
+.bp-vid video,
 .bp-vid div {
   top: 0;
   left: 0;
@@ -161,7 +177,6 @@
   height: 100%;
   position: absolute;
   border: 0;
-  backface-visibility: hidden;
 }
 
 .bp-if {
@@ -170,8 +185,7 @@
 
 .bp-load {
   display: flex;
-  background-size: cover;
-  background-position: center;
+  background-size: 100% 100%;
   overflow: hidden;
 }
 
@@ -231,7 +245,6 @@
   width: -moz-fit-content;
   display: table;
   transition: opacity 0.3s;
-  contain: strict;
 }
 .bp-cap a {
   color: inherit;
@@ -277,7 +290,7 @@
 
   .bp-o,
 .bp-o:after {
-    border-width: 8px;
+    border-width: 6px;
     width: 60px;
     height: 60px;
   }
