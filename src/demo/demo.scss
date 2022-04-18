@@ -294,6 +294,7 @@ h3 {
 	position: fixed;
 	display: flex;
 	flex-direction: column;
+	contain: strict;
 	.bp-wrap {
 		contain: layout size;
 	}
@@ -327,7 +328,6 @@ h3 {
 			display: flex;
 			padding: 4px 0;
 			touch-action: none;
-			// justify-content: center;
 		}
 	}
 	button {
@@ -433,7 +433,7 @@ footer {
 	.main p {
 		width: 100%;
 		font-size: 0.95em;
-		margin: 1em 0;
+		margin: 1em auto;
 		line-height: 1.2;
 	}
 }
@@ -445,6 +445,7 @@ footer {
 	height: 920px;
 	max-height: 97%;
 	overflow: hidden;
+	border-radius: 3px;
 	background: #ffaf1b;
 
 	.parallax-container {
@@ -624,8 +625,7 @@ body:not(.using-mouse) {
 	}
 }
 
-.masonry,
-.html-grid {
+.section-example {
 	a {
 		&:after {
 			content: '';
@@ -818,5 +818,12 @@ body:not(.using-mouse) {
 	}
 	.bp-inner .code-example > div {
 		padding: 25px 20px;
+	}
+	.section-example {
+		a {
+			&:after {
+				display: none;
+			}
+		}
 	}
 }

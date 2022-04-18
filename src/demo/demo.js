@@ -102,7 +102,7 @@ function openThumbnails(e) {
 		// position: 2,
 		// scale: 1,
 		// intro: 'fadeup',
-		el: e.target,
+		el: e.currentTarget,
 		items: thumbnails,
 		maxZoom: 4,
 	})
@@ -227,7 +227,7 @@ document.getElementById('dialog').addEventListener('click', (e) => {
 		intro: 'fadeup',
 		items: [{ html: '' }],
 		onOpen: (container) => {
-			container.querySelector('.bp-x').remove()
+			container.querySelector('.bp-controls').remove()
 			container.classList.add('blur')
 			new Dialog({
 				target: container.querySelector('.bp-inner'),
@@ -264,26 +264,6 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 		items: window.innerWidth > 680 ? tweets : [tweets[0]],
 	})
 })
-
-// thumbnails
-// thumbnails.addEventListener('click', (e) => {
-// 	e.preventDefault()
-// 	if (!bpThumbnails) {
-// 		bpThumbnails = new BiggerPictureThumbnails({
-// 			target: body,
-// 			props: {
-// 				target: body,
-// 			},
-// 		})
-// 	}
-// 	bpThumbnails.open({
-// 		// position: 2,
-// 		scale: 1,
-// 		// intro: 'fadeup',
-// 		el: e.target,
-// 		items: thumbnails,
-// 	})
-// })
 
 for (let i = 0; i < thumbnails.length; i++) {
 	thumbnails[i].addEventListener('click', openThumbnails)

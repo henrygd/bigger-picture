@@ -22,6 +22,11 @@
 	let dragPositions = []
 	let focusWrap
 
+	$: if (position) {
+		// make sure button is in view when position updates
+		setTimeout(scrollToButton, 0)
+	}
+
 	export const open = (options) => {
 		opts = options
 	}
@@ -101,9 +106,8 @@
 			...opts,
 			focusWrap,
 			onOpen: () => (bpItems = bp.items),
-			onUpdate() {
-				position = bp.position
-				setTimeout(scrollToButton, 0)
+			onUpdate(container, activeItem) {
+				position = activeItem.i
 			},
 			onClose: () => (opts = null),
 		})
