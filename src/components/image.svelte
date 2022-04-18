@@ -62,6 +62,9 @@
 	// double click timeout (mobile controls)
 	let doubleClickTimeout
 
+	// if true, adds class to .bp-wrap to avoid image cropping
+	let closingWhileZoomed
+
 	// options for tweens - no animation if prefers reduced motion
 	const tweenOptions = {
 		easing: cubicOut,
@@ -74,11 +77,6 @@
 	const zoomDragTranslate = tweened([0, 0], tweenOptions)
 
 	$: $zoomed = $imageDimensions[0] > calculatedDimensions[0]
-
-	// reset translate if closing while zoomed
-	$: if ($closing && !opts.intro) {
-		$zoomDragTranslate = [0, 0]
-	}
 
 	// calculate translate position with bounds
 	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
@@ -389,32 +387,36 @@
 	on:pointermove={onPointerMove}
 	on:pointerup={onPointerUp}
 	on:pointercancel={onPointerUp}
-	class:dragging={pointerDown}
+	class:bp-drag={pointerDown}
+	class:bp-close={closingWhileZoomed}
 >
 	<div
 		use:onMount
 		class="bp-item bp-img"
 		style="
-		width:{$imageDimensions[0]}px;
-		height:{$imageDimensions[1]}px
-	"
-	>
-		<div
-			style="
 			background-image:url({thumb});
+			width:{$imageDimensions[0]}px;
+			height:{$imageDimensions[1]}px;
 			transform:translate3d({$zoomDragTranslate[0]}px, {$zoomDragTranslate[1]}px, 0px)
 		"
-		>
-			<img
-				{srcset}
-				sizes={opts.sizes || `${sizes}px`}
-				{alt}
-				out:fade
-				on:outrostart={() => (imageOutroStarted = true)}
-			/>
-			{#if showLoader}
-				<Loading {thumb} {loaded} />
-			{/if}
-		</div>
+	>
+		<img
+			{srcset}
+			sizes={opts.sizes || `${sizes}px`}
+			{alt}
+			out:fade
+			on:outrostart={() => {
+				imageOutroStarted = true
+				// if zoomed while closing, zoom out image and add class
+				// to change contain value on .bp-wrap to avoid cropping
+				if ($closing && $zoomed && !opts.intro) {
+					closingWhileZoomed = true
+					$zoomDragTranslate = [0, 0]
+				}
+			}}
+		/>
+		{#if showLoader}
+			<Loading {thumb} {loaded} />
+		{/if}
 	</div>
 </div>
