@@ -65,7 +65,8 @@
 	user-select: none;
 	cursor: zoom-in;
 	background-size: 100% 100%;
-	img {
+	img,
+	div {
 		position: absolute;
 		@include fillall;
 	}
@@ -187,6 +188,7 @@
 	width: 100%;
 	transform: translateX(-100%);
 	background: rgba(255, 255, 255, 0.9);
+	border-radius: 0 3px 3px 0;
 	animation: bp-bar 4s both;
 }
 @keyframes bp-bar {
