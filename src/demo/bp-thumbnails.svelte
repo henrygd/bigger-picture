@@ -1,9 +1,10 @@
 <script>
-	import BiggerPicture from '../bigger-picture.svelte'
+	import BiggerPicture from '../bigger-picture.js'
 	import { tweened } from 'svelte/motion'
 	import { fade } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 	import { prefersReducedMotion } from '../stores'
+	import { resize } from './actions'
 
 	let opts
 
@@ -13,16 +14,17 @@
 
 	let thumbsWidth
 	let containerWidth
-	let translate = tweened(0, {
-		easing: cubicOut,
-		duration: prefersReducedMotion ? 0 : 250,
-	})
 	let initialTranslate = 0
 	let isPointerDown, pointerDownPos, hasDragged
 	let dragPositions = []
 	let focusWrap
 
-	$: if (position) {
+	let translate = tweened(0, {
+		easing: cubicOut,
+		duration: prefersReducedMotion ? 0 : 250,
+	})
+
+	$: if (position !== undefined) {
 		// make sure button is in view when position updates
 		setTimeout(scrollToButton, 0)
 	}
@@ -114,16 +116,18 @@
 	}
 </script>
 
-<svelte:window on:resize={() => ($translate = 0)} />
-
 {#if opts}
 	<div
 		class="thumbnail-wrap"
 		bind:this={focusWrap}
-		bind:clientWidth={containerWidth}
 		on:pointermove={pointerMove}
 		on:pointerup={pointerUp}
 		on:pointercancel={pointerUp}
+		use:resize
+		on:bp:resize={({ detail }) => {
+			containerWidth = detail.cr.width
+			$translate = 0
+		}}
 	>
 		<div class="thumbnail-bp" use:onMount />
 		<div
@@ -135,8 +139,11 @@
 		>
 			<div
 				style="transform: translatex({$translate}px)"
-				bind:clientWidth={thumbsWidth}
 				on:pointerdown={pointerDown}
+				use:resize
+				on:bp:resize={({ detail }) => {
+					thumbsWidth = detail.cr.width
+				}}
 			>
 				<div>
 					{#each bpItems as element (element.i)}

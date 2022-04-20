@@ -1,6 +1,6 @@
 [npm-image]: https://flat.badgen.net/npm/v/bigger-picture?color=blue
 [npm-url]: https://www.npmjs.com/package/bigger-picture
-[size-image]: https://flat.badgen.net/badgesize/gzip/henrygd/bigger-picture/master/dist/bigger-picture.mjs?color=green
+[size-image]: https://flat.badgen.net/badgesize/gzip/henrygd/bigger-picture/master/dist/bigger-picture.min.mjs?color=green
 [license-image]: https://flat.badgen.net/github/license/henrygd/bigger-picture?color=purple
 [license-url]: /license
 
@@ -22,7 +22,7 @@ https://user-images.githubusercontent.com/8519632/155907562-a8849399-51e4-4363-b
 npm install bigger-picture
 ```
 
-Grab the [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) and add to your styles.
+Add the required [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) to your project. Import from the package if your setup allows it so you won't need to manually replace styles if you update.
 
 ## Usage
 
@@ -193,6 +193,12 @@ Type: `function`
 
 Executes just after the lightbox has been closed and removed from the page.
 
+### onResize
+
+Type: `function`
+
+Executes when the dimensions of the container element (not the window) are changed. Supplies `container` and `activeItem`.
+
 ## Item Properties
 
 ### width
@@ -310,7 +316,7 @@ bp.open({
 
 ## Usage with Svelte
 
-Please import `src/bigger-picture.js`, which uses the uncompiled Svelte files. Depending on your setup this may happen automatically, but to be sure you can use the import statement below. Adding [svelte-fast-dimension](https://github.com/bluwy/svelte-fast-dimension) to your build process is recommended but not required.
+Please import `src/bigger-picture.js`, which uses the uncompiled Svelte files. Depending on your setup this may happen automatically, but to be sure you can use the import statement below.
 
 ```js
 import BiggerPicture from 'bigger-picture/src/bigger-picture.js'
