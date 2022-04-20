@@ -3,22 +3,20 @@
 
 	export let stuff
 
-	let { activeItem, calculateDimensions } = stuff
+	let { activeItem, calculateDimensions, setResizeFunc } = stuff
 
-	let { iframe, thumb, title } = activeItem
+	let { iframe, thumb, title, width, height } = activeItem
 
 	let loaded
 
 	let dimensions
 
-	const updateDimensions = () => {
-		dimensions = calculateDimensions(activeItem.width, activeItem.height)
-	}
+	const setDimensions = () => (dimensions = calculateDimensions(width, height))
 
-	updateDimensions()
+	setDimensions()
+
+	setResizeFunc(setDimensions)
 </script>
-
-<svelte:window on:resize={updateDimensions} />
 
 <div
 	class="bp-item bp-if"

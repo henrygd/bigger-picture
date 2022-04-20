@@ -20,6 +20,7 @@
 		next,
 		close,
 		toggleControls,
+		setResizeFunc,
 	} = stuff
 
 	let { inline } = opts
@@ -353,18 +354,17 @@
 		dragPositions = []
 	}
 
-	// handle window resize
-	const onResize = () => {
-		calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
-		// adjust image only if not smaller container
-		// some mobile browsers trigger resize constantly if dragging / pinching
-		if (!smallScreen) {
-			imageDimensions.set(calculatedDimensions)
-			zoomDragTranslate.set([0, 0])
-		}
-	}
-
 	const onMount = () => {
+		// handle window resize
+		setResizeFunc(() => {
+			calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
+			// adjust image only if not smaller container
+			// some mobile browsers trigger resize constantly if dragging / pinching
+			if (!smallScreen) {
+				imageDimensions.set(calculatedDimensions)
+				zoomDragTranslate.set([0, 0])
+			}
+		})
 		// decode initial image before rendering
 		loadImage(activeItem).then(() => {
 			loaded = true
@@ -376,8 +376,6 @@
 		}, 250)
 	}
 </script>
-
-<svelte:window on:resize={() => setTimeout(onResize, 0)} />
 
 <div
 	class="bp-img-wrap"

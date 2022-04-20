@@ -10,9 +10,9 @@
 
 	export let stuff
 
-	let loaded
+	let loaded, dimensions
 
-	let { activeItem, calculateDimensions } = stuff
+	let { activeItem, calculateDimensions, setResizeFunc } = stuff
 
 	let { video, thumb, tracks = [], width, height } = activeItem
 
@@ -36,12 +36,12 @@
 			)}>`
 	)
 
-	let dimensions = calculateDimensions(width, height)
-</script>
+	const setDimensions = () => (dimensions = calculateDimensions(width, height))
 
-<svelte:window
-	on:resize={() => (dimensions = calculateDimensions(width, height))}
-/>
+	setDimensions()
+
+	setResizeFunc(setDimensions)
+</script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
 

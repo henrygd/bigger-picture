@@ -46,11 +46,23 @@
 	// active item object
 	let activeItem
 
+	// true if activeItem is html
+	let activeItemIsHtml
+
+	// function set by child component to run when container resized
+	let resizeFunc
+	const setResizeFunc = (fn) => (resizeFunc = fn)
+
 	$: if (items) {
 		// update active item when position changes
 		activeItem = items[position]
-		// run onUpdate when items updated
-		isOpen && opts.onUpdate && opts.onUpdate(container, activeItem)
+		if (isOpen) {
+			activeItemIsHtml = activeItem.hasOwnProperty('html')
+			// clear child resize function if html
+			activeItemIsHtml && setResizeFunc(null)
+			// run onUpdate when items updated
+			opts.onUpdate && opts.onUpdate(container, activeItem)
+		}
 	}
 
 	// receives options and opens gallery
@@ -79,16 +91,14 @@
 		// make array w/ dataset to work with
 		items = Array.isArray(openItems)
 			? // array was passed
-			  openItems.map((item, i) => ({ ...item, ...{ i } }))
+			  openItems.map((item, i) => ({ ...item, i }))
 			: // nodelist / node was passed
 			  [...(openItems.length ? openItems : [openItems])].map((element, i) => {
-					// add unique id (i)
-					const obj = { element, i }
 					// set gallery position
 					if (element === opts.el) {
 						position = i
 					}
-					return { ...obj, ...element.dataset }
+					return { element, i, ...element.dataset }
 			  })
 	}
 
@@ -96,7 +106,7 @@
 		if (!opts.noClose) {
 			opts.onClose && opts.onClose()
 			$closing = 1
-			items = 0
+			items = false
 			// restore focus to trigger element
 			focusTrigger && focusTrigger.focus({ preventScroll: true })
 		}
@@ -125,9 +135,6 @@
 	}
 
 	const onKeydown = (e) => {
-		if (!isOpen || inline) {
-			return
-		}
 		const { key, shiftKey } = e
 		if (key === 'Escape') {
 			close()
@@ -255,17 +262,33 @@
 	// toggle controls for small screen
 	const toggleControls = () => (hideControls = !hideControls)
 
-	const onResize = () => {
-		smallScreen = containerWidth < 769
-		opts.onResize && opts.onResize(activeItem)
-	}
-
-	const lifecycleMethods = () => {
-		let removeResizeListener = listen(window, 'resize', onResize)
+	const containerActions = (node) => {
+		let removeKeydownListener
+		let roActive
+		// don't use keyboard events for inline galleries
+		if (!inline) {
+			removeKeydownListener = listen(window, 'keydown', onKeydown)
+		}
+		// set up resize observer
+		let ro = new ResizeObserver((entries) => {
+			// use roActive to avoid running on initial open
+			if (roActive) {
+				containerWidth = entries[0].contentRect.width
+				containerHeight = entries[0].contentRect.height
+				smallScreen = containerWidth < 769
+				// run child component resize function
+				resizeFunc && resizeFunc()
+				// run user defined onResize function
+				opts.onResize && opts.onResize(container, activeItem)
+			}
+			roActive = true
+		})
+		ro.observe(node)
 		return {
 			destroy() {
-				removeResizeListener()
-				$closing = isOpen = 0
+				ro.unobserve(node)
+				removeKeydownListener && removeKeydownListener()
+				$closing = isOpen = false
 				showScroll()
 				opts.onClosed && opts.onClosed()
 			},
@@ -273,14 +296,10 @@
 	}
 </script>
 
-<svelte:window on:keydown={onKeydown} />
-
 {#if items}
 	<div
-		use:lifecycleMethods
+		use:containerActions
 		bind:this={container}
-		bind:clientHeight={containerHeight}
-		bind:clientWidth={containerWidth}
 		class="bp-wrap"
 		class:zoomed={$zoomed}
 		class:bp-inline={inline}
@@ -289,7 +308,7 @@
 		{#key activeItem.i}
 			<div
 				class="bp-inner"
-				class:bp-html={activeItem.hasOwnProperty('html')}
+				class:bp-html={activeItemIsHtml}
 				in:animateIn
 				out:animateOut
 				on:pointerdown={({ target }) => (clickedEl = target)}
@@ -302,22 +321,35 @@
 						stuff={{
 							activeItem,
 							calculateDimensions,
-							toggleControls,
 							loadImage,
 							preloadNext,
-							next,
-							prev,
-							close,
 							opts,
+							prev,
+							next,
+							close,
+							toggleControls,
+							setResizeFunc,
 						}}
 						{containerWidth}
 						{containerHeight}
 						{smallScreen}
 					/>
 				{:else if activeItem.video}
-					<Video stuff={{ activeItem, calculateDimensions }} />
+					<Video
+						stuff={{
+							activeItem,
+							calculateDimensions,
+							setResizeFunc,
+						}}
+					/>
 				{:else if activeItem.iframe}
-					<Iframe stuff={{ activeItem, calculateDimensions }} />
+					<Iframe
+						stuff={{
+							activeItem,
+							calculateDimensions,
+							setResizeFunc,
+						}}
+					/>
 				{:else}
 					{@html activeItem.html}
 				{/if}
