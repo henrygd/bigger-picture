@@ -3,7 +3,6 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
-import { fastDimension } from 'svelte-fast-dimension'
 import modify from 'rollup-plugin-modify'
 
 const production = !process.env.ROLLUP_WATCH
@@ -38,43 +37,29 @@ const terserOptions = {
 rm unneeded svelte stuff for vanilla scripts (hacky but saves a few bytes)
 need to re-test / modify if svelte is updated
 */
-const tagsRegex1 = /(>)[\s]*([<{])/g
-const tagsRegex2 = /({[/:][a-z]+})[\s]*([<{])/g
-const tagsRegex3 = /({[#:][a-z]+ .+?})[\s]*([<{])/g
-const tagsRegex4 = /([>}])[\s]+(<|{[/#:][a-z][^}]*})/g
-const tagsReplace = '$1$2'
-const findReplace = {
-	find: /^\s*validate_store.+$|throw.+interpolate.+$/gm,
-	replace: '',
+const cleanSvelteWhitespace = {
+	markup: ({ content }) => {
+		const code = content
+			.replace(/(>)[\s]*([<{])/g, '$1$2')
+			.replace(/({[/:][a-z]+})[\s]*([<{])/g, '$1$2')
+			.replace(/({[#:][a-z]+ .+?})[\s]*([<{])/g, '$1$2')
+			.replace(/([>}])[\s]+(<|{[/#:][a-z][^}]*})/g, '$1$2')
+		return { code }
+	},
 }
-const findReplace2 = {
-	find: 'if (options.hydrate)',
-	replace: 'if (false)',
-}
-const findReplace3 = {
-	find: /if \(type === 'object'\) {(.|\n)+if \(type === 'number'\)/gm,
-	replace: `if (type === 'number')`,
-}
-const findReplace4 = {
-	find: `: blank_object()`,
-	replace: `: {}`,
-}
-const findReplace5 = {
-	find: `typeof window !== 'undefined'`,
-	replace: `true`,
-}
-const findReplace6 = {
-	find: 'const doc = get_root_for_style(node)',
-	replace: 'const doc = document',
-}
-const findReplace7 = {
-	find: /get_root_for_style\(node\),/g,
-	replace: 'document,',
-}
-const findReplace8 = {
-	find: /^\sset .+{$\n\s+this.+[^}]+}/gm,
-	replace: '',
-}
+const findReplaceOptions = [
+	[/^\s*validate_store.+$|throw.+interpolate.+$/gm, ''],
+	['if (options.hydrate)', 'if (false)'],
+	[
+		/if \(type === 'object'\) {(.|\n)+if \(type === 'number'\)/gm,
+		`if (type === 'number')`,
+	],
+	[': blank_object()', ': {}'],
+	[`typeof window !== 'undefined'`, 'true'],
+	['const doc = get_root_for_style(node)', 'const doc = document'],
+	[/get_root_for_style\(node\),/g, 'document,'],
+	[/^\sset .+{$\n\s+this.+[^}]+}/gm, ''],
+].map(([find, replace]) => modify({ find, replace }))
 
 let config = [
 	{
@@ -86,19 +71,7 @@ let config = [
 		plugins: [
 			commonjs(),
 			svelte({
-				preprocess: [
-					{
-						markup: ({ content }) => {
-							const code = content
-								.replace(tagsRegex1, tagsReplace)
-								.replace(tagsRegex2, tagsReplace)
-								.replace(tagsRegex3, tagsReplace)
-								.replace(tagsRegex4, tagsReplace)
-							return { code }
-						},
-					},
-					fastDimension(),
-				],
+				preprocess: [cleanSvelteWhitespace],
 				compilerOptions: {
 					dev: !production,
 					immutable: true,
@@ -106,20 +79,42 @@ let config = [
 				},
 			}),
 			resolve({ browser: true }),
-			modify(findReplace),
-			modify(findReplace2),
-			modify(findReplace3),
-			modify(findReplace4),
-			modify(findReplace5),
-			modify(findReplace6),
-			modify(findReplace7),
-			modify(findReplace8),
+			...findReplaceOptions,
 			production && terser(terserOptions),
 		],
 	},
 ]
 
 if (production) {
+	// unminified dist files
+	config.push({
+		input: 'src/bigger-picture.js',
+		output: [
+			{
+				format: 'es',
+				file: 'dist/bigger-picture.mjs',
+			},
+			{
+				format: 'umd',
+				name: 'BiggerPicture',
+				file: 'dist/bigger-picture.umd.js',
+				strict: false,
+			},
+		],
+		plugins: [
+			commonjs(),
+			svelte({
+				preprocess: [cleanSvelteWhitespace],
+				compilerOptions: {
+					immutable: true,
+					css: false,
+				},
+			}),
+			resolve({ browser: true }),
+			...findReplaceOptions,
+		],
+	})
+	// minified dist files
 	config.push({
 		input: 'src/bigger-picture.js',
 		output: [
@@ -130,46 +125,21 @@ if (production) {
 				strict: false,
 			},
 			{
-				format: 'umd',
-				name: 'BiggerPicture',
-				file: 'dist/bigger-picture.umd.js',
-				strict: false,
-			},
-			{
 				format: 'es',
-				file: 'dist/bigger-picture.mjs',
+				file: 'dist/bigger-picture.min.mjs',
 			},
 		],
 		plugins: [
 			commonjs(),
 			svelte({
-				preprocess: [
-					{
-						markup: ({ content }) => {
-							const code = content
-								.replace(tagsRegex1, tagsReplace)
-								.replace(tagsRegex2, tagsReplace)
-								.replace(tagsRegex3, tagsReplace)
-								.replace(tagsRegex4, tagsReplace)
-							return { code }
-						},
-					},
-					fastDimension(),
-				],
+				preprocess: [cleanSvelteWhitespace],
 				compilerOptions: {
 					immutable: true,
 					css: false,
 				},
 			}),
 			resolve({ browser: true }),
-			modify(findReplace),
-			modify(findReplace2),
-			modify(findReplace3),
-			modify(findReplace5),
-			modify(findReplace4),
-			modify(findReplace6),
-			modify(findReplace7),
-			modify(findReplace8),
+			...findReplaceOptions,
 			terser(terserOptions),
 			size(),
 		],
