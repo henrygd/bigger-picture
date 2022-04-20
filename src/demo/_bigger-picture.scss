@@ -1,4 +1,4 @@
-@mixin fillall() {
+@mixin bpfillall() {
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -6,7 +6,7 @@
 }
 
 .bp-wrap {
-	@include fillall;
+	@include bpfillall;
 	position: fixed;
 	z-index: 999;
 	/* If you're mounting on a portion of the screen and need visible
@@ -19,7 +19,7 @@
 	}
 	> div:first-child {
 		position: absolute;
-		@include fillall;
+		@include bpfillall;
 		background: rgba(0, 0, 0, 0.75);
 	}
 }
@@ -29,7 +29,7 @@
 }
 
 .bp-inner {
-	@include fillall;
+	@include bpfillall;
 	position: absolute;
 	display: flex;
 	align-items: center;
@@ -44,7 +44,7 @@
 }
 
 .bp-img-wrap {
-	@include fillall;
+	@include bpfillall;
 	position: absolute;
 	display: flex;
 	justify-content: center;
@@ -68,7 +68,7 @@
 	img,
 	div {
 		position: absolute;
-		@include fillall;
+		@include bpfillall;
 	}
 	.bp-o {
 		display: none;
@@ -86,7 +86,7 @@
 
 .bp-controls {
 	position: absolute;
-	@include fillall;
+	@include bpfillall;
 	pointer-events: none;
 	text-align: left;
 	// weird bug w/ contain strict on firefox 91 kali linux
@@ -165,7 +165,7 @@
 	iframe,
 	video,
 	div {
-		@include fillall;
+		@include bpfillall;
 		position: absolute;
 		border: 0;
 	}
