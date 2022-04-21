@@ -4,8 +4,23 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="shortcut icon" href="assets/favicon.png" />
-		<title>Bigger Picture</title>
+		<title>Bigger Picture - Modern JavaScript lightbox gallery</title>
 		<link rel="stylesheet" href="demo.css" />
+		<meta
+			name="description"
+			content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary."
+		/>
+		<meta
+			itemprop="image"
+			content="https://assets.henrygd.me/bp/images/bp-social.png"
+		/>
+		<meta property="og:url" content="https://biggerpicture.henrygd.me" />
+		<meta property="og:type" content="website" />
+		<meta
+			property="og:image"
+			content="https://assets.henrygd.me/bp/images/bp-social.png"
+		/>
+		<meta name="twitter:card" content="summary_large_image" />
 	</head>
 
 	<body>
@@ -953,6 +968,14 @@ bp<span class="token punctuation">.</span><span class="token function">open</spa
 </pre>
 			</div>
 		</div>
+
+		<script>
+			if (!('ResizeObserver' in window)) {
+				document.write(
+					'<script src="https://cdn.jsdelivr.net/combine/npm/intersection-observer@0.12.0/intersection-observer.min.js,npm/@juggle/resize-observer@4.0.0-4/lib/resize-observer.min.js"><\/script>'
+				)
+			}
+		</script>
 
 		<script src="demo.js"></script>
 	</body>

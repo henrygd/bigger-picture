@@ -22,7 +22,7 @@ https://user-images.githubusercontent.com/8519632/155907562-a8849399-51e4-4363-b
 npm install bigger-picture
 ```
 
-Add the required [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) to your project. Import from the package if your setup allows it so you won't need to manually replace styles if you update.
+Add the required [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) to your project. If possible, import from the package so you won't need to manually replace styles when you update.
 
 ## Usage
 

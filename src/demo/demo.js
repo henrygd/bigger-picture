@@ -71,10 +71,6 @@ function openBiggerPicture(items, e) {
 		// 	console.log('container', container)
 		// 	console.log('activeItem', activeItem)
 		// },
-		// onResize: (activeItem) => {
-		// 	console.log('resize', activeItem)
-		// 	// bp.$set({ activeItem: { ...activeItem, ...{ width: 400 } } })
-		// },
 		// onOpen: hideShowScroll.hide,
 		// onClosed: hideShowScroll.show,
 	})
@@ -145,20 +141,16 @@ function openCode(e, node) {
 
 function createObserver() {
 	let observer
-
 	let options = {
 		root: null,
 		rootMargin: '0px',
 		threshold: 0,
 	}
-
 	observer = new IntersectionObserver((entries) => {
-		entries.forEach((entry) => {
-			if (entry.isIntersecting) {
-				observer.unobserve(entry.target)
-				initInlineGallery()
-			}
-		})
+		if (entries[0].isIntersecting) {
+			observer.disconnect()
+			initInlineGallery()
+		}
 	}, options)
 	observer.observe(inlineWrap)
 }

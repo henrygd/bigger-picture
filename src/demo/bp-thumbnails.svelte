@@ -100,9 +100,6 @@
 	const onMount = (bpWrap) => {
 		bp = new BiggerPicture({
 			target: bpWrap,
-			props: {
-				target: bpWrap,
-			},
 		})
 		bp.open({
 			...opts,
