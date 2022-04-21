@@ -113,6 +113,7 @@
 .bp-count {
 	position: absolute;
 	color: rgba(255, 255, 255, 0.9);
+	line-height: 1;
 	margin: 16px;
 	height: 50px;
 	width: 100px;
@@ -260,21 +261,22 @@
 
 @media (max-width: 500px) {
 	.bp-x {
-		height: 50px;
-		width: 50px;
+		height: 47px;
+		width: 47px;
 		&:before {
 			width: 34px;
-			top: 7px;
-			right: 7px;
+			top: 6px;
+			right: 6px;
 		}
 	}
 	.bp-prev,
 	.bp-next {
 		margin-top: -27px;
-		height: 57px;
-		width: 50px;
+		height: 54px;
+		width: 45px;
 		&:before {
-			top: 8px;
+			top: 7px;
+			left: 2px;
 			width: 43px;
 		}
 	}
@@ -283,5 +285,8 @@
 		border-width: 6px;
 		width: 60px;
 		height: 60px;
+	}
+	.bp-count {
+		margin: 13px;
 	}
 }

@@ -270,7 +270,7 @@
 			removeKeydownListener = listen(window, 'keydown', onKeydown)
 		}
 		// set up resize observer
-		let ro = new ResizeObserver((entries) => {
+		const ro = new ResizeObserver((entries) => {
 			// use roActive to avoid running on initial open
 			if (roActive) {
 				containerWidth = entries[0].contentRect.width
@@ -286,7 +286,7 @@
 		ro.observe(node)
 		return {
 			destroy() {
-				ro.unobserve(node)
+				ro.disconnect()
 				removeKeydownListener && removeKeydownListener()
 				$closing = isOpen = false
 				showScroll()
