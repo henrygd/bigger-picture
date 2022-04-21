@@ -2909,7 +2909,7 @@ function instance($$self, $$props, $$invalidate) {
 		}
 
 		// set up resize observer
-		let ro = new ResizeObserver(entries => {
+		const ro = new ResizeObserver(entries => {
 				// use roActive to avoid running on initial open
 				if (roActive) {
 					$$invalidate(9, containerWidth = entries[0].contentRect.width);
@@ -2930,7 +2930,7 @@ function instance($$self, $$props, $$invalidate) {
 
 		return {
 			destroy() {
-				ro.unobserve(node);
+				ro.disconnect();
 				removeKeydownListener && removeKeydownListener();
 				set_store_value(closing, $closing = $$invalidate(27, isOpen = false), $closing);
 				s();
