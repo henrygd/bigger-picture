@@ -111,13 +111,6 @@ function listen(node, event, handler, options) {
     node.addEventListener(event, handler, options);
     return () => node.removeEventListener(event, handler, options);
 }
-function self(fn) {
-    return function (event) {
-        // @ts-ignore
-        if (event.target === this)
-            fn.call(this, event);
-    };
-}
 function attr(node, attribute, value) {
     if (value == null)
         node.removeAttribute(attribute);
@@ -1053,27 +1046,20 @@ function create_if_block_1$1(ctx) {
 	let img_sizes_value;
 	let img_outro;
 	let current;
-	let mounted;
-	let dispose;
 
 	return {
 		c() {
 			img = element("img");
-			attr(img, "srcset", /*srcset*/ ctx[12]);
-			attr(img, "sizes", img_sizes_value = /*opts*/ ctx[11].sizes || `${/*sizes*/ ctx[1]}px`);
-			attr(img, "alt", /*alt*/ ctx[14]);
+			attr(img, "srcset", /*srcset*/ ctx[8]);
+			attr(img, "sizes", img_sizes_value = /*opts*/ ctx[7].sizes || `${/*sizes*/ ctx[1]}px`);
+			attr(img, "alt", /*alt*/ ctx[10]);
 		},
 		m(target, anchor) {
 			insert(target, img, anchor);
 			current = true;
-
-			if (!mounted) {
-				dispose = listen(img, "outrostart", /*outrostart_handler*/ ctx[27]);
-				mounted = true;
-			}
 		},
 		p(ctx, dirty) {
-			if (!current || dirty[0] & /*sizes*/ 2 && img_sizes_value !== (img_sizes_value = /*opts*/ ctx[11].sizes || `${/*sizes*/ ctx[1]}px`)) {
+			if (!current || dirty[0] & /*sizes*/ 2 && img_sizes_value !== (img_sizes_value = /*opts*/ ctx[7].sizes || `${/*sizes*/ ctx[1]}px`)) {
 				attr(img, "sizes", img_sizes_value);
 			}
 		},
@@ -1089,21 +1075,19 @@ function create_if_block_1$1(ctx) {
 		d(detaching) {
 			if (detaching) detach(img);
 			if (detaching && img_outro) img_outro.end();
-			mounted = false;
-			dispose();
 		}
 	};
 }
 
-// (410:10) {#if showLoader}
+// (394:85) {#if showLoader}
 function create_if_block$1(ctx) {
 	let loading;
 	let current;
 
 	loading = new Loading({
 			props: {
-				thumb: /*thumb*/ ctx[13],
-				loaded: /*loaded*/ ctx[3]
+				thumb: /*thumb*/ ctx[9],
+				loaded: /*loaded*/ ctx[2]
 			}
 		});
 
@@ -1117,7 +1101,7 @@ function create_if_block$1(ctx) {
 		},
 		p(ctx, dirty) {
 			const loading_changes = {};
-			if (dirty[0] & /*loaded*/ 8) loading_changes.loaded = /*loaded*/ ctx[3];
+			if (dirty[0] & /*loaded*/ 4) loading_changes.loaded = /*loaded*/ ctx[2];
 			loading.$set(loading_changes);
 		},
 		i(local) {
@@ -1142,8 +1126,8 @@ function create_fragment$3(ctx) {
 	let current;
 	let mounted;
 	let dispose;
-	let if_block0 = /*loaded*/ ctx[3] && create_if_block_1$1(ctx);
-	let if_block1 = /*showLoader*/ ctx[4] && create_if_block$1(ctx);
+	let if_block0 = /*loaded*/ ctx[2] && create_if_block_1$1(ctx);
+	let if_block1 = /*showLoader*/ ctx[3] && create_if_block$1(ctx);
 
 	return {
 		c() {
@@ -1153,13 +1137,13 @@ function create_fragment$3(ctx) {
 			if_block0_anchor = empty();
 			if (if_block1) if_block1.c();
 			attr(div0, "class", "bp-item bp-img");
-			set_style(div0, "background-image", "url(" + /*thumb*/ ctx[13] + ")");
+			set_style(div0, "background-image", "url(" + /*thumb*/ ctx[9] + ")");
 			set_style(div0, "width", /*$imageDimensions*/ ctx[0][0] + "px");
 			set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
-			set_style(div0, "transform", "translate3d(" + /*$zoomDragTranslate*/ ctx[8][0] + "px, " + /*$zoomDragTranslate*/ ctx[8][1] + "px, 0px)");
+			set_style(div0, "transform", "translate3d(" + /*$zoomDragTranslate*/ ctx[6][0] + "px, " + /*$zoomDragTranslate*/ ctx[6][1] + "px, 0px)");
 			attr(div1, "class", "bp-img-wrap");
-			toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[6]);
-			toggle_class(div1, "bp-close", /*closingWhileZoomed*/ ctx[7]);
+			toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[4]);
+			toggle_class(div1, "bp-close", /*closingWhileZoomed*/ ctx[5]);
 		},
 		m(target, anchor) {
 			insert(target, div1, anchor);
@@ -1167,28 +1151,27 @@ function create_fragment$3(ctx) {
 			if (if_block0) if_block0.m(div0, null);
 			append(div0, if_block0_anchor);
 			if (if_block1) if_block1.m(div0, null);
-			/*div1_binding*/ ctx[28](div1);
 			current = true;
 
 			if (!mounted) {
 				dispose = [
-					action_destroyer(/*onMount*/ ctx[21].call(null, div0)),
-					listen(div1, "wheel", /*onWheel*/ ctx[17]),
-					listen(div1, "pointerdown", /*onPointerDown*/ ctx[18]),
-					listen(div1, "pointermove", /*onPointerMove*/ ctx[19]),
-					listen(div1, "pointerup", /*onPointerUp*/ ctx[20]),
-					listen(div1, "pointercancel", /*onPointerUp*/ ctx[20])
+					action_destroyer(/*onMount*/ ctx[17].call(null, div1)),
+					listen(div1, "wheel", /*onWheel*/ ctx[13]),
+					listen(div1, "pointerdown", /*onPointerDown*/ ctx[14]),
+					listen(div1, "pointermove", /*onPointerMove*/ ctx[15]),
+					listen(div1, "pointerup", /*onPointerUp*/ ctx[16]),
+					listen(div1, "pointercancel", /*onPointerUp*/ ctx[16])
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (/*loaded*/ ctx[3]) {
+			if (/*loaded*/ ctx[2]) {
 				if (if_block0) {
 					if_block0.p(ctx, dirty);
 
-					if (dirty[0] & /*loaded*/ 8) {
+					if (dirty[0] & /*loaded*/ 4) {
 						transition_in(if_block0, 1);
 					}
 				} else {
@@ -1207,11 +1190,11 @@ function create_fragment$3(ctx) {
 				check_outros();
 			}
 
-			if (/*showLoader*/ ctx[4]) {
+			if (/*showLoader*/ ctx[3]) {
 				if (if_block1) {
 					if_block1.p(ctx, dirty);
 
-					if (dirty[0] & /*showLoader*/ 16) {
+					if (dirty[0] & /*showLoader*/ 8) {
 						transition_in(if_block1, 1);
 					}
 				} else {
@@ -1238,16 +1221,16 @@ function create_fragment$3(ctx) {
 				set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
 			}
 
-			if (!current || dirty[0] & /*$zoomDragTranslate*/ 256) {
-				set_style(div0, "transform", "translate3d(" + /*$zoomDragTranslate*/ ctx[8][0] + "px, " + /*$zoomDragTranslate*/ ctx[8][1] + "px, 0px)");
+			if (!current || dirty[0] & /*$zoomDragTranslate*/ 64) {
+				set_style(div0, "transform", "translate3d(" + /*$zoomDragTranslate*/ ctx[6][0] + "px, " + /*$zoomDragTranslate*/ ctx[6][1] + "px, 0px)");
 			}
 
-			if (dirty[0] & /*pointerDown*/ 64) {
-				toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[6]);
+			if (dirty[0] & /*pointerDown*/ 16) {
+				toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[4]);
 			}
 
-			if (dirty[0] & /*closingWhileZoomed*/ 128) {
-				toggle_class(div1, "bp-close", /*closingWhileZoomed*/ ctx[7]);
+			if (dirty[0] & /*closingWhileZoomed*/ 32) {
+				toggle_class(div1, "bp-close", /*closingWhileZoomed*/ ctx[5]);
 			}
 		},
 		i(local) {
@@ -1265,7 +1248,6 @@ function create_fragment$3(ctx) {
 			if (detaching) detach(div1);
 			if (if_block0) if_block0.d();
 			if (if_block1) if_block1.d();
-			/*div1_binding*/ ctx[28](null);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -1275,10 +1257,10 @@ function create_fragment$3(ctx) {
 function instance$3($$self, $$props, $$invalidate) {
 	let $zoomDragTranslate;
 	let $zoomed;
-	let $imageDimensions;
 	let $closing;
-	component_subscribe($$self, zoomed, $$value => $$invalidate(9, $zoomed = $$value));
-	component_subscribe($$self, closing, $$value => $$invalidate(10, $closing = $$value));
+	let $imageDimensions;
+	component_subscribe($$self, zoomed, $$value => $$invalidate(23, $zoomed = $$value));
+	component_subscribe($$self, closing, $$value => $$invalidate(24, $closing = $$value));
 	let { stuff } = $$props;
 	let { containerWidth } = $$props;
 	let { containerHeight } = $$props;
@@ -1291,9 +1273,6 @@ function instance$3($$self, $$props, $$invalidate) {
 	let naturalHeight = +height;
 	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight);
 	let sizes = calculatedDimensions[0];
-
-	// .bp-img-wrap element
-	let wrap;
 
 	// tracks load state of image
 	let loaded, showLoader;
@@ -1309,9 +1288,6 @@ function instance$3($$self, $$props, $$invalidate) {
 
 	// track distance for pinch events
 	let prevDiff = 0;
-
-	// bool ignore pointer events if true
-	let imageOutroStarted;
 
 	let pointerDown, hasDragged;
 	let dragStartX, dragStartY;
@@ -1339,7 +1315,7 @@ function instance$3($$self, $$props, $$invalidate) {
 	// translate transform for pointerDown
 	const zoomDragTranslate = tweened([0, 0], tweenOptions);
 
-	component_subscribe($$self, zoomDragTranslate, value => $$invalidate(8, $zoomDragTranslate = value));
+	component_subscribe($$self, zoomDragTranslate, value => $$invalidate(6, $zoomDragTranslate = value));
 
 	// calculate translate position with bounds
 	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
@@ -1391,7 +1367,7 @@ function instance$3($$self, $$props, $$invalidate) {
 
 	// updates zoom level in or out based on amt value
 	const changeZoom = (e, amt = maxZoom) => {
-		if (imageOutroStarted) {
+		if ($closing) {
 			return;
 		}
 
@@ -1462,7 +1438,7 @@ function instance$3($$self, $$props, $$invalidate) {
 		// don't run if right click
 		if (e.button !== 2) {
 			e.preventDefault();
-			$$invalidate(6, pointerDown = true);
+			$$invalidate(4, pointerDown = true);
 			eventCache.push(e);
 			const [x, y] = [e.clientX, e.clientY];
 			dragStartX = x;
@@ -1474,14 +1450,13 @@ function instance$3($$self, $$props, $$invalidate) {
 
 	// on drag, update image translate val
 	const onPointerMove = e => {
-		// e.preventDefault()
 		if (eventCache.length > 1) {
 			isPinch = true;
-			$$invalidate(6, pointerDown = false);
+			$$invalidate(4, pointerDown = false);
 			return handlePinch(e);
 		}
 
-		if (imageOutroStarted || !pointerDown) {
+		if (!pointerDown) {
 			return;
 		}
 
@@ -1499,12 +1474,14 @@ function instance$3($$self, $$props, $$invalidate) {
 		if (!$zoomed) {
 			// previous if swipe left
 			if (x > 40) {
-				prev();
+				// pointerdown = undefined to stop pointermove from running again
+				$$invalidate(4, pointerDown = prev());
 			}
 
 			// next if swipe right
 			if (x < -40) {
-				next();
+				// pointerdown = undefined to stop pointermove from running again
+				$$invalidate(4, pointerDown = next());
 			}
 
 			// close if swipe up (don't close if inline)
@@ -1516,7 +1493,7 @@ function instance$3($$self, $$props, $$invalidate) {
 		hasDragged = Math.hypot(x, y) > 10;
 
 		// image drag when zoomed
-		if ($zoomed && hasDragged) {
+		if ($zoomed && hasDragged && !$closing) {
 			zoomDragTranslate.set(boundTranslateValues([dragStartTranslateX + x, dragStartTranslateY + y]), { duration: 0 });
 		}
 	};
@@ -1537,14 +1514,14 @@ function instance$3($$self, $$props, $$invalidate) {
 		}
 
 		// scale image
-		changeZoom(e, (prevDiff - curDiff) * -0.015);
+		changeZoom(e, (prevDiff - curDiff) * -0.02);
 
 		// Cache the distance for the next move event
 		prevDiff = curDiff;
 	};
 
 	// on mouse / touch end, set pointerDown to false
-	const onPointerUp = e => {
+	function onPointerUp(e) {
 		// remove event from event cache
 		eventCache = eventCache.filter(ev => ev.pointerId != e.pointerId);
 
@@ -1557,16 +1534,16 @@ function instance$3($$self, $$props, $$invalidate) {
 		}
 
 		// make sure pointer events don't carry over to next image
-		if (imageOutroStarted || !pointerDown) {
+		if (!pointerDown) {
 			return;
 		}
 
 		// close if overlay is clicked
-		if (e.target === wrap && !inline) {
+		if (e.target === this && !inline) {
 			return close();
 		}
 
-		$$invalidate(6, pointerDown = false);
+		$$invalidate(4, pointerDown = false);
 
 		if (!smallScreen) {
 			// if largescreen
@@ -1620,79 +1597,64 @@ function instance$3($$self, $$props, $$invalidate) {
 
 		// reset dragPositions
 		dragPositions = [];
-	};
+	}
 
 	const onMount = () => {
 		// handle window resize
 		setResizeFunc(() => {
-			$$invalidate(26, calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight));
+			$$invalidate(22, calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight));
 
-			// adjust image only if not smaller container
-			// some mobile browsers trigger resize constantly if dragging / pinching
-			if (!smallScreen) {
-				imageDimensions.set(calculatedDimensions);
-				zoomDragTranslate.set([0, 0]);
-			}
+			// adjust image size / zoom on resize
+			imageDimensions.set(calculatedDimensions);
+
+			zoomDragTranslate.set([0, 0]);
 		});
 
 		// decode initial image before rendering
 		loadImage(activeItem).then(() => {
-			$$invalidate(3, loaded = true);
+			$$invalidate(2, loaded = true);
 			preloadNext();
 		});
 
 		// show loading indicator if needed
 		setTimeout(
 			() => {
-				$$invalidate(4, showLoader = !loaded);
+				$$invalidate(3, showLoader = !loaded);
 			},
 			250
 		);
 	};
 
-	const outrostart_handler = () => {
-		$$invalidate(5, imageOutroStarted = true);
-
-		// if zoomed while closing, zoom out image and add class
-		// to change contain value on .bp-wrap to avoid cropping
-		if ($closing && $zoomed && !opts.intro) {
-			$$invalidate(7, closingWhileZoomed = true);
-			set_store_value(zoomDragTranslate, $zoomDragTranslate = [0, 0], $zoomDragTranslate);
-		}
-	};
-
-	function div1_binding($$value) {
-		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-			wrap = $$value;
-			$$invalidate(2, wrap);
-		});
-	}
-
 	$$self.$$set = $$props => {
-		if ('stuff' in $$props) $$invalidate(22, stuff = $$props.stuff);
-		if ('containerWidth' in $$props) $$invalidate(23, containerWidth = $$props.containerWidth);
-		if ('containerHeight' in $$props) $$invalidate(24, containerHeight = $$props.containerHeight);
-		if ('smallScreen' in $$props) $$invalidate(25, smallScreen = $$props.smallScreen);
+		if ('stuff' in $$props) $$invalidate(18, stuff = $$props.stuff);
+		if ('containerWidth' in $$props) $$invalidate(19, containerWidth = $$props.containerWidth);
+		if ('containerHeight' in $$props) $$invalidate(20, containerHeight = $$props.containerHeight);
+		if ('smallScreen' in $$props) $$invalidate(21, smallScreen = $$props.smallScreen);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 67108865) {
+		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 4194305) {
 			set_store_value(zoomed, $zoomed = $imageDimensions[0] > calculatedDimensions[0], $zoomed);
+		}
+
+		if ($$self.$$.dirty[0] & /*$closing, $zoomed*/ 25165824) {
+			// if zoomed while closing, zoom out image and add class
+			// to change contain value on .bp-wrap to avoid cropping
+			if ($closing && $zoomed && !opts.intro) {
+				$$invalidate(5, closingWhileZoomed = true);
+				zoomDragTranslate.set([0, 0]);
+			}
 		}
 	};
 
 	return [
 		$imageDimensions,
 		sizes,
-		wrap,
 		loaded,
 		showLoader,
-		imageOutroStarted,
 		pointerDown,
 		closingWhileZoomed,
 		$zoomDragTranslate,
-		$zoomed,
-		$closing,
 		opts,
 		srcset,
 		thumb,
@@ -1709,8 +1671,8 @@ function instance$3($$self, $$props, $$invalidate) {
 		containerHeight,
 		smallScreen,
 		calculatedDimensions,
-		outrostart_handler,
-		div1_binding
+		$zoomed,
+		$closing
 	];
 }
 
@@ -1725,10 +1687,10 @@ class Image extends SvelteComponent {
 			create_fragment$3,
 			not_equal,
 			{
-				stuff: 22,
-				containerWidth: 23,
-				containerHeight: 24,
-				smallScreen: 25
+				stuff: 18,
+				containerWidth: 19,
+				containerHeight: 20,
+				smallScreen: 21
 			},
 			null,
 			[-1, -1]
@@ -1968,14 +1930,14 @@ function create_if_block(ctx) {
 	let div1;
 	let div0;
 	let div0_transition;
-	let previous_key = /*activeItem*/ ctx[7].i;
+	let previous_key = /*activeItem*/ ctx[6].i;
 	let key_block_anchor;
 	let containerActions_action;
 	let current;
 	let mounted;
 	let dispose;
 	let key_block = create_key_block(ctx);
-	let if_block = (!/*smallScreen*/ ctx[12] || !/*hideControls*/ ctx[11]) && create_if_block_1(ctx);
+	let if_block = (!/*smallScreen*/ ctx[11] || !/*hideControls*/ ctx[10]) && create_if_block_1(ctx);
 
 	return {
 		c() {
@@ -1985,8 +1947,8 @@ function create_if_block(ctx) {
 			key_block_anchor = empty();
 			if (if_block) if_block.c();
 			attr(div1, "class", "bp-wrap");
-			toggle_class(div1, "zoomed", /*$zoomed*/ ctx[15]);
-			toggle_class(div1, "bp-inline", /*inline*/ ctx[13]);
+			toggle_class(div1, "zoomed", /*$zoomed*/ ctx[14]);
+			toggle_class(div1, "bp-inline", /*inline*/ ctx[12]);
 		},
 		m(target, anchor) {
 			insert(target, div1, anchor);
@@ -1994,18 +1956,17 @@ function create_if_block(ctx) {
 			key_block.m(div1, null);
 			append(div1, key_block_anchor);
 			if (if_block) if_block.m(div1, null);
-			/*div1_binding*/ ctx[30](div1);
 			current = true;
 
 			if (!mounted) {
-				dispose = action_destroyer(containerActions_action = /*containerActions*/ ctx[23].call(null, div1));
+				dispose = action_destroyer(containerActions_action = /*containerActions*/ ctx[22].call(null, div1));
 				mounted = true;
 			}
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty[0] & /*activeItem*/ 128 && not_equal(previous_key, previous_key = /*activeItem*/ ctx[7].i)) {
+			if (dirty[0] & /*activeItem*/ 64 && not_equal(previous_key, previous_key = /*activeItem*/ ctx[6].i)) {
 				group_outros();
 				transition_out(key_block, 1, 1, noop);
 				check_outros();
@@ -2017,11 +1978,11 @@ function create_if_block(ctx) {
 				key_block.p(ctx, dirty);
 			}
 
-			if (!/*smallScreen*/ ctx[12] || !/*hideControls*/ ctx[11]) {
+			if (!/*smallScreen*/ ctx[11] || !/*hideControls*/ ctx[10]) {
 				if (if_block) {
 					if_block.p(ctx, dirty);
 
-					if (dirty[0] & /*smallScreen, hideControls*/ 6144) {
+					if (dirty[0] & /*smallScreen, hideControls*/ 3072) {
 						transition_in(if_block, 1);
 					}
 				} else {
@@ -2040,12 +2001,12 @@ function create_if_block(ctx) {
 				check_outros();
 			}
 
-			if (dirty[0] & /*$zoomed*/ 32768) {
-				toggle_class(div1, "zoomed", /*$zoomed*/ ctx[15]);
+			if (dirty[0] & /*$zoomed*/ 16384) {
+				toggle_class(div1, "zoomed", /*$zoomed*/ ctx[14]);
 			}
 
-			if (dirty[0] & /*inline*/ 8192) {
-				toggle_class(div1, "bp-inline", /*inline*/ ctx[13]);
+			if (dirty[0] & /*inline*/ 4096) {
+				toggle_class(div1, "bp-inline", /*inline*/ ctx[12]);
 			}
 		},
 		i(local) {
@@ -2072,17 +2033,16 @@ function create_if_block(ctx) {
 			if (detaching && div0_transition) div0_transition.end();
 			key_block.d(detaching);
 			if (if_block) if_block.d();
-			/*div1_binding*/ ctx[30](null);
 			mounted = false;
 			dispose();
 		}
 	};
 }
 
-// (337:7) {:else}
+// (339:7) {:else}
 function create_else_block(ctx) {
 	let html_tag;
-	let raw_value = /*activeItem*/ ctx[7].html + "";
+	let raw_value = /*activeItem*/ ctx[6].html + "";
 	let html_anchor;
 
 	return {
@@ -2096,7 +2056,7 @@ function create_else_block(ctx) {
 			insert(target, html_anchor, anchor);
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*activeItem*/ 128 && raw_value !== (raw_value = /*activeItem*/ ctx[7].html + "")) html_tag.p(raw_value);
+			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) html_tag.p(raw_value);
 		},
 		i: noop,
 		o: noop,
@@ -2107,7 +2067,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (331:35) 
+// (333:35) 
 function create_if_block_7(ctx) {
 	let iframe;
 	let current;
@@ -2115,9 +2075,9 @@ function create_if_block_7(ctx) {
 	iframe = new Iframe({
 			props: {
 				stuff: {
-					activeItem: /*activeItem*/ ctx[7],
-					calculateDimensions: /*calculateDimensions*/ ctx[17],
-					setResizeFunc: /*setResizeFunc*/ ctx[16]
+					activeItem: /*activeItem*/ ctx[6],
+					calculateDimensions: /*calculateDimensions*/ ctx[16],
+					setResizeFunc: /*setResizeFunc*/ ctx[15]
 				}
 			}
 		});
@@ -2133,10 +2093,10 @@ function create_if_block_7(ctx) {
 		p(ctx, dirty) {
 			const iframe_changes = {};
 
-			if (dirty[0] & /*activeItem*/ 128) iframe_changes.stuff = {
-				activeItem: /*activeItem*/ ctx[7],
-				calculateDimensions: /*calculateDimensions*/ ctx[17],
-				setResizeFunc: /*setResizeFunc*/ ctx[16]
+			if (dirty[0] & /*activeItem*/ 64) iframe_changes.stuff = {
+				activeItem: /*activeItem*/ ctx[6],
+				calculateDimensions: /*calculateDimensions*/ ctx[16],
+				setResizeFunc: /*setResizeFunc*/ ctx[15]
 			};
 
 			iframe.$set(iframe_changes);
@@ -2156,7 +2116,7 @@ function create_if_block_7(ctx) {
 	};
 }
 
-// (325:36) 
+// (327:36) 
 function create_if_block_6(ctx) {
 	let video;
 	let current;
@@ -2164,9 +2124,9 @@ function create_if_block_6(ctx) {
 	video = new Video({
 			props: {
 				stuff: {
-					activeItem: /*activeItem*/ ctx[7],
-					calculateDimensions: /*calculateDimensions*/ ctx[17],
-					setResizeFunc: /*setResizeFunc*/ ctx[16]
+					activeItem: /*activeItem*/ ctx[6],
+					calculateDimensions: /*calculateDimensions*/ ctx[16],
+					setResizeFunc: /*setResizeFunc*/ ctx[15]
 				}
 			}
 		});
@@ -2182,10 +2142,10 @@ function create_if_block_6(ctx) {
 		p(ctx, dirty) {
 			const video_changes = {};
 
-			if (dirty[0] & /*activeItem*/ 128) video_changes.stuff = {
-				activeItem: /*activeItem*/ ctx[7],
-				calculateDimensions: /*calculateDimensions*/ ctx[17],
-				setResizeFunc: /*setResizeFunc*/ ctx[16]
+			if (dirty[0] & /*activeItem*/ 64) video_changes.stuff = {
+				activeItem: /*activeItem*/ ctx[6],
+				calculateDimensions: /*calculateDimensions*/ ctx[16],
+				setResizeFunc: /*setResizeFunc*/ ctx[15]
 			};
 
 			video.$set(video_changes);
@@ -2205,7 +2165,7 @@ function create_if_block_6(ctx) {
 	};
 }
 
-// (309:4) {#if activeItem.img}
+// (311:4) {#if activeItem.img}
 function create_if_block_5(ctx) {
 	let imageitem;
 	let current;
@@ -2213,20 +2173,20 @@ function create_if_block_5(ctx) {
 	imageitem = new Image({
 			props: {
 				stuff: {
-					activeItem: /*activeItem*/ ctx[7],
-					calculateDimensions: /*calculateDimensions*/ ctx[17],
-					loadImage: /*loadImage*/ ctx[19],
-					preloadNext: /*preloadNext*/ ctx[18],
+					activeItem: /*activeItem*/ ctx[6],
+					calculateDimensions: /*calculateDimensions*/ ctx[16],
+					loadImage: /*loadImage*/ ctx[18],
+					preloadNext: /*preloadNext*/ ctx[17],
 					opts: /*opts*/ ctx[5],
 					prev: /*prev*/ ctx[2],
 					next: /*next*/ ctx[3],
 					close: /*close*/ ctx[1],
-					toggleControls: /*toggleControls*/ ctx[22],
-					setResizeFunc: /*setResizeFunc*/ ctx[16]
+					toggleControls: /*toggleControls*/ ctx[21],
+					setResizeFunc: /*setResizeFunc*/ ctx[15]
 				},
-				containerWidth: /*containerWidth*/ ctx[9],
-				containerHeight: /*containerHeight*/ ctx[10],
-				smallScreen: /*smallScreen*/ ctx[12]
+				containerWidth: /*containerWidth*/ ctx[8],
+				containerHeight: /*containerHeight*/ ctx[9],
+				smallScreen: /*smallScreen*/ ctx[11]
 			}
 		});
 
@@ -2241,22 +2201,22 @@ function create_if_block_5(ctx) {
 		p(ctx, dirty) {
 			const imageitem_changes = {};
 
-			if (dirty[0] & /*activeItem, opts*/ 160) imageitem_changes.stuff = {
-				activeItem: /*activeItem*/ ctx[7],
-				calculateDimensions: /*calculateDimensions*/ ctx[17],
-				loadImage: /*loadImage*/ ctx[19],
-				preloadNext: /*preloadNext*/ ctx[18],
+			if (dirty[0] & /*activeItem, opts*/ 96) imageitem_changes.stuff = {
+				activeItem: /*activeItem*/ ctx[6],
+				calculateDimensions: /*calculateDimensions*/ ctx[16],
+				loadImage: /*loadImage*/ ctx[18],
+				preloadNext: /*preloadNext*/ ctx[17],
 				opts: /*opts*/ ctx[5],
 				prev: /*prev*/ ctx[2],
 				next: /*next*/ ctx[3],
 				close: /*close*/ ctx[1],
-				toggleControls: /*toggleControls*/ ctx[22],
-				setResizeFunc: /*setResizeFunc*/ ctx[16]
+				toggleControls: /*toggleControls*/ ctx[21],
+				setResizeFunc: /*setResizeFunc*/ ctx[15]
 			};
 
-			if (dirty[0] & /*containerWidth*/ 512) imageitem_changes.containerWidth = /*containerWidth*/ ctx[9];
-			if (dirty[0] & /*containerHeight*/ 1024) imageitem_changes.containerHeight = /*containerHeight*/ ctx[10];
-			if (dirty[0] & /*smallScreen*/ 4096) imageitem_changes.smallScreen = /*smallScreen*/ ctx[12];
+			if (dirty[0] & /*containerWidth*/ 256) imageitem_changes.containerWidth = /*containerWidth*/ ctx[8];
+			if (dirty[0] & /*containerHeight*/ 512) imageitem_changes.containerHeight = /*containerHeight*/ ctx[9];
+			if (dirty[0] & /*smallScreen*/ 2048) imageitem_changes.smallScreen = /*smallScreen*/ ctx[11];
 			imageitem.$set(imageitem_changes);
 		},
 		i(local) {
@@ -2274,10 +2234,10 @@ function create_if_block_5(ctx) {
 	};
 }
 
-// (337:48) {#if activeItem.caption}
+// (339:48) {#if activeItem.caption}
 function create_if_block_4(ctx) {
 	let div;
-	let raw_value = /*activeItem*/ ctx[7].caption + "";
+	let raw_value = /*activeItem*/ ctx[6].caption + "";
 	let div_transition;
 	let current;
 
@@ -2292,7 +2252,7 @@ function create_if_block_4(ctx) {
 			current = true;
 		},
 		p(ctx, dirty) {
-			if ((!current || dirty[0] & /*activeItem*/ 128) && raw_value !== (raw_value = /*activeItem*/ ctx[7].caption + "")) div.innerHTML = raw_value;		},
+			if ((!current || dirty[0] & /*activeItem*/ 64) && raw_value !== (raw_value = /*activeItem*/ ctx[6].caption + "")) div.innerHTML = raw_value;		},
 		i(local) {
 			if (current) return;
 
@@ -2330,15 +2290,15 @@ function create_key_block(ctx) {
 	const if_blocks = [];
 
 	function select_block_type(ctx, dirty) {
-		if (/*activeItem*/ ctx[7].img) return 0;
-		if (/*activeItem*/ ctx[7].sources) return 1;
-		if (/*activeItem*/ ctx[7].iframe) return 2;
+		if (/*activeItem*/ ctx[6].img) return 0;
+		if (/*activeItem*/ ctx[6].sources) return 1;
+		if (/*activeItem*/ ctx[6].iframe) return 2;
 		return 3;
 	}
 
 	current_block_type_index = select_block_type(ctx);
 	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-	let if_block1 = /*activeItem*/ ctx[7].caption && create_if_block_4(ctx);
+	let if_block1 = /*activeItem*/ ctx[6].caption && create_if_block_4(ctx);
 
 	return {
 		c() {
@@ -2347,7 +2307,7 @@ function create_key_block(ctx) {
 			if (if_block1) if_block1.c();
 			if_block1_anchor = empty();
 			attr(div, "class", "bp-inner");
-			toggle_class(div, "bp-html", /*activeItemIsHtml*/ ctx[8]);
+			toggle_class(div, "bp-html", /*activeItemIsHtml*/ ctx[7]);
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
@@ -2359,7 +2319,7 @@ function create_key_block(ctx) {
 			if (!mounted) {
 				dispose = [
 					listen(div, "pointerdown", /*pointerdown_handler*/ ctx[28]),
-					listen(div, "pointerup", self(/*pointerup_handler*/ ctx[29]))
+					listen(div, "pointerup", /*pointerup_handler*/ ctx[29])
 				];
 
 				mounted = true;
@@ -2392,15 +2352,15 @@ function create_key_block(ctx) {
 				if_block0.m(div, null);
 			}
 
-			if (dirty[0] & /*activeItemIsHtml*/ 256) {
-				toggle_class(div, "bp-html", /*activeItemIsHtml*/ ctx[8]);
+			if (dirty[0] & /*activeItemIsHtml*/ 128) {
+				toggle_class(div, "bp-html", /*activeItemIsHtml*/ ctx[7]);
 			}
 
-			if (/*activeItem*/ ctx[7].caption) {
+			if (/*activeItem*/ ctx[6].caption) {
 				if (if_block1) {
 					if_block1.p(ctx, dirty);
 
-					if (dirty[0] & /*activeItem*/ 128) {
+					if (dirty[0] & /*activeItem*/ 64) {
 						transition_in(if_block1, 1);
 					}
 				} else {
@@ -2425,7 +2385,7 @@ function create_key_block(ctx) {
 
 			add_render_callback(() => {
 				if (div_outro) div_outro.end(1);
-				div_intro = create_in_transition(div, /*animateIn*/ ctx[20], {});
+				div_intro = create_in_transition(div, /*animateIn*/ ctx[19], {});
 				div_intro.start();
 			});
 
@@ -2435,7 +2395,7 @@ function create_key_block(ctx) {
 		o(local) {
 			transition_out(if_block0);
 			if (div_intro) div_intro.invalidate();
-			div_outro = create_out_transition(div, /*animateOut*/ ctx[21], {});
+			div_outro = create_out_transition(div, /*animateOut*/ ctx[20], {});
 			transition_out(if_block1);
 			current = false;
 		},
@@ -2451,7 +2411,7 @@ function create_key_block(ctx) {
 	};
 }
 
-// (337:171) {#if !smallScreen || !hideControls}
+// (339:171) {#if !smallScreen || !hideControls}
 function create_if_block_1(ctx) {
 	let div;
 	let if_block0_anchor;
@@ -2526,7 +2486,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (337:288) {#if !opts.noClose}
+// (339:288) {#if !opts.noClose}
 function create_if_block_3(ctx) {
 	let button;
 	let mounted;
@@ -2556,7 +2516,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (342:12) {#if items.length > 1}
+// (344:12) {#if items.length > 1}
 function create_if_block_2(ctx) {
 	let div;
 	let t_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2666,8 +2626,8 @@ function create_fragment(ctx) {
 function instance($$self, $$props, $$invalidate) {
 	let $closing;
 	let $zoomed;
-	component_subscribe($$self, closing, $$value => $$invalidate(34, $closing = $$value));
-	component_subscribe($$self, zoomed, $$value => $$invalidate(15, $zoomed = $$value));
+	component_subscribe($$self, closing, $$value => $$invalidate(33, $closing = $$value));
+	component_subscribe($$self, zoomed, $$value => $$invalidate(14, $zoomed = $$value));
 	let { items = undefined } = $$props;
 	let { target = undefined } = $$props;
 
@@ -2716,7 +2676,7 @@ function instance($$self, $$props, $$invalidate) {
 		$$invalidate(5, opts = options);
 
 		// disable scroll if not inline gallery
-		$$invalidate(13, inline = opts.inline);
+		$$invalidate(12, inline = opts.inline);
 
 		inline || r();
 
@@ -2731,17 +2691,17 @@ function instance($$self, $$props, $$invalidate) {
 		// update trigger element to restore focus
 		focusTrigger = document.activeElement;
 
-		$$invalidate(9, containerWidth = target.offsetWidth);
+		$$invalidate(8, containerWidth = target.offsetWidth);
 
-		$$invalidate(10, containerHeight = target === document.body
+		$$invalidate(9, containerHeight = target === document.body
 		? window.innerHeight
 		: target.clientHeight);
 
-		$$invalidate(12, smallScreen = containerWidth < 769);
+		$$invalidate(11, smallScreen = containerWidth < 769);
 		$$invalidate(4, position = opts.position || 0);
 
 		// reset controls
-		$$invalidate(11, hideControls = false);
+		$$invalidate(10, hideControls = false);
 
 		// make array w/ dataset to work with
 		$$invalidate(0, items = Array.isArray(openItems)
@@ -2860,7 +2820,7 @@ function instance($$self, $$props, $$invalidate) {
 	// animate media in when bp is first opened
 	const animateIn = node => {
 		if (!isOpen) {
-			$$invalidate(27, isOpen = 1);
+			$$invalidate(26, isOpen = 1);
 			opts.onOpen && opts.onOpen(container, activeItem);
 
 			return opts.intro
@@ -2912,9 +2872,10 @@ function instance($$self, $$props, $$invalidate) {
 	};
 
 	// toggle controls for small screen
-	const toggleControls = () => $$invalidate(11, hideControls = !hideControls);
+	const toggleControls = () => $$invalidate(10, hideControls = !hideControls);
 
 	const containerActions = node => {
+		$$invalidate(27, container = node);
 		let removeKeydownListener;
 		let roActive;
 
@@ -2927,9 +2888,9 @@ function instance($$self, $$props, $$invalidate) {
 		const ro = new ResizeObserver(entries => {
 				// use roActive to avoid running on initial open
 				if (roActive) {
-					$$invalidate(9, containerWidth = entries[0].contentRect.width);
-					$$invalidate(10, containerHeight = entries[0].contentRect.height);
-					$$invalidate(12, smallScreen = containerWidth < 769);
+					$$invalidate(8, containerWidth = entries[0].contentRect.width);
+					$$invalidate(9, containerHeight = entries[0].contentRect.height);
+					$$invalidate(11, smallScreen = containerWidth < 769);
 
 					// run child component resize function
 					resizeFunc && resizeFunc();
@@ -2947,40 +2908,35 @@ function instance($$self, $$props, $$invalidate) {
 			destroy() {
 				ro.disconnect();
 				removeKeydownListener && removeKeydownListener();
-				set_store_value(closing, $closing = $$invalidate(27, isOpen = false), $closing);
+				set_store_value(closing, $closing = $$invalidate(26, isOpen = false), $closing);
 				s();
 				opts.onClosed && opts.onClosed();
 			}
 		};
 	};
 
-	const pointerdown_handler = ({ target }) => $$invalidate(14, clickedEl = target);
+	const pointerdown_handler = e => $$invalidate(13, clickedEl = e.target);
 
-	const pointerup_handler = e => {
-		// only close on left click and not dragged
-		e.button !== 2 && e.target === clickedEl && close();
+	const pointerup_handler = function (e) {
+		// only close if left click on self and not dragged
+		if (e.button !== 2 && e.target === this && clickedEl === this) {
+			close();
+		}
 	};
-
-	function div1_binding($$value) {
-		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-			container = $$value;
-			$$invalidate(6, container);
-		});
-	}
 
 	$$self.$$set = $$props => {
 		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-		if ('target' in $$props) $$invalidate(24, target = $$props.target);
+		if ('target' in $$props) $$invalidate(23, target = $$props.target);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty[0] & /*items, position, isOpen, activeItem, activeItemIsHtml, opts, container*/ 134218225) {
+		if ($$self.$$.dirty[0] & /*items, position, isOpen, activeItem, activeItemIsHtml, opts, container*/ 201326833) {
 			if (items) {
 				// update active item when position changes
-				$$invalidate(7, activeItem = items[position]);
+				$$invalidate(6, activeItem = items[position]);
 
 				if (isOpen) {
-					$$invalidate(8, activeItemIsHtml = activeItem.hasOwnProperty('html'));
+					$$invalidate(7, activeItemIsHtml = activeItem.hasOwnProperty('html'));
 
 					// clear child resize function if html
 					activeItemIsHtml && setResizeFunc(null);
@@ -2999,7 +2955,6 @@ function instance($$self, $$props, $$invalidate) {
 		next,
 		position,
 		opts,
-		container,
 		activeItem,
 		activeItemIsHtml,
 		containerWidth,
@@ -3021,9 +2976,9 @@ function instance($$self, $$props, $$invalidate) {
 		open,
 		setPosition,
 		isOpen,
+		container,
 		pointerdown_handler,
-		pointerup_handler,
-		div1_binding
+		pointerup_handler
 	];
 }
 
@@ -3039,12 +2994,12 @@ class Bigger_picture extends SvelteComponent {
 			not_equal,
 			{
 				items: 0,
-				target: 24,
-				open: 25,
+				target: 23,
+				open: 24,
 				close: 1,
 				prev: 2,
 				next: 3,
-				setPosition: 26
+				setPosition: 25
 			},
 			null,
 			[-1, -1]
@@ -3058,13 +3013,13 @@ class Bigger_picture extends SvelteComponent {
 
 
 	get target() {
-		return this.$$.ctx[24];
+		return this.$$.ctx[23];
 	}
 
 
 
 	get open() {
-		return this.$$.ctx[25];
+		return this.$$.ctx[24];
 	}
 
 	get close() {
@@ -3080,7 +3035,7 @@ class Bigger_picture extends SvelteComponent {
 	}
 
 	get setPosition() {
-		return this.$$.ctx[26];
+		return this.$$.ctx[25];
 	}
 }
 
