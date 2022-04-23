@@ -202,7 +202,7 @@ for (let i = 0; i < htmlLinks.length; i++) {
 // firewatch load images on mouseenter
 firewatch.addEventListener(
 	'mouseenter',
-	(e) => {
+	() => {
 		Array.from(Array(9)).forEach((v, i) =>
 			loadImage(
 				`https://www.firewatchgame.com/images/parallax/parallax${i}.png`
