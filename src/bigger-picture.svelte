@@ -262,6 +262,7 @@
 	const toggleControls = () => (hideControls = !hideControls)
 
 	const containerActions = (node) => {
+		container = node
 		let removeKeydownListener
 		let roActive
 		// don't use keyboard events for inline galleries
@@ -298,7 +299,6 @@
 {#if items}
 	<div
 		use:containerActions
-		bind:this={container}
 		class="bp-wrap"
 		class:zoomed={$zoomed}
 		class:bp-inline={inline}
@@ -310,10 +310,12 @@
 				class:bp-html={activeItemIsHtml}
 				in:animateIn
 				out:animateOut
-				on:pointerdown={({ target }) => (clickedEl = target)}
-				on:pointerup|self={(e) => {
-					// only close on left click and not dragged
-					e.button !== 2 && e.target === clickedEl && close()
+				on:pointerdown={(e) => (clickedEl = e.target)}
+				on:pointerup={function (e) {
+					// only close if left click on self and not dragged
+					if (e.button !== 2 && e.target === this && clickedEl === this) {
+						close()
+					}
 				}}
 			>
 				{#if activeItem.img}
