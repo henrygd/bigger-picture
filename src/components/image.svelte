@@ -274,7 +274,7 @@
 		}
 
 		// scale image
-		changeZoom(e, (prevDiff - curDiff) * -0.015)
+		changeZoom(e, (prevDiff - curDiff) * -0.02)
 
 		// Cache the distance for the next move event
 		prevDiff = curDiff
@@ -360,12 +360,9 @@
 		// handle window resize
 		setResizeFunc(() => {
 			calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
-			// adjust image only if not smaller container
-			// some mobile browsers trigger resize constantly if dragging / pinching
-			if (!smallScreen) {
-				imageDimensions.set(calculatedDimensions)
-				zoomDragTranslate.set([0, 0])
-			}
+			// adjust image size / zoom on resize
+			imageDimensions.set(calculatedDimensions)
+			zoomDragTranslate.set([0, 0])
 		})
 		// decode initial image before rendering
 		loadImage(activeItem).then(() => {
