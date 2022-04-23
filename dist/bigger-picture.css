@@ -26,6 +26,16 @@
 .bp-item {
   position: absolute;
 }
+.bp-item video {
+  contain: layout;
+}
+.bp-item audio {
+  position: absolute;
+  left: 14px;
+  width: calc(100% - 28px);
+  bottom: 14px;
+  height: 50px;
+}
 
 .bp-inner {
   top: 0;
@@ -167,6 +177,11 @@
   right: 10px;
 }
 
+.bp-if,
+.bp-vid {
+  background: #000;
+  background-size: 100% 100%;
+}
 .bp-if iframe,
 .bp-if video,
 .bp-if div,
@@ -179,11 +194,6 @@
   height: 100%;
   position: absolute;
   border: 0;
-}
-
-.bp-if,
-.bp-vid {
-  background: #000;
 }
 
 .bp-load {
@@ -215,8 +225,8 @@
 .bp-o,
 .bp-o:after {
   border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
 }
 
 .bp-o {

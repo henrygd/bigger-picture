@@ -1842,8 +1842,6 @@
 
     function create_fragment$1(ctx) {
     	let div;
-    	let video_1;
-    	let raw_value = /*video*/ ctx[2] + /*tracks*/ ctx[3] + "";
     	let loading;
     	let current;
     	let mounted;
@@ -1851,7 +1849,7 @@
 
     	loading = new Loading({
     			props: {
-    				thumb: /*thumb*/ ctx[4],
+    				thumb: /*thumb*/ ctx[2],
     				loaded: /*loaded*/ ctx[0]
     			}
     		});
@@ -1859,30 +1857,24 @@
     	return {
     		c() {
     			div = element("div");
-    			video_1 = element("video");
     			create_component(loading.$$.fragment);
-    			video_1.playsInline = true;
-    			video_1.controls = true;
-    			video_1.autoplay = true;
-    			attr(video_1, "tabindex", "0");
     			attr(div, "class", "bp-item bp-vid");
     			set_style(div, "width", /*dimensions*/ ctx[1][0] + "px");
     			set_style(div, "height", /*dimensions*/ ctx[1][1] + "px");
+    			set_style(div, "background-image", "url(" + /*thumb*/ ctx[2] + ")");
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
-    			append(div, video_1);
-    			video_1.innerHTML = raw_value;
     			mount_component(loading, div, null);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen(video_1, "canplay", /*canplay_handler*/ ctx[6]);
+    				dispose = action_destroyer(/*onMount*/ ctx[3].call(null, div));
     				mounted = true;
     			}
     		},
     		p(ctx, [dirty]) {
-    			if ((!current || dirty & /*video, tracks*/ 12) && raw_value !== (raw_value = /*video*/ ctx[2] + /*tracks*/ ctx[3] + "")) video_1.innerHTML = raw_value;			const loading_changes = {};
+    			const loading_changes = {};
     			if (dirty & /*loaded*/ 1) loading_changes.loaded = /*loaded*/ ctx[0];
     			loading.$set(loading_changes);
 
@@ -1916,36 +1908,60 @@
     	let { stuff } = $$props;
     	let loaded, dimensions;
     	let { activeItem, calculateDimensions, setResizeFunc } = stuff;
-    	let { video, thumb, tracks = [], width, height } = activeItem;
-
-    	// convert videos to array if passed via attribute
-    	video = Array.isArray(video) ? video : video.split(', ');
-
-    	// convert tracks to array if passed via attribute
-    	tracks = Array.isArray(tracks) ? tracks : JSON.parse(tracks);
-
-    	// make html string for video sources
-    	video = video.map(src => `<source src="${src}" type="video/${src.match(/.(\w+)$/)[1]}">`);
-
-    	// make html string for tracks
-    	tracks = tracks.map(track => `<track${Object.keys(track).reduce((str, key) => str + ` ${key}="${track[key]}"`, '')}>`);
-
+    	let { sources, thumb, tracks = [], width, height } = activeItem;
     	const setDimensions = () => $$invalidate(1, dimensions = calculateDimensions(width, height));
     	setDimensions();
     	setResizeFunc(setDimensions);
-    	const canplay_handler = () => $$invalidate(0, loaded = true);
+    	const audio = JSON.stringify(sources).includes('audio');
 
-    	$$self.$$set = $$props => {
-    		if ('stuff' in $$props) $$invalidate(5, stuff = $$props.stuff);
+    	// adds attributes to a node
+    	const addAttributes = (node, obj) => {
+    		Object.keys(obj).forEach(key => attr(node, key, obj[key]));
     	};
 
-    	return [loaded, dimensions, video, tracks, thumb, stuff, canplay_handler];
+    	const onMount = node => {
+    		// create audo / video element
+    		const mediaElement = element(audio ? 'audio' : 'video');
+
+    		// add attributes to created elements
+    		addAttributes(mediaElement, {
+    			controls: true,
+    			autoplay: true,
+    			playsinline: true,
+    			tabindex: '0'
+    		});
+
+    		// takes supplied object and creates elements in video
+    		const appendToVideo = (tag, arr) => {
+    			if (!Array.isArray(arr)) {
+    				arr = JSON.parse(arr);
+    			}
+
+    			// add attributes
+    			arr.forEach(obj => {
+    				const el = element(tag);
+    				addAttributes(el, obj);
+    				append(mediaElement, el);
+    			});
+    		};
+
+    		appendToVideo('track', tracks);
+    		appendToVideo('source', sources);
+    		listen(mediaElement, 'canplay', () => $$invalidate(0, loaded = true));
+    		node.prepend(mediaElement);
+    	};
+
+    	$$self.$$set = $$props => {
+    		if ('stuff' in $$props) $$invalidate(4, stuff = $$props.stuff);
+    	};
+
+    	return [loaded, dimensions, thumb, onMount, stuff];
     }
 
     class Video extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$1, create_fragment$1, not_equal, { stuff: 5 });
+    		init(this, options, instance$1, create_fragment$1, not_equal, { stuff: 4 });
     	}
     }
 
@@ -2145,7 +2161,7 @@
     	};
     }
 
-    // (325:34) 
+    // (325:36) 
     function create_if_block_6(ctx) {
     	let video;
     	let current;
@@ -2304,7 +2320,7 @@
     	};
     }
 
-    // (300:63) {#key activeItem.i}
+    // (299:63) {#key activeItem.i}
     function create_key_block(ctx) {
     	let div;
     	let current_block_type_index;
@@ -2320,7 +2336,7 @@
 
     	function select_block_type(ctx, dirty) {
     		if (/*activeItem*/ ctx[7].img) return 0;
-    		if (/*activeItem*/ ctx[7].video) return 1;
+    		if (/*activeItem*/ ctx[7].sources) return 1;
     		if (/*activeItem*/ ctx[7].iframe) return 2;
     		return 3;
     	}
@@ -2720,7 +2736,6 @@
     		// update trigger element to restore focus
     		focusTrigger = document.activeElement;
 
-    		// containerWidth = target.clientWidth
     		$$invalidate(9, containerWidth = target.offsetWidth);
 
     		$$invalidate(10, containerHeight = target === document.body
@@ -2851,7 +2866,7 @@
     	const animateIn = node => {
     		if (!isOpen) {
     			$$invalidate(27, isOpen = 1);
-    			opts.onOpen && opts.onOpen(container);
+    			opts.onOpen && opts.onOpen(container, activeItem);
 
     			return opts.intro
     			? fly(node, { y: 10, easing: cubicOut })
@@ -2946,8 +2961,9 @@
 
     	const pointerdown_handler = ({ target }) => $$invalidate(14, clickedEl = target);
 
-    	const pointerup_handler = ({ target }) => {
-    		target === clickedEl && close();
+    	const pointerup_handler = e => {
+    		// only close on left click and not dragged
+    		e.button !== 2 && e.target === clickedEl && close();
     	};
 
     	function div1_binding($$value) {
