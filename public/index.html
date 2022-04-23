@@ -5,19 +5,19 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="shortcut icon" href="assets/favicon.png" />
-		<title>Bigger Picture - Modern JavaScript lightbox gallery</title>
+		<title>Bigger Picture - JavaScript lightbox gallery</title>
 		<link rel="stylesheet" href="demo.css" />
 		<meta name="description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
-		<meta itemprop="name" content="Bigger Picture - Modern JavaScript lightbox gallery">
+		<meta itemprop="name" content="Bigger Picture - JavaScript lightbox gallery">
 		<meta itemprop="description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
 		<meta itemprop="image" content="https://assets.henrygd.me/bp/images/bp-social.png">
 		<meta property="og:url" content="https://biggerpicture.henrygd.me">
 		<meta property="og:type" content="website">
-		<meta property="og:title" content="Bigger Picture - Modern JavaScript lightbox gallery">
+		<meta property="og:title" content="Bigger Picture - JavaScript lightbox gallery">
 		<meta property="og:description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
 		<meta property="og:image" content="https://assets.henrygd.me/bp/images/bp-social.png">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:title" content="Bigger Picture - Modern JavaScript lightbox gallery">
+		<meta name="twitter:title" content="Bigger Picture - JavaScript lightbox gallery">
 		<meta name="twitter:description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
 		<meta name="twitter:image" content="https://assets.henrygd.me/bp/images/bp-social.png">
 	</head>
@@ -87,8 +87,8 @@
 						<div class="inner-wrap">
 							<h2>Full Page Galleries</h2>
 							<p>
-								While this gallery is all images, any media type can be
-								included.
+								This gallery is only images, but media types can be mixed and
+								matched.
 								<a href="#" data-html="code_image_gallery">View code example</a>
 							</p>
 							<ul id="images" class="masonry section-example">
@@ -255,7 +255,7 @@
 				<section>
 					<div class="main">
 						<div class="inner-wrap">
-							<h2>Videos / iframes</h2>
+							<h2>Video / iframes / audio</h2>
 							<p>
 								Any iframe will work. Video captions are supported.
 								<a href="#" data-html="code_vid_gallery">View code example</a>
@@ -267,7 +267,7 @@
 										href="https://assets.henrygd.me/bp/videos/agent-327.webm"
 										data-height="804"
 										data-thumb="https://assets.henrygd.me/bp/images/agent-327.jpg"
-										data-video="https://assets.henrygd.me/bp/videos/agent-327.webm, https://assets.henrygd.me/bp/videos/agent-327.mp4, https://assets.henrygd.me/bp/videos/agent-327-x264.mp4"
+										data-sources='[{"src": "https://assets.henrygd.me/bp/videos/agent-327.webm", "type": "video/webm"}, {"src": "https://assets.henrygd.me/bp/videos/agent-327-x265.mp4", "type": "video/mp4"}]'
 										data-tracks='[{"label": "English", "kind": "subtitles", "srclang": "en", "src": "assets/agent-327-en.vtt", "default": "true"}, {"label": "العربية", "kind": "subtitles", "srclang": "ar", "src": "assets/agent-327-ar.vtt", "default": "true"}, {"label": "Español", "kind": "subtitles", "srclang": "es", "src": "assets/agent-327-es.vtt"}, {"label": "日本語", "kind": "subtitles", "srclang": "ja", "src": "assets/agent-327-ja.vtt"}, {"label": "Монгол", "kind": "subtitles", "srclang": "mn", "src": "assets/agent-327-mn.vtt"}, {"label": "Português", "kind": "subtitles", "srclang": "pt", "src": "assets/agent-327-pt.vtt"}, {"label": "Türkçe", "kind": "subtitles", "srclang": "tr", "src": "assets/agent-327-tr.vtt"}]'
 										target="_blank"
 										title="HTML video"
@@ -281,17 +281,19 @@
 								</li>
 								<li>
 									<a
-										class="yt"
-										href="https://www.youtube.com/watch?v=286jXjwdst0"
-										data-iframe="https://www.youtube.com/embed/286jXjwdst0?autoplay=1&playsinline=1"
-										data-height="1012"
-										data-thumb="https://assets.henrygd.me/bp/images/uebok.jpg"
+										class="html"
+										href="https://assets.henrygd.me/bp/audio/1998-12-17.mp3"
+										data-height="800"
+										data-width="800"
+										data-thumb="https://assets.henrygd.me/bp/images/lysflath.webp"
+										data-sources='[{"src": "https://assets.henrygd.me/bp/audio/1998-12-17.mp3", "type": "audio/mpeg"}]'
 										target="_blank"
-										title="Youtube embed"
-										><span style="padding-bottom: 52.708%"></span>
+										title="HTML audio - GYBE live Monheim 12/17/1998"
+										><span style="padding-bottom: 100%"></span>
 										<img
-											src="https://assets.henrygd.me/bp/images/uebok.jpg"
-											alt="Uebok youtube embed"
+											src="https://assets.henrygd.me/bp/images/lysflath.webp"
+											alt="HTML audio - GYBE live Monheim 12/17/1998"
+											loading="lazy"
 										/>
 									</a>
 								</li>
@@ -316,34 +318,17 @@
 								</li>
 								<li>
 									<a
-										class="vimeo"
-										href="https://vimeo.com/584907375"
-										data-height="1161"
-										data-thumb="https://i.vimeocdn.com/video/1210493119-933d6556d06380642c7d32968c64f6c7e92b04937f25d2672352a56553a00b5c-d_1280"
-										data-iframe="https://player.vimeo.com/video/584907375?h=c72acb0612&autoplay=1&title=0&byline=0&portrait=0"
+										class="yt"
+										href="https://www.youtube.com/watch?v=286jXjwdst0"
+										data-iframe="https://www.youtube.com/embed/286jXjwdst0?autoplay=1&playsinline=1"
+										data-height="1012"
+										data-thumb="https://assets.henrygd.me/bp/images/uebok.jpg"
 										target="_blank"
-										title="Vimeo embed"
-										><span style="padding-bottom: 60.46875%"></span>
+										title="Youtube embed"
+										><span style="padding-bottom: 52.708%"></span>
 										<img
-											src="https://i.vimeocdn.com/video/1210493119-933d6556d06380642c7d32968c64f6c7e92b04937f25d2672352a56553a00b5c-d_1280"
-											alt="Post Office vimeo embed"
-											loading="lazy"
-										/>
-									</a>
-								</li>
-								<li>
-									<a
-										href="#"
-										data-iframe="/"
-										data-thumb="https://assets.henrygd.me/bp/images/bp.png"
-										target="_blank"
-										title="This website"
-									>
-										<span style="padding-bottom: 56.25%"></span>
-										<img
-											src="https://assets.henrygd.me/bp/images/bp.png"
-											alt="biggerpicture.henrygd.me iframe"
-											loading="lazy"
+											src="https://assets.henrygd.me/bp/images/uebok.jpg"
+											alt="Uebok youtube embed"
 										/>
 									</a>
 								</li>
@@ -711,11 +696,11 @@
 			<div>
 				<h3>Image Gallery Example Code</h3>
 				<p>
-					There are two methods of supplying data to BiggerPicture -- JavaScript
-					objects and <code>data-*</code> attributes. The example below uses the
-					latter method, passing the necessary information through attributes on
-					link elements. Event listeners are set up to open BiggerPicture when a
-					link is clicked.
+					There are two methods of supplying data -- JavaScript objects and
+					<code>data-*</code> attributes. The example below uses the latter
+					method, passing the necessary information through attributes on link
+					elements. Event listeners are set up to open BiggerPicture when a link
+					is clicked.
 				</p>
 				<a
 					href="https://codesandbox.io/s/bigger-picture-basic-gallery-o4kb82"
@@ -730,18 +715,18 @@
 				<pre
 					class="language-html"
 					tabindex="0"
-				><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+				><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images"</span><span class="token punctuation">&gt;</span></span>
 	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span>
-		<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash.jpg<span class="token punctuation">"</span></span>
-		<span class="token attr-name">data-img</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash.jpg<span class="token punctuation">"</span></span>
-		<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash_thumb.jpg<span class="token punctuation">"</span></span>
-		<span class="token attr-name">data-alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Example<span class="token punctuation">"</span></span>
-		<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>2000<span class="token punctuation">"</span></span>
-		<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>3000<span class="token punctuation">"</span></span>
+		<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"example.jpg"</span>
+		<span class="token attr-name">data-img</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"example.jpg"</span>
+		<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"example-thumb.jpg"</span>
+		<span class="token attr-name">data-alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"image description"</span>
+		<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"2000"</span>
+		<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"3000"</span>
 	<span class="token punctuation">&gt;</span></span>
 		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span>
-			<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>img/asa-rodger-B8xmtKWLrVo-unsplash_thumb.jpg<span class="token punctuation">"</span></span>
-			<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Example<span class="token punctuation">"</span></span>
+			<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"example-thumb.jpg"</span>
+			<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"image description"</span>
 		<span class="token punctuation">/&gt;</span></span>
 	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></code>
@@ -781,16 +766,31 @@
 					Like the the image gallery example, the code below uses data
 					attributes on link elements to pass data to BiggerPicture when a link
 					is clicked. Instead of a gallery, we just open them on their own by
-					passing the individual node instead of an array of multiple items.
+					passing the individual node.
+				</p>
+				<p>
+					For native video and audio, you must provide <code>sources</code> --
+					an array of objects indicating a
+					<a
+						href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-src"
+						><code>src</code></a
+					>
+					and
+					<a
+						href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-type"
+						><code>type</code></a
+					>
+					(mime). A string may be used if it is JSON parsable. Each object will
+					create a &ltsource&gt element, and all key-value pairs in the object
+					will be added as attributes.
 				</p>
 				<p>
 					Videos have a <code>tracks</code> option allowing you to add captions,
 					which you can see in use below.
 				</p>
 				<p>
-					Note: The width option defaults to 1920, so the
-					<code>data-width</code> attributes aren't necessary in this case, but
-					are left in for clarity.
+					Note: Width / height defaults to 1920 / 1080, so those attributes
+					aren't necessary, but are left in for clarity.
 				</p>
 				<a
 					href="https://codesandbox.io/s/bigger-picture-video-and-embed-8vmr1y"
@@ -807,36 +807,34 @@
 					tabindex="0"
 				><code><span class="token comment">&lt;!-- video --&gt;</span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span>
-	<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>videos/agent-327.webm<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>1920<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>804<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/agent-327.jpg<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-video</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>videos/agent-327.webm, videos/agent-327.mp4<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-tracks</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">'</span>[{<span class="token punctuation">"</span>label<span class="token punctuation">"</span>: <span class="token punctuation">"</span>English<span class="token punctuation">"</span>, <span class="token punctuation">"</span>kind<span class="token punctuation">"</span>: <span class="token punctuation">"</span>subtitles<span class="token punctuation">"</span>, <span class="token punctuation">"</span>srclang<span class="token punctuation">"</span>: <span class="token punctuation">"</span>en<span class="token punctuation">"</span>, <span class="token punctuation">"</span>src<span class="token punctuation">"</span>: <span class="token punctuation">"</span>assets/en.vtt<span class="token punctuation">"</span>, <span class="token punctuation">"</span>default<span class="token punctuation">"</span>: <span class="token punctuation">"</span>true<span class="token punctuation">"</span>}, {<span class="token punctuation">"</span>label<span class="token punctuation">"</span>: <span class="token punctuation">"</span>Español<span class="token punctuation">"</span>, <span class="token punctuation">"</span>kind<span class="token punctuation">"</span>: <span class="token punctuation">"</span>subtitles<span class="token punctuation">"</span>, <span class="token punctuation">"</span>srclang<span class="token punctuation">"</span>: <span class="token punctuation">"</span>es<span class="token punctuation">"</span>, <span class="token punctuation">"</span>src<span class="token punctuation">"</span>: <span class="token punctuation">"</span>assets/es.vtt<span class="token punctuation">"</span>}]<span class="token punctuation">'</span></span>
+	<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"example.mp4"</span>
+	<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"1920"</span>
+	<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"1080"</span>
+	<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"thumb.jpg"</span>
+	<span class="token attr-name">data-sources</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>'[{"src": "example.webm", "type": "video/webm"}, {"src": "example.mp4", "type": "video/mp4"}]'</span>
+	<span class="token attr-name">data-tracks</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>'[{"label": "English", "kind": "subtitles", "srclang": "en", "src": "en.vtt", "default": "true"}, {"label": "Español", "kind": "subtitles", "srclang": "es", "src": "es.vtt"}]'</span>
 <span class="token punctuation">&gt;</span></span>
 	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span>
-		<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/agent-327.jpg<span class="token punctuation">"</span></span>
-		<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Agent 327: Operation Barbershop HTML5 video<span class="token punctuation">"</span></span>
+		<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"thumb.jpg"</span>
+		<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"video description"</span>
 	<span class="token punctuation">/&gt;</span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
 <span class="token comment">&lt;!-- iframe embed --&gt;</span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span>
-	<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://www.youtube.com/watch?v=286jXjwdst0<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-iframe</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://www.youtube.com/embed/286jXjwdst0?autoplay=1&amp;playsinline=1<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>1920<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>1012<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/uebok.jpg<span class="token punctuation">"</span></span>
+	<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"https://www.youtube.com/watch?v=286jXjwdst0"</span>
+	<span class="token attr-name">data-iframe</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"https://www.youtube.com/embed/286jXjwdst0?autoplay=1&amp;playsinline=1"</span>
+	<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"1920"</span>
+	<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"1012"</span>
+	<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/uebok.jpg"</span>
 <span class="token punctuation">&gt;</span></span>
 	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span>
-		<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/uebok.jpg<span class="token punctuation">"</span></span>
-		<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Uebok youtube embed<span class="token punctuation">"</span></span>
+		<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/uebok.jpg"</span>
+		<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"Uebok youtube embed"</span>
 	<span class="token punctuation">/&gt;</span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span></code>
 </pre>
-				<pre
-					class="language-javascript"
-					tabindex="0"
-				><code class="language-javascript"><span class="token comment">// initialize BiggerPicture</span>
+				<pre class="language-javascript">
+<code class="language-javascript"><span class="token comment">// initialize BiggerPicture</span>
 <span class="token keyword">let</span> bp <span class="token operator">=</span> <span class="token function">BiggerPicture</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
   <span class="token literal-property property">target</span><span class="token operator">:</span> document<span class="token punctuation">.</span>body
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -846,14 +844,14 @@
 
 <span class="token comment">// add click listener on links to open BiggerPicture</span>
 <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> links<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  links<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token function">openBiggerPicture</span><span class="token punctuation">(</span>e<span class="token punctuation">,</span> links<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  links<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> openBiggerPicture<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token comment">// function to open BiggerPicture</span>
-<span class="token keyword">function</span> <span class="token function">openBiggerPicture</span><span class="token punctuation">(</span><span class="token parameter">e<span class="token punctuation">,</span> link</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token keyword">function</span> <span class="token function">openBiggerPicture</span><span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   e<span class="token punctuation">.</span><span class="token function">preventDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   bp<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
-    <span class="token literal-property property">items</span><span class="token operator">:</span> link<span class="token punctuation">,</span>
+    <span class="token literal-property property">items</span><span class="token operator">:</span> e<span class="token punctuation">.</span>currentTarget<span class="token punctuation">,</span>
     <span class="token literal-property property">el</span><span class="token operator">:</span> e<span class="token punctuation">.</span>currentTarget
   <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code>
@@ -886,7 +884,7 @@
 				<pre
 					class="language-html"
 					tabindex="0"
-				><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>inline<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>inline-gallery<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></code>
+				><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"inline"</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"inline-gallery"</span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></code>
 </pre>
 				<pre
 					class="language-javascript"
@@ -952,16 +950,16 @@ bp<span class="token punctuation">.</span><span class="token function">open</spa
 					class="language-html"
 					tabindex="0"
 				><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span>
-	<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/exandria-2500.webp<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-img</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/exandria-1300.webp 1300w, images/exandria-2500.webp 2500w, images/exandria-6000.webp 6000w<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/exandria-1300.webp<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>3376<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>6000<span class="token punctuation">"</span></span>
-	<span class="token attr-name">data-alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>map of critical role<span class="token punctuation">'</span>s exandria<span class="token punctuation">"</span></span>
+	<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/exandria-2500.webp"</span>
+	<span class="token attr-name">data-img</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/exandria-1300.webp 1300w, images/exandria-2500.webp 2500w, images/exandria-6000.webp 6000w"</span>
+	<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/exandria-1300.webp"</span>
+	<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"3376"</span>
+	<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"6000"</span>
+	<span class="token attr-name">data-alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"map of critical role's exandria"</span>
 	<span class="token punctuation">&gt;</span></span>
 	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span>
-		<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>images/exandria-1300.webp<span class="token punctuation">"</span></span>
-		<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>map of critical role<span class="token punctuation">'</span>s exandria<span class="token punctuation">"</span></span>
+		<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/exandria-1300.webp"</span>
+		<span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"map of critical role's exandria"</span>
 	<span class="token punctuation">/&gt;</span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span></code>
 </pre>

@@ -2,6 +2,7 @@ import BiggerPicture from '../bigger-picture'
 import Firewatch from './components/firewatch.svelte'
 import Dialog from './components/dialog.svelte'
 import BiggerPictureThumbnails from './bp-thumbnails.svelte'
+import { listen, self } from 'svelte/internal'
 // import Macy from 'macy'
 import FlexMasonry from 'flexmasonry/src/flexmasonry.js'
 
@@ -37,10 +38,7 @@ function handleNodes(nodes) {
 }
 function handleVids(nodes) {
 	for (let i = 0; i < nodes.length; i++) {
-		nodes[i].addEventListener(
-			'click',
-			openBiggerPictureVids.bind(null, nodes[i])
-		)
+		nodes[i].addEventListener('click', openBiggerPictureVids)
 	}
 }
 
@@ -75,14 +73,32 @@ function openBiggerPicture(items, e) {
 		// onClosed: hideShowScroll.show,
 	})
 }
-function openBiggerPictureVids(items, e) {
+function openBiggerPictureVids(e) {
 	e.preventDefault()
 	initBodyBp()
 	let { currentTarget } = e
 	bodyBp.open({
 		el: currentTarget,
-		items,
-		onOpen: () => currentTarget.classList.add('hide-icon'),
+		items: currentTarget,
+		onOpen(container, activeItem) {
+			let { sources, thumb } = activeItem
+			currentTarget.classList.add('hide-icon')
+			if (thumb && thumb.includes('327')) {
+				// turn volume to 50% on agent 327 vid
+				container.querySelector('video').volume = 0.5
+			} else if (sources && sources.includes('audio')) {
+				container.classList.add('bp-audio')
+				// play / pause on audio image click
+				const audio = container.querySelector('audio')
+				listen(
+					audio.parentNode,
+					'click',
+					self(() => {
+						audio[audio.paused ? 'play' : 'pause']()
+					})
+				)
+			}
+		},
 		onClosed: () => currentTarget.classList.remove('hide-icon'),
 	})
 }
