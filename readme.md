@@ -154,11 +154,17 @@ Restricts an image's maximum zoom level to `maxZoom` times the starting size, ev
 
 > Note: If `maxZoom` is set on an individual item it will override the value set in options.
 
+### onResize
+
+Type: `function`
+
+Executes when the dimensions of the container element (not the window) are changed. Supplies `container` and `activeItem`.
+
 ### onOpen
 
 Type: `function`
 
-Executes just before intro animation. Supplies `container` -- the wrapper element that is added to page.
+Executes just before intro animation. Supplies `container` - the wrapper element that is added to page, and `activeItem` - an object containing the currently displayed item's data.
 
 ```js
 bp.open({
@@ -193,12 +199,6 @@ Type: `function`
 
 Executes just after the lightbox has been closed and removed from the page.
 
-### onResize
-
-Type: `function`
-
-Executes when the dimensions of the container element (not the window) are changed. Supplies `container` and `activeItem`.
-
 ## Item Properties
 
 ### width
@@ -229,13 +229,16 @@ URL or path to full image. Can be a `srcset` value.
 
 When using `srcset`, the `sizes` value will update automatically when an image is zoomed. You may override this behavior by setting the [`sizes`](#sizes) value.
 
-### video
+### sources
 
-Type: `string` or `Array`
+Type: `Array` or `string`
 
-URL or path to video(s). If using multiple sources, separate with a comma: `video.mp4, video.webm`.
+For native video and audio, an array of objects specifying a [`src`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-src) and [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-type) (mime). A string may be used if it is JSON parsable. Each object will create a `source` element, and all key / value pairs in the object will be added as attributes.
 
-If supplying data via Array, each video should be a separate string.
+<!-- prettier-ignore -->
+```html
+<div data-sources='[{"src": "example.webm", "type": "video/webm"}, {"src": "example.mp4", "type": "video/mp4"}]'>
+```
 
 ### html
 

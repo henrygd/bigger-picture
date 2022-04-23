@@ -1,12 +1,12 @@
 <script>
 	/*
-	This file uses @html instead of each blocks simply because this 
-	was the only place each blocks were being used and it inflated 
-	the vanilla bundle size. If each blocks are eventually used 
-	elsewhere, this file can be converted back to using each blocks.
+	This could be cleaner with svelte:element to switch video / audio
+	and each blocks for sources / tracks, but doing it that way creates
+	a larger vanilla bundle size, so we make them ourselves.
 	*/
 
 	import Loading from './loading.svelte'
+	import { attr, element, append, listen } from 'svelte/internal'
 
 	export let stuff
 
@@ -14,52 +14,59 @@
 
 	let { activeItem, calculateDimensions, setResizeFunc } = stuff
 
-	let { video, thumb, tracks = [], width, height } = activeItem
-
-	// convert videos to array if passed via attribute
-	video = Array.isArray(video) ? video : video.split(', ')
-
-	// convert tracks to array if passed via attribute
-	tracks = Array.isArray(tracks) ? tracks : JSON.parse(tracks)
-
-	// make html string for video sources
-	video = video.map(
-		(src) => `<source src="${src}" type="video/${src.match(/.(\w+)$/)[1]}">`
-	)
-
-	// make html string for tracks
-	tracks = tracks.map(
-		(track) =>
-			`<track${Object.keys(track).reduce(
-				(str, key) => str + ` ${key}="${track[key]}"`,
-				''
-			)}>`
-	)
+	let { sources, thumb, tracks = [], width, height } = activeItem
 
 	const setDimensions = () => (dimensions = calculateDimensions(width, height))
 
 	setDimensions()
 
 	setResizeFunc(setDimensions)
-</script>
 
-<!-- svelte-ignore a11y-media-has-caption -->
+	const audio = JSON.stringify(sources).includes('audio')
+
+	// adds attributes to a node
+	const addAttributes = (node, obj) => {
+		Object.keys(obj).forEach((key) => attr(node, key, obj[key]))
+	}
+
+	const onMount = (node) => {
+		// create audo / video element
+		const mediaElement = element(audio ? 'audio' : 'video')
+		// add attributes to created elements
+		addAttributes(mediaElement, {
+			controls: true,
+			autoplay: true,
+			playsinline: true,
+			tabindex: '0',
+		})
+
+		// takes supplied object and creates elements in video
+		const appendToVideo = (tag, arr) => {
+			if (!Array.isArray(arr)) {
+				arr = JSON.parse(arr)
+			}
+			// add attributes
+			arr.forEach((obj) => {
+				const el = element(tag)
+				addAttributes(el, obj)
+				append(mediaElement, el)
+			})
+		}
+		appendToVideo('track', tracks)
+		appendToVideo('source', sources)
+		listen(mediaElement, 'canplay', () => (loaded = true))
+		node.prepend(mediaElement)
+	}
+</script>
 
 <div
 	class="bp-item bp-vid"
+	use:onMount
 	style="
 			width:{dimensions[0]}px;
-			height:{dimensions[1]}px
+			height:{dimensions[1]}px;
+			background-image:url({thumb})
 		"
 >
-	<video
-		playsinline
-		controls
-		autoplay
-		tabindex="0"
-		on:canplay={() => (loaded = true)}
-	>
-		{@html video + tracks}
-	</video>
 	<Loading {thumb} {loaded} />
 </div>

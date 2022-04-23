@@ -80,7 +80,6 @@
 		const openItems = opts.items
 		// update trigger element to restore focus
 		focusTrigger = document.activeElement
-		// containerWidth = target.clientWidth
 		containerWidth = target.offsetWidth
 		containerHeight =
 			target === document.body ? window.innerHeight : target.clientHeight
@@ -207,7 +206,7 @@
 	const animateIn = (node) => {
 		if (!isOpen) {
 			isOpen = 1
-			opts.onOpen && opts.onOpen(container)
+			opts.onOpen && opts.onOpen(container, activeItem)
 			return opts.intro ? fly(node, { y: 10, easing: cubicOut }) : scaleIn(node)
 		}
 		return fly(node, {
@@ -312,8 +311,9 @@
 				in:animateIn
 				out:animateOut
 				on:pointerdown={({ target }) => (clickedEl = target)}
-				on:pointerup|self={({ target }) => {
-					target === clickedEl && close()
+				on:pointerup|self={(e) => {
+					// only close on left click and not dragged
+					e.button !== 2 && e.target === clickedEl && close()
 				}}
 			>
 				{#if activeItem.img}
@@ -334,7 +334,7 @@
 						{containerHeight}
 						{smallScreen}
 					/>
-				{:else if activeItem.video}
+				{:else if activeItem.sources}
 					<Video
 						stuff={{
 							activeItem,
