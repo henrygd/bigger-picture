@@ -33,9 +33,6 @@
 	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
 	let sizes = calculatedDimensions[0]
 
-	// .bp-img-wrap element
-	let wrap
-
 	// tracks load state of image
 	let loaded, showLoader
 
@@ -50,9 +47,6 @@
 
 	// track distance for pinch events
 	let prevDiff = 0
-
-	// bool ignore pointer events if true
-	let imageOutroStarted
 
 	let pointerDown, hasDragged
 	let dragStartX, dragStartY
@@ -78,6 +72,13 @@
 	const zoomDragTranslate = tweened([0, 0], tweenOptions)
 
 	$: $zoomed = $imageDimensions[0] > calculatedDimensions[0]
+
+	// if zoomed while closing, zoom out image and add class
+	// to change contain value on .bp-wrap to avoid cropping
+	$: if ($closing && $zoomed && !opts.intro) {
+		closingWhileZoomed = true
+		zoomDragTranslate.set([0, 0])
+	}
 
 	// calculate translate position with bounds
 	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
@@ -123,7 +124,7 @@
 
 	// updates zoom level in or out based on amt value
 	const changeZoom = (e, amt = maxZoom) => {
-		if (imageOutroStarted) {
+		if ($closing) {
 			return
 		}
 
@@ -207,15 +208,13 @@
 
 	// on drag, update image translate val
 	const onPointerMove = (e) => {
-		// e.preventDefault()
-
 		if (eventCache.length > 1) {
 			isPinch = true
 			pointerDown = false
 			return handlePinch(e)
 		}
 
-		if (imageOutroStarted || !pointerDown) {
+		if (!pointerDown) {
 			return
 		}
 
@@ -232,11 +231,13 @@
 		if (!$zoomed) {
 			// previous if swipe left
 			if (x > 40) {
-				prev()
+				// pointerdown = undefined to stop pointermove from running again
+				pointerDown = prev()
 			}
 			// next if swipe right
 			if (x < -40) {
-				next()
+				// pointerdown = undefined to stop pointermove from running again
+				pointerDown = next()
 			}
 			// close if swipe up (don't close if inline)
 			if (y < -90 && !inline) {
@@ -247,7 +248,7 @@
 		hasDragged = Math.hypot(x, y) > 10
 
 		// image drag when zoomed
-		if ($zoomed && hasDragged) {
+		if ($zoomed && hasDragged && !$closing) {
 			zoomDragTranslate.set(
 				boundTranslateValues([
 					dragStartTranslateX + x,
@@ -280,7 +281,7 @@
 	}
 
 	// on mouse / touch end, set pointerDown to false
-	const onPointerUp = (e) => {
+	function onPointerUp(e) {
 		// remove event from event cache
 		eventCache = eventCache.filter((ev) => ev.pointerId != e.pointerId)
 
@@ -292,12 +293,12 @@
 		}
 
 		// make sure pointer events don't carry over to next image
-		if (imageOutroStarted || !pointerDown) {
+		if (!pointerDown) {
 			return
 		}
 
 		// close if overlay is clicked
-		if (e.target === wrap && !inline) {
+		if (e.target === this && !inline) {
 			return close()
 		}
 
@@ -345,6 +346,7 @@
 			} else {
 				coords = $zoomDragTranslate
 			}
+
 			zoomDragTranslate.set(boundTranslateValues(coords))
 		}
 
@@ -379,7 +381,7 @@
 
 <div
 	class="bp-img-wrap"
-	bind:this={wrap}
+	use:onMount
 	on:wheel={onWheel}
 	on:pointerdown={onPointerDown}
 	on:pointermove={onPointerMove}
@@ -389,7 +391,6 @@
 	class:bp-close={closingWhileZoomed}
 >
 	<div
-		use:onMount
 		class="bp-item bp-img"
 		style="
 			background-image:url({thumb});
@@ -399,21 +400,7 @@
 		"
 	>
 		{#if loaded}
-			<img
-				{srcset}
-				sizes={opts.sizes || `${sizes}px`}
-				{alt}
-				out:fade
-				on:outrostart={() => {
-					imageOutroStarted = true
-					// if zoomed while closing, zoom out image and add class
-					// to change contain value on .bp-wrap to avoid cropping
-					if ($closing && $zoomed && !opts.intro) {
-						closingWhileZoomed = true
-						$zoomDragTranslate = [0, 0]
-					}
-				}}
-			/>
+			<img {srcset} sizes={opts.sizes || `${sizes}px`} {alt} out:fade />
 		{/if}
 		{#if showLoader}
 			<Loading {thumb} {loaded} />
