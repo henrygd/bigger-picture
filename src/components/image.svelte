@@ -99,16 +99,16 @@
 			} else {
 				x = maxTranslateX
 			}
-		} else if (x < maxTranslateX * -1) {
+		} else if (x < -maxTranslateX) {
 			// bound to right side (allow slight over drag)
 			if (smallScreen) {
 				x = pointerDown
-					? maxTranslateX * -1 - (maxTranslateX * -1 - x) / 10
-					: maxTranslateX * -1
+					? -maxTranslateX - (-maxTranslateX - x) / 10
+					: -maxTranslateX
 				// next item if dragged past threshold
-				x < maxTranslateX * -1 - 20 && next()
+				if (x < -maxTranslateX - 20) {
 			} else {
-				x = maxTranslateX * -1
+				x = -maxTranslateX
 			}
 		}
 		// y max drag
@@ -116,8 +116,8 @@
 			y = 0
 		} else if (y > maxTranslateY) {
 			y = maxTranslateY
-		} else if (y < maxTranslateY * -1) {
-			y = maxTranslateY * -1
+		} else if (y < -maxTranslateY) {
+			y = -maxTranslateY
 		}
 		return [x, y]
 	}
@@ -160,8 +160,8 @@
 		const offsetX = e.clientX - x - width / 2
 		const offsetY = e.clientY - y - height / 2
 
-		x = offsetX * -1 * (newWidth / width) + offsetX
-		y = offsetY * -1 * (newHeight / height) + offsetY
+		x = -offsetX * (newWidth / width) + offsetX
+		y = -offsetY * (newHeight / height) + offsetY
 
 		const newDimensions = [newWidth, newHeight]
 
