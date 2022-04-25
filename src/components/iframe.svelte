@@ -19,7 +19,7 @@
 </script>
 
 <div
-	class="bp-item bp-if"
+	class="bp-if"
 	style="
 		width:{dimensions[0]}px;
 		height:{dimensions[1]}px

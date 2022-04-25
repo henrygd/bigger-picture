@@ -397,7 +397,7 @@
 	class:bp-close={closingWhileZoomed}
 >
 	<div
-		class="bp-item bp-img"
+		class="bp-img"
 		style="
 			background-image:url({thumb});
 			width:{$imageDimensions[0]}px;

@@ -60,7 +60,7 @@
 </script>
 
 <div
-	class="bp-item bp-vid"
+	class="bp-vid"
 	use:onMount
 	style="
 			width:{dimensions[0]}px;

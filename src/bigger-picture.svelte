@@ -57,8 +57,8 @@
 	$: if (items) {
 		// update active item when position changes
 		activeItem = items[position]
+		activeItemIsHtml = activeItem.hasOwnProperty('html')
 		if (isOpen) {
-			activeItemIsHtml = activeItem.hasOwnProperty('html')
 			// clear child resize function if html
 			activeItemIsHtml && setResizeFunc(null)
 			// run onUpdate when items updated
@@ -229,7 +229,12 @@
 	const scaleIn = (node) => {
 		const { element } = activeItem
 
-		const bpItem = node.querySelector('.bp-item')
+		let bpItem = node.firstElementChild
+
+		// images and html have a wrapper div, so we must go deeper
+		if (activeItem.img || activeItemIsHtml) {
+			bpItem = bpItem.firstElementChild
+		}
 
 		const { clientWidth, clientHeight } = bpItem
 
@@ -304,7 +309,6 @@
 		{#key activeItem.i}
 			<div
 				class="bp-inner"
-				class:bp-html={activeItemIsHtml}
 				in:animateIn
 				out:animateOut
 				on:pointerdown={(e) => (clickedEl = e.target)}
@@ -350,7 +354,9 @@
 						}}
 					/>
 				{:else}
-					{@html activeItem.html}
+					<div class="bp-html">
+						{@html activeItem.html}
+					</div>
 				{/if}
 			</div>
 			{#if activeItem.caption}

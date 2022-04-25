@@ -24,8 +24,7 @@
 	}
 }
 
-.bp-item {
-	position: absolute;
+.bp-vid {
 	video {
 		// can't use strict bc chrome stretches vid on fullscreen
 		contain: layout;
@@ -49,6 +48,7 @@
 }
 
 .bp-html {
+	display: contents;
 	* {
 		contain: unset;
 	}
@@ -73,6 +73,7 @@
 }
 
 .bp-img {
+	position: absolute;
 	user-select: none;
 	cursor: zoom-in;
 	background-size: 100% 100%;
@@ -174,6 +175,7 @@
 
 .bp-if,
 .bp-vid {
+	position: absolute;
 	background: #000;
 	background-size: 100% 100%;
 	iframe,
