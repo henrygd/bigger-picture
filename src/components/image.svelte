@@ -366,9 +366,12 @@
 		// handle window resize
 		setResizeFunc(() => {
 			calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
-			// adjust image size / zoom on resize
-			imageDimensions.set(calculatedDimensions)
-			zoomDragTranslate.set([0, 0])
+			// adjust image size / zoom on resize, but not on mobile because
+			// some browsers (ios safari 15) constantly resize screen on drag
+			if (!smallScreen) {
+				imageDimensions.set(calculatedDimensions)
+				zoomDragTranslate.set([0, 0])
+			}
 		})
 		// decode initial image before rendering
 		loadImage(activeItem).then(() => {
