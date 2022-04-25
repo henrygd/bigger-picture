@@ -7,18 +7,18 @@
 		<link rel="shortcut icon" href="assets/favicon.png" />
 		<title>Bigger Picture - JavaScript lightbox gallery</title>
 		<link rel="stylesheet" href="demo.css" />
-		<meta name="description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
+		<meta name="description" content="High performance lightbox script with a small footprint. Supports images, video, audio, iframes, and html. No plugins necessary.">
 		<meta itemprop="name" content="Bigger Picture - JavaScript lightbox gallery">
-		<meta itemprop="description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
+		<meta itemprop="description" content="High performance lightbox script with a small footprint. Supports images, video, audio, iframes, and html. No plugins necessary.">
 		<meta itemprop="image" content="https://assets.henrygd.me/bp/images/bp-social.png">
 		<meta property="og:url" content="https://biggerpicture.henrygd.me">
 		<meta property="og:type" content="website">
 		<meta property="og:title" content="Bigger Picture - JavaScript lightbox gallery">
-		<meta property="og:description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
+		<meta property="og:description" content="High performance lightbox script with a small footprint. Supports images, video, audio, iframes, and html. No plugins necessary.">
 		<meta property="og:image" content="https://assets.henrygd.me/bp/images/bp-social.png">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:title" content="Bigger Picture - JavaScript lightbox gallery">
-		<meta name="twitter:description" content="High performance lightbox script with a small footprint. Supports images, videos, iframes, and html. No plugins necessary.">
+		<meta name="twitter:description" content="High performance lightbox script with a small footprint. Supports images, video, audio, iframes, and html. No plugins necessary.">
 		<meta name="twitter:image" content="https://assets.henrygd.me/bp/images/bp-social.png">
 	</head>
 
@@ -74,9 +74,10 @@
 						</div>
 						<p>
 							High performance JavaScript lightbox gallery with a small
-							footprint. Supports images, videos, iframes, and html with no
-							plugins necessary. Under 10 kB gzip vanilla / much smaller if using
-							Svelte.
+							footprint.<br />
+							Supports images, video, audio, iframes, and html with no plugins
+							necessary.<br />
+							Under 10 kB gzip vanilla / much smaller if using Svelte.
 						</p>
 					</div>
 				</div>
@@ -255,7 +256,7 @@
 				<section>
 					<div class="main">
 						<div class="inner-wrap">
-							<h2>Video / iframes / audio</h2>
+							<h2>Video / audio / iframes</h2>
 							<p>
 								Any iframe will work. Video captions are supported.
 								<a href="#" data-html="code_vid_gallery">View code example</a>
@@ -366,7 +367,7 @@
 										id="firewatch"
 									>
 										<img
-											src="https://assets.henrygd.me/bp/images/firewatch.png"
+											src="https://assets.henrygd.me/bp/images/firewatch-2.png"
 											loading="lazy"
 											alt="firewatch"
 										/>
@@ -505,9 +506,9 @@
 						<div class="inner-wrap">
 							<h2>Custom Layout Example - Thumbnails</h2>
 							<p>
-								Same gallery as above, now mounted inside a wrapper component to
-								add thumbnail functionality. There's no limit to the complexity
-								of custom layouts.
+								Same gallery as above, now mounted inside a wrapper component
+								that independently <br />controls thumbnails via BiggerPicture's
+								API.
 								<a
 									href="https://codesandbox.io/s/bigger-picture-thumbnails-vpszy7"
 									target="_blank"
@@ -698,8 +699,7 @@
 				<p>
 					There are two methods of supplying data -- JavaScript objects and
 					<code>data-*</code> attributes. The example below uses the latter
-					method, passing the necessary information through attributes on link
-					elements. Event listeners are set up to open BiggerPicture when a link
+					method. Event listeners are set up to open BiggerPicture when a link
 					is clicked.
 				</p>
 				<a

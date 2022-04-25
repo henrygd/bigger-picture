@@ -8,9 +8,7 @@
 
 [![npm][npm-image]][npm-url] ![File Size][size-image] [![MIT license][license-image]][license-url]
 
-High performance JavaScript lightbox gallery with a small footprint. Supports images, videos, iframes, and html with no plugins necessary. Under 10kB gzip vanilla / much smaller if using Svelte.
-
-Flexible enough to intergrate into custom layouts and easily customizable via CSS.
+High performance JavaScript lightbox gallery with a small footprint. Supports images, video, audio, iframes, and html with no plugins necessary. Under 10 kB gzip vanilla / much smaller if using Svelte.
 
 Demo: https://biggerpicture.henrygd.me
 
@@ -137,7 +135,7 @@ Specifies that the lightbox is inline. Interaction events are modified to avoid 
 Type: `boolean`<br>
 Default: `false`
 
-Removes the close button and prevents the lightbox from closing. Recommended to use in combination with an inline gallery.
+Hides the close button and prevents the lightbox from closing unless the [`close`](#close) method is called. Recommended to use in combination with an inline gallery.
 
 ### focusWrap
 
@@ -252,7 +250,7 @@ For advanced use, you can pass an empty string, then mount a component using the
 // mounting svelte component (firewatch example from demo site)
 onOpen: (container) => {
   new Firewatch({
-    target: container.querySelector('.bp-inner'),
+    target: container.querySelector('.bp-html'),
   })
 },
 ```

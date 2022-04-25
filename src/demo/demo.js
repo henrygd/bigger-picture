@@ -171,12 +171,6 @@ function createObserver() {
 	observer.observe(inlineWrap)
 }
 
-const loadImage = (src) => {
-	const img = new Image()
-	img.src = src
-	return img.decode()
-}
-
 function makeTweetHtml(profileName, profileHandle, avatarUrl, content) {
 	return `<div class="tweet"><div class="t-head"><img height="48" width="48" src="https://pbs.twimg.com/profile_images/${avatarUrl}" alt="avatar"/><a href="https://twitter.com/${profileHandle}" target="_blank"><span>${profileName}</span><span>@${profileHandle}</span></a><svg viewBox="0 0 24 24"><path d="M23.6 5c-.8.3-1.7.6-2.6.7 1-.6 1.7-1.5 2-2.6-.9.5-1.9 1-3 1.1a4.7 4.7 0 0 0-7.9 4.3 13 13 0 0 1-9.6-4.9A4.7 4.7 0 0 0 4 9.8c-.8 0-1.5-.2-2.2-.6v.1c0 2.3 1.7 4.1 3.8 4.6a4.7 4.7 0 0 1-2.1 0 4.7 4.7 0 0 0 4.3 3.3 9.3 9.3 0 0 1-6.9 2c2.1 1.2 4.5 2 7.2 2A13.2 13.2 0 0 0 21.3 7.4c1-.7 1.7-1.5 2.3-2.5z"/></svg></div>${content}</div>`
 }
@@ -199,29 +193,19 @@ for (let i = 0; i < htmlLinks.length; i++) {
 	htmlLinks[i].addEventListener('click', (e) => openCode(e, htmlLinks[i]))
 }
 
-// firewatch load images on mouseenter
-firewatch.addEventListener(
-	'mouseenter',
-	() => {
-		Array.from(Array(9)).forEach((v, i) =>
-			loadImage(
-				`https://www.firewatchgame.com/images/parallax/parallax${i}.png`
-			)
-		)
-	},
-	{ once: true }
-)
-
 // firewatch click
 firewatch.addEventListener('click', (e) => {
 	e.preventDefault()
 	initBodyBp()
+	let component
 	bodyBp.open({
-		intro: 'fadeup',
-		items: [{ html: '' }],
+		onClose() {
+			component.isClosing = true
+		},
+		items: [{ element: e.currentTarget, html: '' }],
 		onOpen: (container) => {
-			new Firewatch({
-				target: container.querySelector('.bp-inner'),
+			component = new Firewatch({
+				target: container.querySelector('.bp-html'),
 			})
 		},
 	})
@@ -238,7 +222,7 @@ document.getElementById('dialog').addEventListener('click', (e) => {
 			container.querySelector('.bp-controls').remove()
 			container.classList.add('blur')
 			new Dialog({
-				target: container.querySelector('.bp-inner'),
+				target: container.querySelector('.bp-html'),
 				props: { bp: bodyBp },
 			})
 		},

@@ -1,4 +1,10 @@
+<svelte:options accessors={true} />
+
 <script>
+	import { fade } from 'svelte/transition'
+
+	export let isClosing = false
+
 	let layers = Array.from(Array(9))
 
 	let y
@@ -25,4 +31,13 @@
 			You have scrolled {Math.round(y)} pixels
 		</div>
 	</div>
+
+	{#if isClosing}
+		<img
+			in:fade
+			src="https://assets.henrygd.me/bp/images/firewatch-2.png"
+			decoding="async"
+			alt=""
+		/>
+	{/if}
 </div>

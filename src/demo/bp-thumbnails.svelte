@@ -51,11 +51,9 @@
 		let margin = 3
 		let { offsetLeft } = activeBtn
 		if (left + width > containerWidth) {
-			$translate = boundTranslate(
-				offsetLeft * -1 - width + containerWidth - margin
-			)
+			$translate = boundTranslate(-offsetLeft - width + containerWidth - margin)
 		} else if (right - width < 0) {
-			$translate = boundTranslate(offsetLeft * -1 + margin)
+			$translate = boundTranslate(-offsetLeft + margin)
 		}
 	}
 
@@ -71,7 +69,7 @@
 	function pointerMove(e) {
 		if (isPointerDown) {
 			let { clientX } = e
-			let dragAmount = (pointerDownPos - clientX) * -1
+			let dragAmount = -(pointerDownPos - clientX)
 			if (hasDragged) {
 				translate.set(boundTranslate(initialTranslate + dragAmount), {
 					duration: 0,

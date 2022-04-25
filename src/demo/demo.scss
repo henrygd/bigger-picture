@@ -13,6 +13,7 @@
 html,
 body {
 	min-height: 100%;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
@@ -120,7 +121,7 @@ footer {
 		display: table;
 		margin: 0 auto;
 		width: 100%;
-		max-width: 600px;
+		max-width: 650px;
 	}
 	button {
 		margin-top: 5px;
@@ -197,7 +198,6 @@ section h2 {
 		// height: attr(data-height);
 	}
 	img {
-		position: absolute;
 		@include fillall;
 		// width: 100%;
 	}
@@ -297,7 +297,7 @@ h3 {
 }
 
 .bp-audio {
-	.bp-item {
+	.bp-vid {
 		border-radius: 5px;
 	}
 }
@@ -372,7 +372,7 @@ h3 {
 	position: relative;
 	background: #666;
 	overflow: hidden;
-	margin: 50px 0 0;
+	margin: 40px 0 0;
 	&:before {
 		content: '';
 		padding-bottom: 66.66%;
@@ -453,22 +453,25 @@ footer {
 
 .firewatch {
 	position: relative;
-	width: 1700px;
+	width: 1520px;
+	height: 855px;
 	max-width: 95%;
-	height: 920px;
 	max-height: 97%;
 	overflow: hidden;
 	border-radius: 3px;
 	background: #ffaf1b;
-
+	background-image: url('https://assets.henrygd.me/bp/images/firewatch-2.png');
+	background-size: 1520px auto;
+	background-position: 50% 0;
+	background-repeat: no-repeat;
+	contain: strict;
+	backface-visibility: hidden;
 	.parallax-container {
 		position: absolute;
 		width: 2800px;
 		top: 0;
-		// height: 920px;
 		left: 50%;
 		transform: translate(-50%, 0);
-		// background: #ffaf1b;
 	}
 	img {
 		position: absolute;
@@ -477,7 +480,9 @@ footer {
 		width: 100%;
 		will-change: transform;
 	}
-
+	> img {
+		height: 100%;
+	}
 	span {
 		display: block;
 		font-size: 1em;
@@ -757,6 +762,9 @@ body:not(.using-mouse) {
 	}
 	p {
 		line-height: 1.8;
+		br {
+			display: none;
+		}
 	}
 	.github-link {
 		span {
@@ -835,5 +843,12 @@ body:not(.using-mouse) {
 		.bp-count {
 			font-size: 0.9em;
 		}
+	}
+	section h2 {
+		font-size: 1.5em;
+		margin: 0 0 9px;
+	}
+	p {
+		line-height: 1.7;
 	}
 }
