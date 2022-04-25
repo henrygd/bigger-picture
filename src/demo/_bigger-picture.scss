@@ -253,18 +253,24 @@
 
 .bp-inline {
 	position: absolute;
-	&:not(.zoomed) {
-		touch-action: pan-y;
-		.bp-img-wrap {
-			cursor: zoom-in;
-		}
-	}
 }
 
 .bp-lock {
 	overflow-y: hidden;
 	body {
 		overflow: scroll;
+	}
+}
+
+.bp-noclose {
+	.bp-x {
+		display: none;
+	}
+	&:not(.zoomed) {
+		touch-action: pan-y;
+		.bp-img-wrap {
+			cursor: zoom-in;
+		}
 	}
 }
 

@@ -99,13 +99,11 @@
 	}
 
 	export const close = () => {
-		if (!opts.noClose) {
-			opts.onClose && opts.onClose()
-			$closing = 1
-			items = false
-			// restore focus to trigger element
-			focusTrigger && focusTrigger.focus({ preventScroll: true })
-		}
+		opts.onClose && opts.onClose()
+		$closing = 1
+		items = false
+		// restore focus to trigger element
+		focusTrigger && focusTrigger.focus({ preventScroll: true })
 	}
 
 	// previous gallery item
@@ -133,7 +131,7 @@
 	const onKeydown = (e) => {
 		const { key, shiftKey } = e
 		if (key === 'Escape') {
-			close()
+			!opts.noClose && close()
 		} else if (key === 'ArrowRight') {
 			next()
 		} else if (key === 'ArrowLeft') {
@@ -300,6 +298,7 @@
 		class="bp-wrap"
 		class:zoomed={$zoomed}
 		class:bp-inline={inline}
+		class:bp-noclose={opts.noClose}
 	>
 		<div transition:fade={{ easing: cubicOut, duration: 480 }} />
 		{#key activeItem.i}
@@ -312,7 +311,7 @@
 				on:pointerup={function (e) {
 					// only close if left click on self and not dragged
 					if (e.button !== 2 && e.target === this && clickedEl === this) {
-						close()
+						!opts.noClose && close()
 					}
 				}}
 			>
@@ -364,14 +363,12 @@
 		{#if !smallScreen || !hideControls}
 			<div class="bp-controls" transition:fade={{ duration: 300 }}>
 				<!-- close button -->
-				{#if !opts.noClose}
-					<button
-						class="bp-x"
-						title="Close"
-						aria-label="Close"
-						on:click={close}
-					/>
-				{/if}
+				<button
+					class="bp-x"
+					title="Close"
+					aria-label="Close"
+					on:click={close}
+				/>
 
 				{#if items.length > 1}
 					<!-- counter -->

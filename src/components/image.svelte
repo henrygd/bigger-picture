@@ -246,8 +246,8 @@
 				pointerDown = next()
 			}
 			// close if swipe up (don't close if inline)
-			if (y < -90 && !inline) {
-				close()
+			if (y < -90) {
+				!opts.noClose && close()
 			}
 		}
 
@@ -304,7 +304,7 @@
 		}
 
 		// close if overlay is clicked
-		if (e.target === this && !inline) {
+		if (e.target === this && !opts.noClose) {
 			return close()
 		}
 
