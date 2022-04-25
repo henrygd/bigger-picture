@@ -7,11 +7,12 @@
 	import Iframe from './components/iframe.svelte'
 	import Video from './components/video.svelte'
 	import { zoomed, closing } from './stores'
-	import { hideScroll, showScroll } from 'hide-show-scroll'
 	import { listen, element as createEl } from 'svelte/internal'
 
 	export let items = undefined
 	export let target = undefined
+
+	const { documentElement: html } = document
 
 	// index of current active item
 	let position
@@ -68,17 +69,13 @@
 	// receives options and opens gallery
 	export const open = (options) => {
 		opts = options
-		// disable scroll if not inline gallery
 		inline = opts.inline
-		inline || hideScroll()
-		// setTimeout to queue behind hideScroll render and avoid reflow
-		setTimeout(openPartDeux, 0)
-	}
-
-	// continuation of open function, delayed to avoid reflow
-	const openPartDeux = () => {
 		const openItems = opts.items
 		// update trigger element to restore focus
+		// add class to hide scroll if not inline gallery
+		if (!inline && html.scrollHeight > html.clientHeight) {
+			html.classList.add('bp-lock')
+		}
 		focusTrigger = document.activeElement
 		containerWidth = target.offsetWidth
 		containerHeight =
@@ -289,7 +286,8 @@
 				ro.disconnect()
 				removeKeydownListener && removeKeydownListener()
 				$closing = isOpen = false
-				showScroll()
+				// remove class hiding scroll
+				html.classList.remove('bp-lock')
 				opts.onClosed && opts.onClosed()
 			},
 		}

@@ -13,7 +13,7 @@
 	overflow on .bp-wrap, change contain to "layout" on that instance */
 	contain: strict;
 	touch-action: none;
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	-webkit-tap-highlight-color: transparent;
 	* {
 		contain: strict;
 	}
@@ -258,6 +258,13 @@
 		.bp-img-wrap {
 			cursor: zoom-in;
 		}
+	}
+}
+
+.bp-lock {
+	overflow-y: hidden;
+	body {
+		overflow: scroll;
 	}
 }
 
