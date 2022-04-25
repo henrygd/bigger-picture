@@ -58,7 +58,6 @@ const findReplaceOptions = [
 	[`typeof window !== 'undefined'`, 'true'],
 	['const doc = get_root_for_style(node)', 'const doc = document'],
 	[/get_root_for_style\(node\),/g, 'document,'],
-	[/^\sset .+{$\n\s+this.+[^}]+}/gm, ''],
 ].map(([find, replace]) => modify({ find, replace }))
 
 let config = [
@@ -79,13 +78,17 @@ let config = [
 				},
 			}),
 			resolve({ browser: true }),
-			...findReplaceOptions,
+			// ...findReplaceOptions,
 			production && terser(terserOptions),
 		],
 	},
 ]
 
 if (production) {
+	// remove unneeded setters in library
+	findReplaceOptions.push(
+		modify({ find: /^\sset .+{$\n\s+this.+[^}]+}/gm, replace: '' })
+	)
 	// unminified dist files
 	config.push({
 		input: 'src/bigger-picture.js',
