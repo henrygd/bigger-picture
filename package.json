@@ -1,6 +1,6 @@
 {
 	"name": "bigger-picture",
-	"version": "0.2.1",
+	"version": "1.0.0",
 	"main": "dist/bigger-picture.umd.js",
 	"module": "dist/bigger-picture.mjs",
 	"svelte": "src/bigger-picture.js",
@@ -20,6 +20,7 @@
 		"lightbox",
 		"photo",
 		"image",
+		"audio",
 		"video",
 		"touch",
 		"swipe",

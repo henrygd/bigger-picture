@@ -143,39 +143,6 @@
         e.initCustomEvent(type, bubbles, false, detail);
         return e;
     }
-    class HtmlTag {
-        constructor() {
-            this.e = this.n = null;
-        }
-        c(html) {
-            this.h(html);
-        }
-        m(html, target, anchor = null) {
-            if (!this.e) {
-                this.e = element(target.nodeName);
-                this.t = target;
-                this.c(html);
-            }
-            this.i(anchor);
-        }
-        h(html) {
-            this.e.innerHTML = html;
-            this.n = Array.from(this.e.childNodes);
-        }
-        i(anchor) {
-            for (let i = 0; i < this.n.length; i += 1) {
-                insert(this.t, this.n[i], anchor);
-            }
-        }
-        p(html) {
-            this.d();
-            this.h(html);
-            this.i(this.a);
-        }
-        d() {
-            this.n.forEach(detach);
-        }
-    }
 
     // we need to store the information for multiple documents because a Svelte application could also contain iframes
     // https://github.com/sveltejs/svelte/issues/3624
@@ -1084,7 +1051,7 @@
     	};
     }
 
-    // (394:85) {#if showLoader}
+    // (403:85) {#if showLoader}
     function create_if_block$1(ctx) {
     	let loading;
     	let current;
@@ -1141,7 +1108,7 @@
     			if (if_block0) if_block0.c();
     			if_block0_anchor = empty();
     			if (if_block1) if_block1.c();
-    			attr(div0, "class", "bp-item bp-img");
+    			attr(div0, "class", "bp-img");
     			set_style(div0, "background-image", "url(" + /*thumb*/ ctx[9] + ")");
     			set_style(div0, "width", /*$imageDimensions*/ ctx[0][0] + "px");
     			set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
@@ -1340,21 +1307,27 @@
     				: maxTranslateX;
 
     				// previous item if dragged past threshold
-    				x > maxTranslateX + 20 && prev();
+    				if (x > maxTranslateX + 20) {
+    					// pointerdown = undefined to stop pointermove from running again
+    					$$invalidate(4, pointerDown = prev());
+    				}
     			} else {
     				x = maxTranslateX;
     			}
-    		} else if (x < maxTranslateX * -1) {
+    		} else if (x < -maxTranslateX) {
     			// bound to right side (allow slight over drag)
     			if (smallScreen) {
     				x = pointerDown
-    				? maxTranslateX * -1 - (maxTranslateX * -1 - x) / 10
-    				: maxTranslateX * -1;
+    				? -maxTranslateX - (-maxTranslateX - x) / 10
+    				: -maxTranslateX;
 
     				// next item if dragged past threshold
-    				x < maxTranslateX * -1 - 20 && next();
+    				if (x < -maxTranslateX - 20) {
+    					// pointerdown = undefined to stop pointermove from running again
+    					$$invalidate(4, pointerDown = next());
+    				}
     			} else {
-    				x = maxTranslateX * -1;
+    				x = -maxTranslateX;
     			}
     		}
 
@@ -1363,8 +1336,8 @@
     			y = 0;
     		} else if (y > maxTranslateY) {
     			y = maxTranslateY;
-    		} else if (y < maxTranslateY * -1) {
-    			y = maxTranslateY * -1;
+    		} else if (y < -maxTranslateY) {
+    			y = -maxTranslateY;
     		}
 
     		return [x, y];
@@ -1410,8 +1383,8 @@
     		const offsetX = e.clientX - x - width / 2;
 
     		const offsetY = e.clientY - y - height / 2;
-    		x = offsetX * -1 * (newWidth / width) + offsetX;
-    		y = offsetY * -1 * (newHeight / height) + offsetY;
+    		x = -offsetX * (newWidth / width) + offsetX;
+    		y = -offsetY * (newHeight / height) + offsetY;
     		const newDimensions = [newWidth, newHeight];
 
     		// set new dimensions and update sizes property
@@ -1490,8 +1463,8 @@
     			}
 
     			// close if swipe up (don't close if inline)
-    			if (y < -90 && !inline) {
-    				close();
+    			if (y < -90) {
+    				!opts.noClose && close();
     			}
     		}
 
@@ -1544,7 +1517,7 @@
     		}
 
     		// close if overlay is clicked
-    		if (e.target === this && !inline) {
+    		if (e.target === this && !opts.noClose) {
     			return close();
     		}
 
@@ -1609,10 +1582,12 @@
     		setResizeFunc(() => {
     			$$invalidate(22, calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight));
 
-    			// adjust image size / zoom on resize
-    			imageDimensions.set(calculatedDimensions);
-
-    			zoomDragTranslate.set([0, 0]);
+    			// adjust image size / zoom on resize, but not on mobile because
+    			// some browsers (ios safari 15) constantly resize screen on drag
+    			if (!smallScreen) {
+    				imageDimensions.set(calculatedDimensions);
+    				zoomDragTranslate.set([0, 0]);
+    			}
     		});
 
     		// decode initial image before rendering
@@ -1729,7 +1704,7 @@
     			attr(iframe_1, "allow", "autoplay; fullscreen");
     			if (!src_url_equal(iframe_1.src, iframe_1_src_value = /*iframe*/ ctx[2])) attr(iframe_1, "src", iframe_1_src_value);
     			attr(iframe_1, "title", /*title*/ ctx[4]);
-    			attr(div, "class", "bp-item bp-if");
+    			attr(div, "class", "bp-if");
     			set_style(div, "width", /*dimensions*/ ctx[1][0] + "px");
     			set_style(div, "height", /*dimensions*/ ctx[1][1] + "px");
     		},
@@ -1820,7 +1795,7 @@
     		c() {
     			div = element("div");
     			create_component(loading.$$.fragment);
-    			attr(div, "class", "bp-item bp-vid");
+    			attr(div, "class", "bp-vid");
     			set_style(div, "width", /*dimensions*/ ctx[1][0] + "px");
     			set_style(div, "height", /*dimensions*/ ctx[1][1] + "px");
     			set_style(div, "background-image", "url(" + /*thumb*/ ctx[2] + ")");
@@ -1927,8 +1902,6 @@
     	}
     }
 
-    let e,l,{documentElement:o,body:t}=document,r=()=>{o.scrollHeight>o.clientHeight&&(e=e||getComputedStyle(o).overflowY,l=l||getComputedStyle(t).overflowY,o.style.overflowY="hidden",t.style.overflowY="scroll");},s=()=>{o.style.overflowY=e,t.style.overflowY=e;};
-
     /* src/bigger-picture.svelte generated by Svelte v3.47.0 */
 
     function create_if_block(ctx) {
@@ -1942,7 +1915,7 @@
     	let mounted;
     	let dispose;
     	let key_block = create_key_block(ctx);
-    	let if_block = (!/*smallScreen*/ ctx[11] || !/*hideControls*/ ctx[10]) && create_if_block_1(ctx);
+    	let if_block = (!/*smallScreen*/ ctx[10] || !/*hideControls*/ ctx[9]) && create_if_block_1(ctx);
 
     	return {
     		c() {
@@ -1952,8 +1925,9 @@
     			key_block_anchor = empty();
     			if (if_block) if_block.c();
     			attr(div1, "class", "bp-wrap");
-    			toggle_class(div1, "zoomed", /*$zoomed*/ ctx[14]);
-    			toggle_class(div1, "bp-inline", /*inline*/ ctx[12]);
+    			toggle_class(div1, "zoomed", /*$zoomed*/ ctx[13]);
+    			toggle_class(div1, "bp-inline", /*inline*/ ctx[11]);
+    			toggle_class(div1, "bp-noclose", /*opts*/ ctx[5].noClose);
     		},
     		m(target, anchor) {
     			insert(target, div1, anchor);
@@ -1964,7 +1938,7 @@
     			current = true;
 
     			if (!mounted) {
-    				dispose = action_destroyer(containerActions_action = /*containerActions*/ ctx[22].call(null, div1));
+    				dispose = action_destroyer(containerActions_action = /*containerActions*/ ctx[21].call(null, div1));
     				mounted = true;
     			}
     		},
@@ -1983,11 +1957,11 @@
     				key_block.p(ctx, dirty);
     			}
 
-    			if (!/*smallScreen*/ ctx[11] || !/*hideControls*/ ctx[10]) {
+    			if (!/*smallScreen*/ ctx[10] || !/*hideControls*/ ctx[9]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
-    					if (dirty[0] & /*smallScreen, hideControls*/ 3072) {
+    					if (dirty[0] & /*smallScreen, hideControls*/ 1536) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -2006,12 +1980,16 @@
     				check_outros();
     			}
 
-    			if (dirty[0] & /*$zoomed*/ 16384) {
-    				toggle_class(div1, "zoomed", /*$zoomed*/ ctx[14]);
+    			if (dirty[0] & /*$zoomed*/ 8192) {
+    				toggle_class(div1, "zoomed", /*$zoomed*/ ctx[13]);
     			}
 
-    			if (dirty[0] & /*inline*/ 4096) {
-    				toggle_class(div1, "bp-inline", /*inline*/ ctx[12]);
+    			if (dirty[0] & /*inline*/ 2048) {
+    				toggle_class(div1, "bp-inline", /*inline*/ ctx[11]);
+    			}
+
+    			if (dirty[0] & /*opts*/ 32) {
+    				toggle_class(div1, "bp-noclose", /*opts*/ ctx[5].noClose);
     			}
     		},
     		i(local) {
@@ -2044,36 +2022,32 @@
     	};
     }
 
-    // (339:7) {:else}
+    // (340:7) {:else}
     function create_else_block(ctx) {
-    	let html_tag;
+    	let div;
     	let raw_value = /*activeItem*/ ctx[6].html + "";
-    	let html_anchor;
 
     	return {
     		c() {
-    			html_tag = new HtmlTag();
-    			html_anchor = empty();
-    			html_tag.a = html_anchor;
+    			div = element("div");
+    			attr(div, "class", "bp-html");
     		},
     		m(target, anchor) {
-    			html_tag.m(raw_value, target, anchor);
-    			insert(target, html_anchor, anchor);
+    			insert(target, div, anchor);
+    			div.innerHTML = raw_value;
     		},
     		p(ctx, dirty) {
-    			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) html_tag.p(raw_value);
-    		},
+    			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) div.innerHTML = raw_value;		},
     		i: noop,
     		o: noop,
     		d(detaching) {
-    			if (detaching) detach(html_anchor);
-    			if (detaching) html_tag.d();
+    			if (detaching) detach(div);
     		}
     	};
     }
 
-    // (333:35) 
-    function create_if_block_7(ctx) {
+    // (334:35) 
+    function create_if_block_6(ctx) {
     	let iframe;
     	let current;
 
@@ -2081,8 +2055,8 @@
     			props: {
     				stuff: {
     					activeItem: /*activeItem*/ ctx[6],
-    					calculateDimensions: /*calculateDimensions*/ ctx[16],
-    					setResizeFunc: /*setResizeFunc*/ ctx[15]
+    					calculateDimensions: /*calculateDimensions*/ ctx[15],
+    					setResizeFunc: /*setResizeFunc*/ ctx[14]
     				}
     			}
     		});
@@ -2100,8 +2074,8 @@
 
     			if (dirty[0] & /*activeItem*/ 64) iframe_changes.stuff = {
     				activeItem: /*activeItem*/ ctx[6],
-    				calculateDimensions: /*calculateDimensions*/ ctx[16],
-    				setResizeFunc: /*setResizeFunc*/ ctx[15]
+    				calculateDimensions: /*calculateDimensions*/ ctx[15],
+    				setResizeFunc: /*setResizeFunc*/ ctx[14]
     			};
 
     			iframe.$set(iframe_changes);
@@ -2121,8 +2095,8 @@
     	};
     }
 
-    // (327:36) 
-    function create_if_block_6(ctx) {
+    // (328:36) 
+    function create_if_block_5(ctx) {
     	let video;
     	let current;
 
@@ -2130,8 +2104,8 @@
     			props: {
     				stuff: {
     					activeItem: /*activeItem*/ ctx[6],
-    					calculateDimensions: /*calculateDimensions*/ ctx[16],
-    					setResizeFunc: /*setResizeFunc*/ ctx[15]
+    					calculateDimensions: /*calculateDimensions*/ ctx[15],
+    					setResizeFunc: /*setResizeFunc*/ ctx[14]
     				}
     			}
     		});
@@ -2149,8 +2123,8 @@
 
     			if (dirty[0] & /*activeItem*/ 64) video_changes.stuff = {
     				activeItem: /*activeItem*/ ctx[6],
-    				calculateDimensions: /*calculateDimensions*/ ctx[16],
-    				setResizeFunc: /*setResizeFunc*/ ctx[15]
+    				calculateDimensions: /*calculateDimensions*/ ctx[15],
+    				setResizeFunc: /*setResizeFunc*/ ctx[14]
     			};
 
     			video.$set(video_changes);
@@ -2170,8 +2144,8 @@
     	};
     }
 
-    // (311:4) {#if activeItem.img}
-    function create_if_block_5(ctx) {
+    // (312:4) {#if activeItem.img}
+    function create_if_block_4(ctx) {
     	let imageitem;
     	let current;
 
@@ -2179,19 +2153,19 @@
     			props: {
     				stuff: {
     					activeItem: /*activeItem*/ ctx[6],
-    					calculateDimensions: /*calculateDimensions*/ ctx[16],
-    					loadImage: /*loadImage*/ ctx[18],
-    					preloadNext: /*preloadNext*/ ctx[17],
+    					calculateDimensions: /*calculateDimensions*/ ctx[15],
+    					loadImage: /*loadImage*/ ctx[17],
+    					preloadNext: /*preloadNext*/ ctx[16],
     					opts: /*opts*/ ctx[5],
     					prev: /*prev*/ ctx[2],
     					next: /*next*/ ctx[3],
     					close: /*close*/ ctx[1],
-    					toggleControls: /*toggleControls*/ ctx[21],
-    					setResizeFunc: /*setResizeFunc*/ ctx[15]
+    					toggleControls: /*toggleControls*/ ctx[20],
+    					setResizeFunc: /*setResizeFunc*/ ctx[14]
     				},
-    				containerWidth: /*containerWidth*/ ctx[8],
-    				containerHeight: /*containerHeight*/ ctx[9],
-    				smallScreen: /*smallScreen*/ ctx[11]
+    				containerWidth: /*containerWidth*/ ctx[7],
+    				containerHeight: /*containerHeight*/ ctx[8],
+    				smallScreen: /*smallScreen*/ ctx[10]
     			}
     		});
 
@@ -2208,20 +2182,20 @@
 
     			if (dirty[0] & /*activeItem, opts*/ 96) imageitem_changes.stuff = {
     				activeItem: /*activeItem*/ ctx[6],
-    				calculateDimensions: /*calculateDimensions*/ ctx[16],
-    				loadImage: /*loadImage*/ ctx[18],
-    				preloadNext: /*preloadNext*/ ctx[17],
+    				calculateDimensions: /*calculateDimensions*/ ctx[15],
+    				loadImage: /*loadImage*/ ctx[17],
+    				preloadNext: /*preloadNext*/ ctx[16],
     				opts: /*opts*/ ctx[5],
     				prev: /*prev*/ ctx[2],
     				next: /*next*/ ctx[3],
     				close: /*close*/ ctx[1],
-    				toggleControls: /*toggleControls*/ ctx[21],
-    				setResizeFunc: /*setResizeFunc*/ ctx[15]
+    				toggleControls: /*toggleControls*/ ctx[20],
+    				setResizeFunc: /*setResizeFunc*/ ctx[14]
     			};
 
-    			if (dirty[0] & /*containerWidth*/ 256) imageitem_changes.containerWidth = /*containerWidth*/ ctx[8];
-    			if (dirty[0] & /*containerHeight*/ 512) imageitem_changes.containerHeight = /*containerHeight*/ ctx[9];
-    			if (dirty[0] & /*smallScreen*/ 2048) imageitem_changes.smallScreen = /*smallScreen*/ ctx[11];
+    			if (dirty[0] & /*containerWidth*/ 128) imageitem_changes.containerWidth = /*containerWidth*/ ctx[7];
+    			if (dirty[0] & /*containerHeight*/ 256) imageitem_changes.containerHeight = /*containerHeight*/ ctx[8];
+    			if (dirty[0] & /*smallScreen*/ 1024) imageitem_changes.smallScreen = /*smallScreen*/ ctx[10];
     			imageitem.$set(imageitem_changes);
     		},
     		i(local) {
@@ -2239,8 +2213,8 @@
     	};
     }
 
-    // (339:48) {#if activeItem.caption}
-    function create_if_block_4(ctx) {
+    // (340:75) {#if activeItem.caption}
+    function create_if_block_3(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].caption + "";
     	let div_transition;
@@ -2280,7 +2254,7 @@
     	};
     }
 
-    // (299:63) {#key activeItem.i}
+    // (301:63) {#key activeItem.i}
     function create_key_block(ctx) {
     	let div;
     	let current_block_type_index;
@@ -2291,7 +2265,7 @@
     	let current;
     	let mounted;
     	let dispose;
-    	const if_block_creators = [create_if_block_5, create_if_block_6, create_if_block_7, create_else_block];
+    	const if_block_creators = [create_if_block_4, create_if_block_5, create_if_block_6, create_else_block];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -2303,7 +2277,7 @@
 
     	current_block_type_index = select_block_type(ctx);
     	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    	let if_block1 = /*activeItem*/ ctx[6].caption && create_if_block_4(ctx);
+    	let if_block1 = /*activeItem*/ ctx[6].caption && create_if_block_3(ctx);
 
     	return {
     		c() {
@@ -2312,7 +2286,6 @@
     			if (if_block1) if_block1.c();
     			if_block1_anchor = empty();
     			attr(div, "class", "bp-inner");
-    			toggle_class(div, "bp-html", /*activeItemIsHtml*/ ctx[7]);
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
@@ -2357,10 +2330,6 @@
     				if_block0.m(div, null);
     			}
 
-    			if (dirty[0] & /*activeItemIsHtml*/ 128) {
-    				toggle_class(div, "bp-html", /*activeItemIsHtml*/ ctx[7]);
-    			}
-
     			if (/*activeItem*/ ctx[6].caption) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
@@ -2369,7 +2338,7 @@
     						transition_in(if_block1, 1);
     					}
     				} else {
-    					if_block1 = create_if_block_4(ctx);
+    					if_block1 = create_if_block_3(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
     					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
@@ -2390,7 +2359,7 @@
 
     			add_render_callback(() => {
     				if (div_outro) div_outro.end(1);
-    				div_intro = create_in_transition(div, /*animateIn*/ ctx[19], {});
+    				div_intro = create_in_transition(div, /*animateIn*/ ctx[18], {});
     				div_intro.start();
     			});
 
@@ -2400,7 +2369,7 @@
     		o(local) {
     			transition_out(if_block0);
     			if (div_intro) div_intro.invalidate();
-    			div_outro = create_out_transition(div, /*animateOut*/ ctx[20], {});
+    			div_outro = create_out_transition(div, /*animateOut*/ ctx[19], {});
     			transition_out(if_block1);
     			current = false;
     		},
@@ -2416,55 +2385,49 @@
     	};
     }
 
-    // (339:171) {#if !smallScreen || !hideControls}
+    // (340:198) {#if !smallScreen || !hideControls}
     function create_if_block_1(ctx) {
     	let div;
-    	let if_block0_anchor;
+    	let button;
     	let div_transition;
     	let current;
-    	let if_block0 = !/*opts*/ ctx[5].noClose && create_if_block_3(ctx);
-    	let if_block1 = /*items*/ ctx[0].length > 1 && create_if_block_2(ctx);
+    	let mounted;
+    	let dispose;
+    	let if_block = /*items*/ ctx[0].length > 1 && create_if_block_2(ctx);
 
     	return {
     		c() {
     			div = element("div");
-    			if (if_block0) if_block0.c();
-    			if_block0_anchor = empty();
-    			if (if_block1) if_block1.c();
+    			button = element("button");
+    			if (if_block) if_block.c();
+    			attr(button, "class", "bp-x");
+    			attr(button, "title", "Close");
+    			attr(button, "aria-label", "Close");
     			attr(div, "class", "bp-controls");
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
-    			if (if_block0) if_block0.m(div, null);
-    			append(div, if_block0_anchor);
-    			if (if_block1) if_block1.m(div, null);
+    			append(div, button);
+    			if (if_block) if_block.m(div, null);
     			current = true;
+
+    			if (!mounted) {
+    				dispose = listen(button, "click", /*close*/ ctx[1]);
+    				mounted = true;
+    			}
     		},
     		p(ctx, dirty) {
-    			if (!/*opts*/ ctx[5].noClose) {
-    				if (if_block0) {
-    					if_block0.p(ctx, dirty);
-    				} else {
-    					if_block0 = create_if_block_3(ctx);
-    					if_block0.c();
-    					if_block0.m(div, if_block0_anchor);
-    				}
-    			} else if (if_block0) {
-    				if_block0.d(1);
-    				if_block0 = null;
-    			}
-
     			if (/*items*/ ctx[0].length > 1) {
-    				if (if_block1) {
-    					if_block1.p(ctx, dirty);
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_2(ctx);
-    					if_block1.c();
-    					if_block1.m(div, null);
+    					if_block = create_if_block_2(ctx);
+    					if_block.c();
+    					if_block.m(div, null);
     				}
-    			} else if (if_block1) {
-    				if_block1.d(1);
-    				if_block1 = null;
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
     			}
     		},
     		i(local) {
@@ -2484,44 +2447,15 @@
     		},
     		d(detaching) {
     			if (detaching) detach(div);
-    			if (if_block0) if_block0.d();
-    			if (if_block1) if_block1.d();
+    			if (if_block) if_block.d();
     			if (detaching && div_transition) div_transition.end();
-    		}
-    	};
-    }
-
-    // (339:288) {#if !opts.noClose}
-    function create_if_block_3(ctx) {
-    	let button;
-    	let mounted;
-    	let dispose;
-
-    	return {
-    		c() {
-    			button = element("button");
-    			attr(button, "class", "bp-x");
-    			attr(button, "title", "Close");
-    			attr(button, "aria-label", "Close");
-    		},
-    		m(target, anchor) {
-    			insert(target, button, anchor);
-
-    			if (!mounted) {
-    				dispose = listen(button, "click", /*close*/ ctx[1]);
-    				mounted = true;
-    			}
-    		},
-    		p: noop,
-    		d(detaching) {
-    			if (detaching) detach(button);
     			mounted = false;
     			dispose();
     		}
     	};
     }
 
-    // (344:12) {#if items.length > 1}
+    // (345:6) {#if items.length > 1}
     function create_if_block_2(ctx) {
     	let div;
     	let t_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2632,9 +2566,10 @@
     	let $closing;
     	let $zoomed;
     	component_subscribe($$self, closing, $$value => $$invalidate(33, $closing = $$value));
-    	component_subscribe($$self, zoomed, $$value => $$invalidate(14, $zoomed = $$value));
+    	component_subscribe($$self, zoomed, $$value => $$invalidate(13, $zoomed = $$value));
     	let { items = undefined } = $$props;
     	let { target = undefined } = $$props;
+    	const { documentElement: html } = document;
 
     	// index of current active item
     	let position;
@@ -2679,34 +2614,27 @@
 
     	const open = options => {
     		$$invalidate(5, opts = options);
-
-    		// disable scroll if not inline gallery
-    		$$invalidate(12, inline = opts.inline);
-
-    		inline || r();
-
-    		// setTimeout to queue behind hideScroll render and avoid reflow
-    		setTimeout(openPartDeux, 0);
-    	};
-
-    	// continuation of open function, delayed to avoid reflow
-    	const openPartDeux = () => {
+    		$$invalidate(11, inline = opts.inline);
     		const openItems = opts.items;
 
     		// update trigger element to restore focus
+    		// add class to hide scroll if not inline gallery
+    		if (!inline && html.scrollHeight > html.clientHeight) {
+    			html.classList.add('bp-lock');
+    		}
+
     		focusTrigger = document.activeElement;
+    		$$invalidate(7, containerWidth = target.offsetWidth);
 
-    		$$invalidate(8, containerWidth = target.offsetWidth);
-
-    		$$invalidate(9, containerHeight = target === document.body
+    		$$invalidate(8, containerHeight = target === document.body
     		? window.innerHeight
     		: target.clientHeight);
 
-    		$$invalidate(11, smallScreen = containerWidth < 769);
+    		$$invalidate(10, smallScreen = containerWidth < 769);
     		$$invalidate(4, position = opts.position || 0);
 
     		// reset controls
-    		$$invalidate(10, hideControls = false);
+    		$$invalidate(9, hideControls = false);
 
     		// make array w/ dataset to work with
     		$$invalidate(0, items = Array.isArray(openItems)
@@ -2724,14 +2652,12 @@
     	};
 
     	const close = () => {
-    		if (!opts.noClose) {
-    			opts.onClose && opts.onClose();
-    			set_store_value(closing, $closing = 1, $closing);
-    			$$invalidate(0, items = false);
+    		opts.onClose && opts.onClose();
+    		set_store_value(closing, $closing = 1, $closing);
+    		$$invalidate(0, items = false);
 
-    			// restore focus to trigger element
-    			focusTrigger && focusTrigger.focus({ preventScroll: true });
-    		}
+    		// restore focus to trigger element
+    		focusTrigger && focusTrigger.focus({ preventScroll: true });
     	};
 
     	const prev = () => setPosition(position - 1);
@@ -2757,7 +2683,7 @@
     		const { key, shiftKey } = e;
 
     		if (key === 'Escape') {
-    			close();
+    			!opts.noClose && close();
     		} else if (key === 'ArrowRight') {
     			next();
     		} else if (key === 'ArrowLeft') {
@@ -2825,7 +2751,7 @@
     	// animate media in when bp is first opened
     	const animateIn = node => {
     		if (!isOpen) {
-    			$$invalidate(26, isOpen = 1);
+    			$$invalidate(25, isOpen = 1);
     			opts.onOpen && opts.onOpen(container, activeItem);
 
     			return opts.intro
@@ -2858,7 +2784,13 @@
     	// custom svelte transition for entrance zoom
     	const scaleIn = node => {
     		const { element } = activeItem;
-    		const bpItem = node.querySelector('.bp-item');
+    		let bpItem = node.firstElementChild;
+
+    		// images and html have a wrapper div, so we must go deeper
+    		if (activeItem.img || activeItemIsHtml) {
+    			bpItem = bpItem.firstElementChild;
+    		}
+
     		const { clientWidth, clientHeight } = bpItem;
     		const { top, left, width, height } = element.getBoundingClientRect();
     		const leftOffset = left - (containerWidth - width) / 2;
@@ -2877,10 +2809,10 @@
     	};
 
     	// toggle controls for small screen
-    	const toggleControls = () => $$invalidate(10, hideControls = !hideControls);
+    	const toggleControls = () => $$invalidate(9, hideControls = !hideControls);
 
     	const containerActions = node => {
-    		$$invalidate(27, container = node);
+    		$$invalidate(26, container = node);
     		let removeKeydownListener;
     		let roActive;
 
@@ -2893,9 +2825,9 @@
     		const ro = new ResizeObserver(entries => {
     				// use roActive to avoid running on initial open
     				if (roActive) {
-    					$$invalidate(8, containerWidth = entries[0].contentRect.width);
-    					$$invalidate(9, containerHeight = entries[0].contentRect.height);
-    					$$invalidate(11, smallScreen = containerWidth < 769);
+    					$$invalidate(7, containerWidth = entries[0].contentRect.width);
+    					$$invalidate(8, containerHeight = entries[0].contentRect.height);
+    					$$invalidate(10, smallScreen = containerWidth < 769);
 
     					// run child component resize function
     					resizeFunc && resizeFunc();
@@ -2913,36 +2845,39 @@
     			destroy() {
     				ro.disconnect();
     				removeKeydownListener && removeKeydownListener();
-    				set_store_value(closing, $closing = $$invalidate(26, isOpen = false), $closing);
-    				s();
+    				set_store_value(closing, $closing = $$invalidate(25, isOpen = false), $closing);
+
+    				// remove class hiding scroll
+    				html.classList.remove('bp-lock');
+
     				opts.onClosed && opts.onClosed();
     			}
     		};
     	};
 
-    	const pointerdown_handler = e => $$invalidate(13, clickedEl = e.target);
+    	const pointerdown_handler = e => $$invalidate(12, clickedEl = e.target);
 
     	const pointerup_handler = function (e) {
     		// only close if left click on self and not dragged
     		if (e.button !== 2 && e.target === this && clickedEl === this) {
-    			close();
+    			!opts.noClose && close();
     		}
     	};
 
     	$$self.$$set = $$props => {
     		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-    		if ('target' in $$props) $$invalidate(23, target = $$props.target);
+    		if ('target' in $$props) $$invalidate(22, target = $$props.target);
     	};
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty[0] & /*items, position, isOpen, activeItem, activeItemIsHtml, opts, container*/ 201326833) {
+    		if ($$self.$$.dirty[0] & /*items, position, activeItem, isOpen, activeItemIsHtml, opts, container*/ 234881137) {
     			if (items) {
     				// update active item when position changes
     				$$invalidate(6, activeItem = items[position]);
 
-    				if (isOpen) {
-    					$$invalidate(7, activeItemIsHtml = activeItem.hasOwnProperty('html'));
+    				$$invalidate(27, activeItemIsHtml = activeItem.hasOwnProperty('html'));
 
+    				if (isOpen) {
     					// clear child resize function if html
     					activeItemIsHtml && setResizeFunc(null);
 
@@ -2961,7 +2896,6 @@
     		position,
     		opts,
     		activeItem,
-    		activeItemIsHtml,
     		containerWidth,
     		containerHeight,
     		hideControls,
@@ -2982,6 +2916,7 @@
     		setPosition,
     		isOpen,
     		container,
+    		activeItemIsHtml,
     		pointerdown_handler,
     		pointerup_handler
     	];
@@ -2999,12 +2934,12 @@
     			not_equal,
     			{
     				items: 0,
-    				target: 23,
-    				open: 24,
+    				target: 22,
+    				open: 23,
     				close: 1,
     				prev: 2,
     				next: 3,
-    				setPosition: 25
+    				setPosition: 24
     			},
     			null,
     			[-1, -1]
@@ -3018,13 +2953,13 @@
 
 
     	get target() {
-    		return this.$$.ctx[23];
+    		return this.$$.ctx[22];
     	}
 
 
 
     	get open() {
-    		return this.$$.ctx[24];
+    		return this.$$.ctx[23];
     	}
 
     	get close() {
@@ -3040,7 +2975,7 @@
     	}
 
     	get setPosition() {
-    		return this.$$.ctx[25];
+    		return this.$$.ctx[24];
     	}
     }
 

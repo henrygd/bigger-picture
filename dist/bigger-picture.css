@@ -9,7 +9,7 @@
   overflow on .bp-wrap, change contain to "layout" on that instance */
   contain: strict;
   touch-action: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
 }
 .bp-wrap * {
   contain: strict;
@@ -23,13 +23,10 @@
   background: rgba(0, 0, 0, 0.75);
 }
 
-.bp-item {
-  position: absolute;
-}
-.bp-item video {
+.bp-vid video {
   contain: layout;
 }
-.bp-item audio {
+.bp-vid audio {
   position: absolute;
   left: 14px;
   width: calc(100% - 28px);
@@ -49,6 +46,9 @@
   contain: layout size;
 }
 
+.bp-html {
+  display: contents;
+}
 .bp-html * {
   contain: unset;
 }
@@ -72,6 +72,7 @@
 }
 
 .bp-img {
+  position: absolute;
   user-select: none;
   cursor: zoom-in;
   background-size: 100% 100%;
@@ -179,6 +180,7 @@
 
 .bp-if,
 .bp-vid {
+  position: absolute;
   background: #000;
   background-size: 100% 100%;
 }
@@ -267,10 +269,21 @@
 .bp-inline {
   position: absolute;
 }
-.bp-inline:not(.zoomed) {
+
+.bp-lock {
+  overflow-y: hidden;
+}
+.bp-lock body {
+  overflow: scroll;
+}
+
+.bp-noclose .bp-x {
+  display: none;
+}
+.bp-noclose:not(.zoomed) {
   touch-action: pan-y;
 }
-.bp-inline:not(.zoomed) .bp-img-wrap {
+.bp-noclose:not(.zoomed) .bp-img-wrap {
   cursor: zoom-in;
 }
 
