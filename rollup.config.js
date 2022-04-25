@@ -78,7 +78,7 @@ let config = [
 				},
 			}),
 			resolve({ browser: true }),
-			// ...findReplaceOptions,
+			...findReplaceOptions,
 			production && terser(terserOptions),
 		],
 	},
