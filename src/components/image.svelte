@@ -95,7 +95,10 @@
 					? maxTranslateX + (x - maxTranslateX) / 10
 					: maxTranslateX
 				// previous item if dragged past threshold
-				x > maxTranslateX + 20 && prev()
+				if (x > maxTranslateX + 20) {
+					// pointerdown = undefined to stop pointermove from running again
+					pointerDown = prev()
+				}
 			} else {
 				x = maxTranslateX
 			}
@@ -107,6 +110,9 @@
 					: -maxTranslateX
 				// next item if dragged past threshold
 				if (x < -maxTranslateX - 20) {
+					// pointerdown = undefined to stop pointermove from running again
+					pointerDown = next()
+				}
 			} else {
 				x = -maxTranslateX
 			}
