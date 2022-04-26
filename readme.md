@@ -8,11 +8,20 @@
 
 [![npm][npm-image]][npm-url] ![File Size][size-image] [![MIT license][license-image]][license-url]
 
-High performance JavaScript lightbox gallery with a small footprint. Supports images, video, audio, iframes, and html with no plugins necessary. Under 10 kB gzip vanilla / much smaller if using Svelte.
+Pretty good JavaScript lightbox gallery with a small footprint. Demo: https://biggerpicture.henrygd.me
 
-Demo: https://biggerpicture.henrygd.me
+https://user-images.githubusercontent.com/8519632/165216178-bd9a0b03-6ee5-42fd-b303-f92d281eb494.mp4
 
-https://user-images.githubusercontent.com/8519632/155907562-a8849399-51e4-4363-b377-b07b0fd12b82.mp4
+## Features
+
+- **High Performance** - Smooth even with huge images, especially if using srcset.
+- **Lightweight** - Less than half the size of lightGallery or PhotoSwipe (the king - not bashing it).
+- **Zoomable** - Click, wheel, pinch, or double tap to zoom photos up to native resolution.
+- **Responsive images** - Pass in a srcset value and Bigger Picture will handle the rest.
+- **Supports video, audio, iframes, and html** - No need for multiple libraries, plugins, or hacky workarounds.
+- **Inline galleries and custom layouts** - Bigger Picture can be mounted anywhere and has an easy-to-use API.
+- **Accessible** - Supports alt text, image / video captions, and plays nice with focus.
+- **Free software** - MIT licensed. Do whatever you want with it, just don't be an asshole please.
 
 ## Install
 
@@ -21,6 +30,8 @@ npm install bigger-picture
 ```
 
 Add the required [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) to your project. If possible, import from the package so you won't need to manually replace styles when you update.
+
+Alternatively, you can include the script directly in a script tag or load from a CDN like [jsDelivr](https://www.jsdelivr.com/package/npm/bigger-picture?path=dist).
 
 ## Usage
 
@@ -325,7 +336,7 @@ import BiggerPicture from 'bigger-picture/src/bigger-picture.js'
 
 ## Internet Explorer Support
 
-IE support should be possible with a few tweaks and the right polyfills. If you want an ES5 script and directions for polyfilling, please open an issue. If there's enough support I will try to figure it out.
+IE support should be possible with a few tweaks and the right polyfills. If you want directions for polyfilling, please open an issue. If there's enough support I will try to figure it out.
 
 ## License
 
