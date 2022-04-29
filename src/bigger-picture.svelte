@@ -227,14 +227,14 @@
 
 	// custom svelte transition for entrance zoom
 	const scaleIn = (node) => {
-		const { element } = activeItem
-
 		let bpItem = node.firstElementChild
 
 		// images and html have a wrapper div, so we must go deeper
 		if (activeItem.img || activeItemIsHtml) {
 			bpItem = bpItem.firstElementChild
 		}
+
+		const element = activeItem.element || focusTrigger
 
 		const { clientWidth, clientHeight } = bpItem
 
