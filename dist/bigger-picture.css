@@ -59,9 +59,6 @@
   width: 100%;
   height: 100%;
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .bp-img-wrap.bp-drag .bp-img {
   cursor: grabbing;
@@ -73,9 +70,12 @@
 
 .bp-img {
   position: absolute;
+  top: 50%;
+  left: 50%;
   user-select: none;
   cursor: zoom-in;
   background-size: 100% 100%;
+  transform: translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), 0px);
 }
 .bp-img img,
 .bp-img div {

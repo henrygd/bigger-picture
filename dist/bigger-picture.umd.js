@@ -1051,7 +1051,7 @@
     	};
     }
 
-    // (403:85) {#if showLoader}
+    // (404:85) {#if showLoader}
     function create_if_block$1(ctx) {
     	let loading;
     	let current;
@@ -1112,7 +1112,8 @@
     			set_style(div0, "background-image", "url(" + /*thumb*/ ctx[9] + ")");
     			set_style(div0, "width", /*$imageDimensions*/ ctx[0][0] + "px");
     			set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
-    			set_style(div0, "transform", "translate3d(" + /*$zoomDragTranslate*/ ctx[6][0] + "px, " + /*$zoomDragTranslate*/ ctx[6][1] + "px, 0px)");
+    			set_style(div0, "--x", /*$zoomDragTranslate*/ ctx[6][0] + "px");
+    			set_style(div0, "--y", /*$zoomDragTranslate*/ ctx[6][1] + "px");
     			attr(div1, "class", "bp-img-wrap");
     			toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[4]);
     			toggle_class(div1, "bp-close", /*closingWhileZoomed*/ ctx[5]);
@@ -1194,7 +1195,11 @@
     			}
 
     			if (!current || dirty[0] & /*$zoomDragTranslate*/ 64) {
-    				set_style(div0, "transform", "translate3d(" + /*$zoomDragTranslate*/ ctx[6][0] + "px, " + /*$zoomDragTranslate*/ ctx[6][1] + "px, 0px)");
+    				set_style(div0, "--x", /*$zoomDragTranslate*/ ctx[6][0] + "px");
+    			}
+
+    			if (!current || dirty[0] & /*$zoomDragTranslate*/ 64) {
+    				set_style(div0, "--y", /*$zoomDragTranslate*/ ctx[6][1] + "px");
     			}
 
     			if (dirty[0] & /*pointerDown*/ 16) {
@@ -2022,7 +2027,7 @@
     	};
     }
 
-    // (340:7) {:else}
+    // (350:7) {:else}
     function create_else_block(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].html + "";
@@ -2046,7 +2051,7 @@
     	};
     }
 
-    // (334:35) 
+    // (344:35) 
     function create_if_block_6(ctx) {
     	let iframe;
     	let current;
@@ -2095,7 +2100,7 @@
     	};
     }
 
-    // (328:36) 
+    // (338:36) 
     function create_if_block_5(ctx) {
     	let video;
     	let current;
@@ -2144,7 +2149,7 @@
     	};
     }
 
-    // (312:4) {#if activeItem.img}
+    // (322:4) {#if activeItem.img}
     function create_if_block_4(ctx) {
     	let imageitem;
     	let current;
@@ -2213,7 +2218,7 @@
     	};
     }
 
-    // (340:75) {#if activeItem.caption}
+    // (350:75) {#if activeItem.caption}
     function create_if_block_3(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].caption + "";
@@ -2254,7 +2259,7 @@
     	};
     }
 
-    // (301:63) {#key activeItem.i}
+    // (311:63) {#key activeItem.i}
     function create_key_block(ctx) {
     	let div;
     	let current_block_type_index;
@@ -2385,7 +2390,7 @@
     	};
     }
 
-    // (340:198) {#if !smallScreen || !hideControls}
+    // (350:198) {#if !smallScreen || !hideControls}
     function create_if_block_1(ctx) {
     	let div;
     	let button;
@@ -2455,7 +2460,7 @@
     	};
     }
 
-    // (345:6) {#if items.length > 1}
+    // (355:6) {#if items.length > 1}
     function create_if_block_2(ctx) {
     	let div;
     	let t_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2637,18 +2642,27 @@
     		$$invalidate(9, hideControls = false);
 
     		// make array w/ dataset to work with
-    		$$invalidate(0, items = Array.isArray(openItems)
-    		? // array was passed
-    			openItems.map((item, i) => ({ ...item, i }))
-    		: // nodelist / node was passed
-    			[...openItems.length ? openItems : [openItems]].map((element, i) => {
-    				// set gallery position
-    				if (element === opts.el) {
+    		if (Array.isArray(openItems)) {
+    			// array was passed
+    			$$invalidate(0, items = openItems.map((item, i) => {
+    				// override gallery position if needed
+    				if (opts.el && opts.el === item.element) {
+    					$$invalidate(4, position = i);
+    				}
+
+    				return { i, ...item };
+    			}));
+    		} else {
+    			// nodelist / node was passed
+    			$$invalidate(0, items = (openItems.length ? [...openItems] : [openItems]).map((element, i) => {
+    				// override gallery position if needed
+    				if (opts.el === element) {
     					$$invalidate(4, position = i);
     				}
 
     				return { element, i, ...element.dataset };
     			}));
+    		}
     	};
 
     	const close = () => {
@@ -2783,7 +2797,6 @@
 
     	// custom svelte transition for entrance zoom
     	const scaleIn = node => {
-    		const { element } = activeItem;
     		let bpItem = node.firstElementChild;
 
     		// images and html have a wrapper div, so we must go deeper
@@ -2791,6 +2804,7 @@
     			bpItem = bpItem.firstElementChild;
     		}
 
+    		const element = activeItem.element || focusTrigger;
     		const { clientWidth, clientHeight } = bpItem;
     		const { top, left, width, height } = element.getBoundingClientRect();
     		const leftOffset = left - (containerWidth - width) / 2;
