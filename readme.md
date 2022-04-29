@@ -109,7 +109,7 @@ If using NodeList or Node, the information is passed via data attributes. If usi
 Type: `Node`<br>
 Default: `undefined`
 
-If the specified node matches a node in `items`, the gallery will start at that position. For example, you could use this inside a click handler by passing `event.target`.
+If the specified node matches a node in `items` (or matches the `element` value on an item if using an array), the gallery will start at that position. For example, you could use this inside a click handler by passing `event.target`. (See [codesandbox demo](https://codesandbox.io/s/bigger-picture-basic-gallery-o4kb82) for example.)
 
 ### position
 
@@ -118,7 +118,7 @@ Default: `0`
 
 Start position of gallery. If using `el` this will be ignored.
 
-> **Note:** This number is zero-indexed. The third item would be position 2.
+> Note: This number is zero-indexed. The third item would be position 2.
 
 ### scale
 
@@ -308,7 +308,7 @@ Below is an example for passing English and Spanish captions. See the [MDN page 
 
 ## Passing Item Data via Object
 
-If you want to track the default open / close animation, also add a property `element` that contains a node on the page. If you're not using the default intro animation, this is not needed.
+To control the default open / close animation, also add a property `element` to each item that contains a node on the page. The active item's `element` will be where the animation opens from / closes to. If you're not using the default scale animation, this is not needed.
 
 ```js
 let items = [
@@ -318,6 +318,8 @@ let items = [
     alt: 'Example',
     height: 2500,
     width: 1667,
+    // if you're using the default intro animation
+    element: node,
   },
 ]
 

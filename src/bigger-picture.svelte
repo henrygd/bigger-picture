@@ -85,17 +85,27 @@
 		// reset controls
 		hideControls = false
 		// make array w/ dataset to work with
-		items = Array.isArray(openItems)
-			? // array was passed
-			  openItems.map((item, i) => ({ ...item, i }))
-			: // nodelist / node was passed
-			  [...(openItems.length ? openItems : [openItems])].map((element, i) => {
-					// set gallery position
-					if (element === opts.el) {
+		if (Array.isArray(openItems)) {
+			// array was passed
+			items = openItems.map((item, i) => {
+				// override gallery position if needed
+				if (opts.el && opts.el === item.element) {
+					position = i
+				}
+				return { i, ...item }
+			})
+		} else {
+			// nodelist / node was passed
+			items = (openItems.length ? [...openItems] : [openItems]).map(
+				(element, i) => {
+					// override gallery position if needed
+					if (opts.el === element) {
 						position = i
 					}
 					return { element, i, ...element.dataset }
-			  })
+				}
+			)
+		}
 	}
 
 	export const close = () => {
