@@ -31,44 +31,46 @@
 	let naturalWidth = +width
 	let naturalHeight = +height
 	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
+
+	/** value of sizes attribute */
 	let sizes = calculatedDimensions[0]
 
-	// tracks load state of image
+	/** tracks load state of image */
 	let loaded, showLoader
 
-	// cache events to handle pinch
+	/** cache events to handle pinch */
 	let eventCache = []
 
-	// store positions for drag inertia
+	/** store positions for drag inertia */
 	let dragPositions = []
 
-	// bool true if multiple touch events
+	/** bool true if multiple touch events */
 	let isPinch
 
-	// track distance for pinch events
+	/** track distance for pinch events */
 	let prevDiff = 0
 
 	let pointerDown, hasDragged
 	let dragStartX, dragStartY
 
-	// zoomDragTranslate values on start of drag
+	/** zoomDragTranslate values on start of drag */
 	let dragStartTranslateX, dragStartTranslateY
 
-	// double click timeout (mobile controls)
+	/** double click timeout (mobile controls) */
 	let doubleClickTimeout
 
-	// if true, adds class to .bp-wrap to avoid image cropping
+	/** if true, adds class to .bp-wrap to avoid image cropping */
 	let closingWhileZoomed
 
-	// options for tweens - no animation if prefers reduced motion
+	/** options for tweens - no animation if prefers reduced motion */
 	const tweenOptions = {
 		easing: cubicOut,
 		duration: prefersReducedMotion ? 0 : 400,
 	}
 
-	// tween to control image size
+	/** tween to control image size */
 	const imageDimensions = tweened(calculatedDimensions, tweenOptions)
-	// translate transform for pointerDown
+	/** translate transform for pointerDown */
 	const zoomDragTranslate = tweened([0, 0], tweenOptions)
 
 	$: $zoomed = $imageDimensions[0] > calculatedDimensions[0]
@@ -80,7 +82,7 @@
 		zoomDragTranslate.set([0, 0])
 	}
 
-	// calculate translate position with bounds
+	/** calculate translate position with bounds */
 	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
 		// image drag translate bounds
 		const maxTranslateX = (newDimensions[0] - containerWidth) / 2
@@ -128,7 +130,7 @@
 		return [x, y]
 	}
 
-	// updates zoom level in or out based on amt value
+	/** updates zoom level in or out based on amt value */
 	const changeZoom = (e, amt = maxZoom) => {
 		if ($closing) {
 			return
@@ -197,7 +199,7 @@
 		changeZoom(e, deltaY)
 	}
 
-	// on drag start, store initial position and image translate values
+	/** on drag start, store initial position and image translate values */
 	const onPointerDown = (e) => {
 		// don't run if right click
 		if (e.button !== 2) {
@@ -212,7 +214,7 @@
 		}
 	}
 
-	// on drag, update image translate val
+	/** on drag, update image translate val */
 	const onPointerMove = (e) => {
 		if (eventCache.length > 1) {
 			isPinch = true
@@ -286,7 +288,6 @@
 		prevDiff = curDiff
 	}
 
-	// on mouse / touch end, set pointerDown to false
 	function onPointerUp(e) {
 		// remove event from event cache
 		eventCache = eventCache.filter((ev) => ev.pointerId != e.pointerId)

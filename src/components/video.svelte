@@ -24,15 +24,15 @@
 
 	const audio = JSON.stringify(sources).includes('audio')
 
-	// adds attributes to a node
+	/** adds attributes to a node */
 	const addAttributes = (node, obj) => {
 		Object.keys(obj).forEach((key) => attr(node, key, obj[key]))
 	}
 
+	/** create audo / video element */
 	const onMount = (node) => {
-		// create audo / video element
 		const mediaElement = element(audio ? 'audio' : 'video')
-		// add attributes to created elements
+		/** add attributes to created elements */
 		addAttributes(mediaElement, {
 			controls: true,
 			autoplay: true,
@@ -40,7 +40,7 @@
 			tabindex: '0',
 		})
 
-		// takes supplied object and creates elements in video
+		/** takes supplied object and creates elements in video */
 		const appendToVideo = (tag, arr) => {
 			if (!Array.isArray(arr)) {
 				arr = JSON.parse(arr)

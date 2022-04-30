@@ -9,49 +9,53 @@
 	import { zoomed, closing } from './stores'
 	import { listen, element as createEl } from 'svelte/internal'
 
+	/** items currently displayed in gallery */
 	export let items = undefined
+
+	/** element the gallery is mounted within (passed during initialization)*/
 	export let target = undefined
 
 	const { documentElement: html } = document
 
-	// index of current active item
+	/** index of current active item */
 	let position
 
-	// options passed via open method
+	/** options passed via open method */
 	let opts
 
-	// bool tracks open state
+	/** bool tracks open state */
 	let isOpen
 
-	// dom element to restore focus to on close
+	/** dom element to restore focus to on close */
 	let focusTrigger
 
-	// container element
+	/** container element */
 	let container, containerWidth, containerHeight
 
-	// bool controlling visual state of controls
+	/** bool controlling visual state of controls */
 	let hideControls
 
-	// bool true if containerWidth < 769
+	/** bool true if containerWidth < 769 */
 	let smallScreen
 
-	// bool value of inline option passed in open method
+	/** bool value of inline option passed in open method */
 	let inline
 
-	// when position is set
+	/** when position is set */
 	let movement
 
-	// stores target on pointerdown (ref for overlay close)
+	/** stores target on pointerdown (ref for overlay close) */
 	let clickedEl
 
-	// active item object
+	/** active item object */
 	let activeItem
 
-	// true if activeItem is html
+	/** true if activeItem is html */
 	let activeItemIsHtml
 
-	// function set by child component to run when container resized
+	/** function set by child component to run when container resized */
 	let resizeFunc
+	/** used by child components to set resize function */
 	const setResizeFunc = (fn) => (resizeFunc = fn)
 
 	$: if (items) {
@@ -66,7 +70,7 @@
 		}
 	}
 
-	// receives options and opens gallery
+	/** receives options and opens gallery */
 	export const open = (options) => {
 		opts = options
 		inline = opts.inline
@@ -108,6 +112,7 @@
 		}
 	}
 
+	/** closes gallery */
 	export const close = () => {
 		opts.onClose && opts.onClose()
 		$closing = 1
@@ -116,19 +121,25 @@
 		focusTrigger && focusTrigger.focus({ preventScroll: true })
 	}
 
-	// previous gallery item
+	/** previous gallery item */
 	export const prev = () => setPosition(position - 1)
 
-	// next gallery item
+	/** next gallery item */
 	export const next = () => setPosition(position + 1)
 
-	// go to specific item in gallery
+	/**
+	 * go to specific item in gallery
+	 * @param {number} index
+	 */
 	export const setPosition = (index) => {
 		movement = index - position
 		position = getNextPosition(index)
 	}
 
-	// get next gallery position
+	/**
+	 * returns next gallery position (looped if neccessary)
+	 * @param {number} index
+	 */
 	const getNextPosition = (index) => {
 		if (index >= items.length) {
 			index = 0
@@ -164,7 +175,12 @@
 		}
 	}
 
-	// calculates dimensions within window for given height / width
+	/**
+	 * calculates dimensions within window bounds for given height / width
+	 * @param {number} fullWidth full width of media
+	 * @param {number} fullHeight full height of media
+	 * @returns {Array} [width: number, height: number]
+	 */
 	const calculateDimensions = (fullWidth, fullHeight) => {
 		fullWidth = fullWidth || 1920
 		fullHeight = fullHeight || 1080
@@ -186,7 +202,7 @@
 		return [Math.round(width), Math.round(height)]
 	}
 
-	// preloads images for previous and next items in gallery
+	/** preloads images for previous and next items in gallery */
 	const preloadNext = () => {
 		const nextItem = items[getNextPosition(position + 1)]
 		const prevItem = items[getNextPosition(position - 1)]
@@ -194,7 +210,7 @@
 		prevItem && !prevItem.preload && loadImage(prevItem)
 	}
 
-	// loads / decodes image for item
+	/** loads / decodes image for item */
 	const loadImage = (item) => {
 		const { img, width, height } = item
 		if (!img) {
@@ -207,7 +223,7 @@
 		return image.decode()
 	}
 
-	// animate media in when bp is first opened
+	/** animate media in when bp is first opened */
 	const animateIn = (node) => {
 		if (!isOpen) {
 			isOpen = 1
@@ -221,7 +237,7 @@
 		})
 	}
 
-	// animate media out when bp is closed
+	/** animate media out when bp is closed */
 	const animateOut = (node) => {
 		if (!items) {
 			return opts.intro
@@ -235,7 +251,7 @@
 		})
 	}
 
-	// custom svelte transition for entrance zoom
+	/** custom svelte transition for entrance zoom */
 	const scaleIn = (node) => {
 		let bpItem = node.firstElementChild
 
@@ -268,9 +284,10 @@
 		}
 	}
 
-	// toggle controls for small screen
+	/** toggle controls shown / hidden */
 	const toggleControls = () => (hideControls = !hideControls)
 
+	/** code to run on mount / destroy */
 	const containerActions = (node) => {
 		container = node
 		let removeKeydownListener
