@@ -20,7 +20,7 @@ https://user-images.githubusercontent.com/8519632/165216178-bd9a0b03-6ee5-42fd-b
 - **Responsive images** - Pass in a srcset value and Bigger Picture will handle the rest.
 - **Supports video, audio, iframes, and html** - No need for multiple libraries, plugins, or hacky workarounds.
 - **Inline galleries and custom layouts** - Bigger Picture can be mounted anywhere and has an easy-to-use API.
-- **Accessible** - Supports alt text, image / video captions, and plays nice with focus.
+- **Accessible** - Supports alt text, image / video captions, respects prefers-reduced-motion, and manages focus.
 - **Free software** - MIT licensed. Do whatever you want with it, just don't be an asshole please.
 
 ## Install
