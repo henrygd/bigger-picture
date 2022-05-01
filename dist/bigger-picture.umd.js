@@ -842,10 +842,13 @@
         };
     }
 
+    /** true if gallery is in the process of closing */
     const closing = writable(0);
+
+    /** true if image is currently zoomed past starting size */
     const zoomed = writable(0);
 
-    // store if user prefers reduced motion
+    /** store if user prefers reduced motion  */
     const prefersReducedMotion = matchMedia(
     	'(prefers-reduced-motion: reduce)'
     ).matches;
@@ -1051,7 +1054,7 @@
     	};
     }
 
-    // (404:85) {#if showLoader}
+    // (406:85) {#if showLoader}
     function create_if_block$1(ctx) {
     	let loading;
     	let current;
@@ -1112,8 +1115,7 @@
     			set_style(div0, "background-image", "url(" + /*thumb*/ ctx[9] + ")");
     			set_style(div0, "width", /*$imageDimensions*/ ctx[0][0] + "px");
     			set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
-    			set_style(div0, "--x", /*$zoomDragTranslate*/ ctx[6][0] + "px");
-    			set_style(div0, "--y", /*$zoomDragTranslate*/ ctx[6][1] + "px");
+    			set_style(div0, "transform", "translate3d(" + (/*$imageDimensions*/ ctx[0][0] / -2 + /*$zoomDragTranslate*/ ctx[6][0]) + "px, " + (/*$imageDimensions*/ ctx[0][1] / -2 + /*$zoomDragTranslate*/ ctx[6][1]) + "px, 0)");
     			attr(div1, "class", "bp-img-wrap");
     			toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[4]);
     			toggle_class(div1, "bp-close", /*closingWhileZoomed*/ ctx[5]);
@@ -1194,12 +1196,8 @@
     				set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
     			}
 
-    			if (!current || dirty[0] & /*$zoomDragTranslate*/ 64) {
-    				set_style(div0, "--x", /*$zoomDragTranslate*/ ctx[6][0] + "px");
-    			}
-
-    			if (!current || dirty[0] & /*$zoomDragTranslate*/ 64) {
-    				set_style(div0, "--y", /*$zoomDragTranslate*/ ctx[6][1] + "px");
+    			if (!current || dirty[0] & /*$imageDimensions, $zoomDragTranslate*/ 65) {
+    				set_style(div0, "transform", "translate3d(" + (/*$imageDimensions*/ ctx[0][0] / -2 + /*$zoomDragTranslate*/ ctx[6][0]) + "px, " + (/*$imageDimensions*/ ctx[0][1] / -2 + /*$zoomDragTranslate*/ ctx[6][1]) + "px, 0)");
     			}
 
     			if (dirty[0] & /*pointerDown*/ 16) {
@@ -1249,52 +1247,54 @@
     	let naturalWidth = +width;
     	let naturalHeight = +height;
     	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight);
+
+    	/** value of sizes attribute */
     	let sizes = calculatedDimensions[0];
 
-    	// tracks load state of image
+    	/** tracks load state of image */
     	let loaded, showLoader;
 
-    	// cache events to handle pinch
+    	/** cache events to handle pinch */
     	let eventCache = [];
 
-    	// store positions for drag inertia
+    	/** store positions for drag inertia */
     	let dragPositions = [];
 
-    	// bool true if multiple touch events
+    	/** bool true if multiple touch events */
     	let isPinch;
 
-    	// track distance for pinch events
+    	/** track distance for pinch events */
     	let prevDiff = 0;
 
     	let pointerDown, hasDragged;
     	let dragStartX, dragStartY;
 
-    	// zoomDragTranslate values on start of drag
+    	/** zoomDragTranslate values on start of drag */
     	let dragStartTranslateX, dragStartTranslateY;
 
-    	// double click timeout (mobile controls)
+    	/** double click timeout (mobile controls) */
     	let doubleClickTimeout;
 
-    	// if true, adds class to .bp-wrap to avoid image cropping
+    	/** if true, adds class to .bp-wrap to avoid image cropping */
     	let closingWhileZoomed;
 
-    	// options for tweens - no animation if prefers reduced motion
+    	/** options for tweens - no animation if prefers reduced motion */
     	const tweenOptions = {
     		easing: cubicOut,
     		duration: prefersReducedMotion ? 0 : 400
     	};
 
-    	// tween to control image size
+    	/** tween to control image size */
     	const imageDimensions = tweened(calculatedDimensions, tweenOptions);
 
     	component_subscribe($$self, imageDimensions, value => $$invalidate(0, $imageDimensions = value));
 
-    	// translate transform for pointerDown
+    	/** translate transform for pointerDown */
     	const zoomDragTranslate = tweened([0, 0], tweenOptions);
 
     	component_subscribe($$self, zoomDragTranslate, value => $$invalidate(6, $zoomDragTranslate = value));
 
-    	// calculate translate position with bounds
+    	/** calculate translate position with bounds */
     	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
     		// image drag translate bounds
     		const maxTranslateX = (newDimensions[0] - containerWidth) / 2;
@@ -1348,7 +1348,7 @@
     		return [x, y];
     	};
 
-    	// updates zoom level in or out based on amt value
+    	/** updates zoom level in or out based on amt value */
     	const changeZoom = (e, amt = maxZoom) => {
     		if ($closing) {
     			return;
@@ -1416,22 +1416,21 @@
     		changeZoom(e, deltaY);
     	};
 
-    	// on drag start, store initial position and image translate values
+    	/** on drag start, store initial position and image translate values */
     	const onPointerDown = e => {
     		// don't run if right click
     		if (e.button !== 2) {
     			e.preventDefault();
     			$$invalidate(4, pointerDown = true);
     			eventCache.push(e);
-    			const [x, y] = [e.clientX, e.clientY];
-    			dragStartX = x;
-    			dragStartY = y;
+    			dragStartX = e.clientX;
+    			dragStartY = e.clientY;
     			dragStartTranslateX = $zoomDragTranslate[0];
     			dragStartTranslateY = $zoomDragTranslate[1];
     		}
     	};
 
-    	// on drag, update image translate val
+    	/** on drag, update image translate val */
     	const onPointerMove = e => {
     		if (eventCache.length > 1) {
     			isPinch = true;
@@ -1443,7 +1442,8 @@
     			return;
     		}
 
-    		let [x, y] = [e.clientX, e.clientY];
+    		let x = e.clientX;
+    		let y = e.clientY;
 
     		// store positions for inertia
     		dragPositions.push({ x, y });
@@ -1503,7 +1503,6 @@
     		prevDiff = curDiff;
     	};
 
-    	// on mouse / touch end, set pointerDown to false
     	function onPointerUp(e) {
     		// remove event from event cache
     		eventCache = eventCache.filter(ev => ev.pointerId != e.pointerId);
@@ -1856,16 +1855,16 @@
     	setResizeFunc(setDimensions);
     	const audio = JSON.stringify(sources).includes('audio');
 
-    	// adds attributes to a node
+    	/** adds attributes to a node */
     	const addAttributes = (node, obj) => {
     		Object.keys(obj).forEach(key => attr(node, key, obj[key]));
     	};
 
+    	/** create audo / video element */
     	const onMount = node => {
-    		// create audo / video element
     		const mediaElement = element(audio ? 'audio' : 'video');
 
-    		// add attributes to created elements
+    		/** add attributes to created elements */
     		addAttributes(mediaElement, {
     			controls: true,
     			autoplay: true,
@@ -1873,7 +1872,7 @@
     			tabindex: '0'
     		});
 
-    		// takes supplied object and creates elements in video
+    		/** takes supplied object and creates elements in video */
     		const appendToVideo = (tag, arr) => {
     			if (!Array.isArray(arr)) {
     				arr = JSON.parse(arr);
@@ -2027,7 +2026,7 @@
     	};
     }
 
-    // (350:7) {:else}
+    // (367:7) {:else}
     function create_else_block(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].html + "";
@@ -2051,7 +2050,7 @@
     	};
     }
 
-    // (344:35) 
+    // (361:35) 
     function create_if_block_6(ctx) {
     	let iframe;
     	let current;
@@ -2100,7 +2099,7 @@
     	};
     }
 
-    // (338:36) 
+    // (355:36) 
     function create_if_block_5(ctx) {
     	let video;
     	let current;
@@ -2149,7 +2148,7 @@
     	};
     }
 
-    // (322:4) {#if activeItem.img}
+    // (339:4) {#if activeItem.img}
     function create_if_block_4(ctx) {
     	let imageitem;
     	let current;
@@ -2218,7 +2217,7 @@
     	};
     }
 
-    // (350:75) {#if activeItem.caption}
+    // (367:75) {#if activeItem.caption}
     function create_if_block_3(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].caption + "";
@@ -2259,7 +2258,7 @@
     	};
     }
 
-    // (311:63) {#key activeItem.i}
+    // (328:63) {#key activeItem.i}
     function create_key_block(ctx) {
     	let div;
     	let current_block_type_index;
@@ -2390,7 +2389,7 @@
     	};
     }
 
-    // (350:198) {#if !smallScreen || !hideControls}
+    // (367:198) {#if !smallScreen || !hideControls}
     function create_if_block_1(ctx) {
     	let div;
     	let button;
@@ -2460,7 +2459,7 @@
     	};
     }
 
-    // (355:6) {#if items.length > 1}
+    // (372:6) {#if items.length > 1}
     function create_if_block_2(ctx) {
     	let div;
     	let t_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2576,45 +2575,46 @@
     	let { target = undefined } = $$props;
     	const { documentElement: html } = document;
 
-    	// index of current active item
+    	/** index of current active item */
     	let position;
 
-    	// options passed via open method
+    	/** options passed via open method */
     	let opts;
 
-    	// bool tracks open state
+    	/** bool tracks open state */
     	let isOpen;
 
-    	// dom element to restore focus to on close
+    	/** dom element to restore focus to on close */
     	let focusTrigger;
 
-    	// container element
+    	/** container element */
     	let container, containerWidth, containerHeight;
 
-    	// bool controlling visual state of controls
+    	/** bool controlling visual state of controls */
     	let hideControls;
 
-    	// bool true if containerWidth < 769
+    	/** bool true if containerWidth < 769 */
     	let smallScreen;
 
-    	// bool value of inline option passed in open method
+    	/** bool value of inline option passed in open method */
     	let inline;
 
-    	// when position is set
+    	/** when position is set */
     	let movement;
 
-    	// stores target on pointerdown (ref for overlay close)
+    	/** stores target on pointerdown (ref for overlay close) */
     	let clickedEl;
 
-    	// active item object
+    	/** active item object */
     	let activeItem;
 
-    	// true if activeItem is html
+    	/** true if activeItem is html */
     	let activeItemIsHtml;
 
-    	// function set by child component to run when container resized
+    	/** function set by child component to run when container resized */
     	let resizeFunc;
 
+    	/** used by child components to set resize function */
     	const setResizeFunc = fn => resizeFunc = fn;
 
     	const open = options => {
@@ -2682,7 +2682,10 @@
     		$$invalidate(4, position = getNextPosition(index));
     	};
 
-    	// get next gallery position
+    	/**
+     * returns next gallery position (looped if neccessary)
+     * @param {number} index
+     */
     	const getNextPosition = index => {
     		if (index >= items.length) {
     			index = 0;
@@ -2719,7 +2722,12 @@
     		}
     	};
 
-    	// calculates dimensions within window for given height / width
+    	/**
+     * calculates dimensions within window bounds for given height / width
+     * @param {number} fullWidth full width of media
+     * @param {number} fullHeight full height of media
+     * @returns {Array} [width: number, height: number]
+     */
     	const calculateDimensions = (fullWidth, fullHeight) => {
     		fullWidth = fullWidth || 1920;
     		fullHeight = fullHeight || 1080;
@@ -2739,7 +2747,7 @@
     		return [Math.round(width), Math.round(height)];
     	};
 
-    	// preloads images for previous and next items in gallery
+    	/** preloads images for previous and next items in gallery */
     	const preloadNext = () => {
     		const nextItem = items[getNextPosition(position + 1)];
     		const prevItem = items[getNextPosition(position - 1)];
@@ -2747,7 +2755,7 @@
     		prevItem && !prevItem.preload && loadImage(prevItem);
     	};
 
-    	// loads / decodes image for item
+    	/** loads / decodes image for item */
     	const loadImage = item => {
     		const { img, width, height } = item;
 
@@ -2762,7 +2770,7 @@
     		return image.decode();
     	};
 
-    	// animate media in when bp is first opened
+    	/** animate media in when bp is first opened */
     	const animateIn = node => {
     		if (!isOpen) {
     			$$invalidate(25, isOpen = 1);
@@ -2780,7 +2788,7 @@
     		});
     	};
 
-    	// animate media out when bp is closed
+    	/** animate media out when bp is closed */
     	const animateOut = node => {
     		if (!items) {
     			return opts.intro
@@ -2795,7 +2803,7 @@
     		});
     	};
 
-    	// custom svelte transition for entrance zoom
+    	/** custom svelte transition for entrance zoom */
     	const scaleIn = node => {
     		let bpItem = node.firstElementChild;
 
@@ -2817,14 +2825,15 @@
     			easing: cubicOut,
     			css: t => {
     				const tDiff = 1 - t;
-    				return `transform:translate3d(${leftOffset * tDiff}px, ${centerTop * tDiff}px, 0px) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${scaleHeight + t * (1 - scaleHeight)}, 1)`;
+    				return `transform:translate3d(${leftOffset * tDiff}px, ${centerTop * tDiff}px, 0) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${scaleHeight + t * (1 - scaleHeight)}, 1)`;
     			}
     		};
     	};
 
-    	// toggle controls for small screen
+    	/** toggle controls shown / hidden */
     	const toggleControls = () => $$invalidate(9, hideControls = !hideControls);
 
+    	/** code to run on mount / destroy */
     	const containerActions = node => {
     		$$invalidate(26, container = node);
     		let removeKeydownListener;

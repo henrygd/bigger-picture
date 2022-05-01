@@ -11,9 +11,6 @@
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
-.bp-wrap * {
-  contain: strict;
-}
 .bp-wrap > div:first-child {
   position: absolute;
   top: 0;
@@ -23,9 +20,6 @@
   background: rgba(0, 0, 0, 0.75);
 }
 
-.bp-vid video {
-  contain: layout;
-}
 .bp-vid audio {
   position: absolute;
   left: 14px;
@@ -43,14 +37,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  contain: layout size;
 }
 
 .bp-html {
   display: contents;
-}
-.bp-html * {
-  contain: unset;
 }
 
 .bp-img-wrap {
@@ -59,6 +49,7 @@
   width: 100%;
   height: 100%;
   position: absolute;
+  contain: strict;
 }
 .bp-img-wrap.bp-drag .bp-img {
   cursor: grabbing;
@@ -75,7 +66,6 @@
   user-select: none;
   cursor: zoom-in;
   background-size: 100% 100%;
-  transform: translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), 0px);
 }
 .bp-img img,
 .bp-img div {
@@ -105,7 +95,6 @@
   height: 100%;
   pointer-events: none;
   text-align: left;
-  contain: size;
 }
 .bp-controls button {
   pointer-events: auto;

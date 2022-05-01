@@ -276,7 +276,7 @@ Image alternative text
 
 Type: `string`
 
-Basic text to be displayed using built in caption (style can be altered via CSS).
+Text to be displayed using built in caption. You may pass html tags and styles can be overriden via CSS.
 
 ### sizes
 

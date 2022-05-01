@@ -14,9 +14,6 @@
 	contain: strict;
 	touch-action: none;
 	-webkit-tap-highlight-color: transparent;
-	* {
-		contain: strict;
-	}
 	> div:first-child {
 		position: absolute;
 		@include bpfillall;
@@ -25,10 +22,6 @@
 }
 
 .bp-vid {
-	video {
-		// can't use strict bc chrome stretches vid on fullscreen
-		contain: layout;
-	}
 	audio {
 		position: absolute;
 		left: 14px;
@@ -44,19 +37,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	contain: layout size;
 }
 
 .bp-html {
 	display: contents;
-	* {
-		contain: unset;
-	}
 }
 
 .bp-img-wrap {
 	@include bpfillall;
 	position: absolute;
+	contain: strict;
 	&.bp-drag {
 		.bp-img {
 			cursor: grabbing;
@@ -76,7 +66,6 @@
 	user-select: none;
 	cursor: zoom-in;
 	background-size: 100% 100%;
-	transform: translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), 0px);
 	img,
 	div {
 		position: absolute;
@@ -101,8 +90,6 @@
 	@include bpfillall;
 	pointer-events: none;
 	text-align: left;
-	// weird bug w/ contain strict on firefox 91 kali linux
-	contain: size;
 	button {
 		pointer-events: auto;
 		cursor: pointer;
