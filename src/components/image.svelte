@@ -206,9 +206,8 @@
 			e.preventDefault()
 			pointerDown = true
 			eventCache.push(e)
-			const [x, y] = [e.clientX, e.clientY]
-			dragStartX = x
-			dragStartY = y
+			dragStartX = e.clientX
+			dragStartY = e.clientY
 			dragStartTranslateX = $zoomDragTranslate[0]
 			dragStartTranslateY = $zoomDragTranslate[1]
 		}
@@ -226,7 +225,8 @@
 			return
 		}
 
-		let [x, y] = [e.clientX, e.clientY]
+		let x = e.clientX
+		let y = e.clientY
 
 		// store positions for inertia
 		dragPositions.push({ x, y })

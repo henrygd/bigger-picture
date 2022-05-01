@@ -277,7 +277,7 @@
 				const tDiff = 1 - t
 				return `transform:translate3d(${leftOffset * tDiff}px, ${
 					centerTop * tDiff
-				}px, 0px) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${
+				}px, 0) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${
 					scaleHeight + t * (1 - scaleHeight)
 				}, 1)`
 			},
