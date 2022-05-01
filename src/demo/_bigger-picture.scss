@@ -76,7 +76,6 @@
 	user-select: none;
 	cursor: zoom-in;
 	background-size: 100% 100%;
-	transform: translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), 0px);
 	img,
 	div {
 		position: absolute;

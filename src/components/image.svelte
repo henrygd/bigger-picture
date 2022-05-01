@@ -403,8 +403,9 @@
 			background-image:url({thumb});
 			width:{$imageDimensions[0]}px;
 			height:{$imageDimensions[1]}px;
-			--x:{$zoomDragTranslate[0]}px;
-			--y:{$zoomDragTranslate[1]}px
+			transform:translate3d({$imageDimensions[0] / -2 +
+			$zoomDragTranslate[0]}px, {$imageDimensions[1] / -2 +
+			$zoomDragTranslate[1]}px, 0)
 		"
 	>
 		{#if loaded}
