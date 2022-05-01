@@ -39,7 +39,7 @@ This is a very basic example using HTML to supply data. You don't need to initia
 
 For passing data via object, see [Passing Item Data via Object](#passing-item-data-via-object).
 
-Using Svelte? See [Usage with Svelte](#usage-with-svelte).
+Using Svelte? You can save a few bytes in your bundle. See [Usage with Svelte](#usage-with-svelte).
 
 [![Edit bigger-picture-basic-gallery](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/bigger-picture-basic-gallery-o4kb82?fontsize=14&hidenavigation=1&theme=dark)
 
@@ -330,7 +330,7 @@ bp.open({
 
 ## Usage with Svelte
 
-Please import `src/bigger-picture.js`, which uses the uncompiled Svelte files. Depending on your setup this may happen automatically, but to be sure you can use the import statement below.
+Please import `src/bigger-picture.js`, which uses the uncompiled Svelte files. Depending on your setup this may happen automatically, but to be sure you can use the import statement below. This will decrease the size of the library by 20 to 30 percent in most cases.
 
 ```js
 import BiggerPicture from 'bigger-picture/src/bigger-picture.js'
