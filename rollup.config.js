@@ -55,6 +55,7 @@ const findReplaceOptions = [
 		`if (type === 'number')`,
 	],
 	[': blank_object()', ': {}'],
+	['__svelte_', 'bp_'],
 	[`typeof window !== 'undefined'`, 'true'],
 	['const doc = get_root_for_style(node)', 'const doc = document'],
 	[/get_root_for_style\(node\),/g, 'document,'],
