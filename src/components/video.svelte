@@ -12,9 +12,9 @@
 
 	let loaded, dimensions
 
-	let { activeItem, calculateDimensions, setResizeFunc } = stuff
+	const { activeItem, calculateDimensions, setResizeFunc } = stuff
 
-	let { sources, thumb, tracks = [], width, height } = activeItem
+	const { sources, thumb, tracks = [], width, height } = activeItem
 
 	const setDimensions = () => (dimensions = calculateDimensions(width, height))
 
@@ -22,40 +22,43 @@
 
 	setResizeFunc(setDimensions)
 
-	const audio = JSON.stringify(sources).includes('audio')
-
 	/** adds attributes to a node */
 	const addAttributes = (node, obj) => {
-		Object.keys(obj).forEach((key) => attr(node, key, obj[key]))
+		for (let key in obj) {
+			attr(node, key, obj[key])
+		}
 	}
 
 	/** create audo / video element */
 	const onMount = (node) => {
-		const mediaElement = element(audio ? 'audio' : 'video')
-		/** add attributes to created elements */
-		addAttributes(mediaElement, {
-			controls: true,
-			autoplay: true,
-			playsinline: true,
-			tabindex: '0',
-		})
+		let mediaElement
 
 		/** takes supplied object and creates elements in video */
 		const appendToVideo = (tag, arr) => {
 			if (!Array.isArray(arr)) {
 				arr = JSON.parse(arr)
 			}
-			// add attributes
 			arr.forEach((obj) => {
+				if (!mediaElement) {
+					mediaElement = element(
+						obj.type?.includes('audio') ? 'audio' : 'video'
+					)
+					addAttributes(mediaElement, {
+						controls: true,
+						autoplay: true,
+						playsinline: true,
+						tabindex: '0',
+					})
+				}
 				const el = element(tag)
 				addAttributes(el, obj)
 				append(mediaElement, el)
 			})
 		}
-		appendToVideo('track', tracks)
 		appendToVideo('source', sources)
+		appendToVideo('track', tracks)
 		listen(mediaElement, 'canplay', () => (loaded = true))
-		node.prepend(mediaElement)
+		append(node, mediaElement)
 	}
 </script>
 
