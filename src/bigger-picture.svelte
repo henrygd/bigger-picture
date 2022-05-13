@@ -66,7 +66,7 @@
 			// clear child resize function if html
 			activeItemIsHtml && setResizeFunc(null)
 			// run onUpdate when items updated
-			opts.onUpdate && opts.onUpdate(container, activeItem)
+			opts.onUpdate?.(container, activeItem)
 		}
 	}
 
@@ -114,11 +114,11 @@
 
 	/** closes gallery */
 	export const close = () => {
-		opts.onClose && opts.onClose()
-		$closing = 1
-		items = false
+		opts.onClose?.()
+		$closing = true
+		items = null
 		// restore focus to trigger element
-		focusTrigger && focusTrigger.focus({ preventScroll: true })
+		focusTrigger?.focus({ preventScroll: true })
 	}
 
 	/** previous gallery item */
@@ -140,14 +140,7 @@
 	 * returns next gallery position (looped if neccessary)
 	 * @param {number} index
 	 */
-	const getNextPosition = (index) => {
-		if (index >= items.length) {
-			index = 0
-		} else if (index < 0) {
-			index = items.length - 1
-		}
-		return index
-	}
+	const getNextPosition = (index) => (index + items.length) % items.length
 
 	const onKeydown = (e) => {
 		const { key, shiftKey } = e
@@ -169,34 +162,30 @@
 				)
 				let index = tabbable.indexOf(activeElement)
 				index += tabbable.length + (shiftKey ? -1 : 1)
-				index %= tabbable.length
-				tabbable[index].focus()
+				tabbable[index % tabbable.length].focus()
 			}
 		}
 	}
 
 	/**
 	 * calculates dimensions within window bounds for given height / width
-	 * @param {number} fullWidth full width of media
-	 * @param {number} fullHeight full height of media
+	 * @param {number} width full width of media
+	 * @param {number} height full height of media
 	 * @returns {Array} [width: number, height: number]
 	 */
-	const calculateDimensions = (fullWidth, fullHeight) => {
-		fullWidth = fullWidth || 1920
-		fullHeight = fullHeight || 1080
+	const calculateDimensions = (width, height) => {
+		width = width || 1920
+		height = height || 1080
 
 		const scale = opts.scale || 0.99
-
-		let width, height
-
 		const windowAspect = containerHeight / containerWidth
-		const mediaAspect = fullHeight / fullWidth
+		const mediaAspect = height / width
 
 		if (mediaAspect > windowAspect) {
-			height = Math.min(fullHeight, containerHeight * scale)
+			height = Math.min(height, containerHeight * scale)
 			width = height / mediaAspect
 		} else {
-			width = Math.min(fullWidth, containerWidth * scale)
+			width = Math.min(width, containerWidth * scale)
 			height = width * mediaAspect
 		}
 		return [Math.round(width), Math.round(height)]
@@ -204,10 +193,12 @@
 
 	/** preloads images for previous and next items in gallery */
 	const preloadNext = () => {
-		const nextItem = items[getNextPosition(position + 1)]
-		const prevItem = items[getNextPosition(position - 1)]
-		nextItem && !nextItem.preload && loadImage(nextItem)
-		prevItem && !prevItem.preload && loadImage(prevItem)
+		if (items) {
+			const nextItem = items[getNextPosition(position + 1)]
+			const prevItem = items[getNextPosition(position - 1)]
+			!nextItem.preload && loadImage(nextItem)
+			!prevItem.preload && loadImage(prevItem)
+		}
 	}
 
 	/** loads / decodes image for item */
@@ -219,7 +210,7 @@
 		const image = createEl('img')
 		image.sizes = opts.sizes || `${calculateDimensions(width, height)[0]}px`
 		image.srcset = img
-		item.preload = image
+		item.preload = true
 		return image.decode()
 	}
 
@@ -276,11 +267,26 @@
 	/** toggle controls shown / hidden */
 	const toggleControls = () => (hideControls = !hideControls)
 
+	/** provides object w/ needed funcs / data to child components  */
+	const getChildProps = () => ({
+		activeItem,
+		calculateDimensions,
+		loadImage,
+		preloadNext,
+		opts,
+		prev,
+		next,
+		close,
+		toggleControls,
+		setResizeFunc,
+	})
+
 	/** code to run on mount / destroy */
 	const containerActions = (node) => {
 		container = node
 		let removeKeydownListener
 		let roActive
+		opts.onOpen?.(container, activeItem)
 		// don't use keyboard events for inline galleries
 		if (!inline) {
 			removeKeydownListener = listen(window, 'keydown', onKeydown)
@@ -293,9 +299,9 @@
 				containerHeight = entries[0].contentRect.height
 				smallScreen = containerWidth < 769
 				// run child component resize function
-				resizeFunc && resizeFunc()
+				resizeFunc?.()
 				// run user defined onResize function
-				opts.onResize && opts.onResize(container, activeItem)
+				opts.onResize?.(container, activeItem)
 			}
 			roActive = true
 		})
@@ -303,11 +309,11 @@
 		return {
 			destroy() {
 				ro.disconnect()
-				removeKeydownListener && removeKeydownListener()
-				$closing = isOpen = false
+				removeKeydownListener?.()
+				$closing = false
 				// remove class hiding scroll
 				html.classList.remove('bp-lock')
-				opts.onClosed && opts.onClosed()
+				opts.onClosed?.()
 			},
 		}
 	}
@@ -337,38 +343,15 @@
 			>
 				{#if activeItem.img}
 					<ImageItem
-						stuff={{
-							activeItem,
-							calculateDimensions,
-							loadImage,
-							preloadNext,
-							opts,
-							prev,
-							next,
-							close,
-							toggleControls,
-							setResizeFunc,
-						}}
+						stuff={getChildProps()}
 						{containerWidth}
 						{containerHeight}
 						{smallScreen}
 					/>
 				{:else if activeItem.sources}
-					<Video
-						stuff={{
-							activeItem,
-							calculateDimensions,
-							setResizeFunc,
-						}}
-					/>
+					<Video stuff={getChildProps()} />
 				{:else if activeItem.iframe}
-					<Iframe
-						stuff={{
-							activeItem,
-							calculateDimensions,
-							setResizeFunc,
-						}}
-					/>
+					<Iframe stuff={getChildProps()} />
 				{:else}
 					<div class="bp-html">
 						{@html activeItem.html}
@@ -395,7 +378,7 @@
 				{#if items.length > 1}
 					<!-- counter -->
 					<div class="bp-count">
-						{`${position + 1} / ${items.length}`}
+						{@html `${position + 1} / ${items.length}`}
 					</div>
 					<!-- foward / back buttons -->
 					<button
