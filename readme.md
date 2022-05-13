@@ -20,7 +20,7 @@ https://user-images.githubusercontent.com/8519632/165216178-bd9a0b03-6ee5-42fd-b
 - **Responsive images** - Pass in a srcset value and Bigger Picture will handle the rest.
 - **Supports video, audio, iframes, and html** - No need for multiple libraries, plugins, or hacky workarounds.
 - **Inline galleries and custom layouts** - Bigger Picture can be mounted anywhere and has an easy-to-use API.
-- **Accessible** - Supports alt text, image / video captions, respects prefers-reduced-motion, and manages focus.
+- **Accessible** - Supports alt text, image / video captions, iframe titles, keyboard navigation, respects prefers-reduced-motion, and manages focus.
 - **Free software** - MIT licensed. Do whatever you want with it, just don't be an asshole please.
 
 ## Install
@@ -242,7 +242,7 @@ When using `srcset`, the `sizes` value will update automatically when an image i
 
 Type: `Array` or `string`
 
-For native video and audio, an array of objects specifying a [`src`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-src) and [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-type) (mime). A string may be used if it is JSON parsable. Each object will create a `source` element, and all key / value pairs in the object will be added as attributes.
+For native video and audio, an array of objects specifying [`src`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-src) (required) and [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-type) (optional). A string may be used if it is JSON parsable. Each object will create a `source` element, and all key / value pairs in the object will be added as attributes.
 
 <!-- prettier-ignore -->
 ```html
@@ -271,6 +271,12 @@ onOpen: (container) => {
 Type: `string`
 
 Image alternative text
+
+### title
+
+Type: `string`
+
+Title attribute for iframes
 
 ### caption
 
@@ -335,10 +341,6 @@ Please import `src/bigger-picture.js`, which uses the uncompiled Svelte files. D
 ```js
 import BiggerPicture from 'bigger-picture/src/bigger-picture.js'
 ```
-
-## Internet Explorer Support
-
-IE support should be possible with a few tweaks and the right polyfills. If you want directions for polyfilling, please open an issue. If there's enough support I will try to figure it out.
 
 ## License
 

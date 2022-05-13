@@ -81,12 +81,11 @@ function openBiggerPictureVids(e) {
 		el: currentTarget,
 		items: currentTarget,
 		onOpen(container, activeItem) {
-			let { sources, thumb } = activeItem
 			currentTarget.classList.add('hide-icon')
-			if (thumb && thumb.includes('327')) {
+			if (activeItem.thumb.includes('327')) {
 				// turn volume to 50% on agent 327 vid
 				container.querySelector('video').volume = 0.5
-			} else if (sources && sources.includes('audio')) {
+			} else if (activeItem.sources?.includes('audio')) {
 				container.classList.add('bp-audio')
 				// play / pause on audio image click
 				const audio = container.querySelector('audio')
