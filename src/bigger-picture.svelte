@@ -332,7 +332,7 @@
 		class:bp-inline={inline}
 		class:bp-noclose={opts.noClose}
 	>
-		<div transition:fade={{ easing: cubicOut, duration: 480 }} />
+		<div out:fade={{ easing: cubicOut, duration: 480 }} />
 		{#key activeItem.i}
 			<div
 				class="bp-inner"
@@ -387,14 +387,14 @@
 				{/if}
 			</div>
 			{#if activeItem.caption}
-				<div class="bp-cap" transition:fade={{ duration: 200 }}>
+				<div class="bp-cap" tabindex="0" out:fade={{ duration: 200 }}>
 					{@html activeItem.caption}
 				</div>
 			{/if}
 		{/key}
 
 		{#if !smallScreen || !hideControls}
-			<div class="bp-controls" transition:fade={{ duration: 300 }}>
+			<div class="bp-controls" out:fade={{ duration: 300 }}>
 				<!-- close button -->
 				<button
 					class="bp-x"
