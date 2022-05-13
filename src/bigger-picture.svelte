@@ -223,29 +223,18 @@
 		return image.decode()
 	}
 
-	/** animate media in when bp is first opened */
-	const animateIn = (node) => {
-		if (!isOpen) {
-			isOpen = 1
-			opts.onOpen && opts.onOpen(container, activeItem)
-			return opts.intro ? fly(node, { y: 10, easing: cubicOut }) : scaleIn(node)
-		}
-		return fly(node, {
-			x: movement > 0 ? 20 : -20,
-			easing: cubicOut,
-			duration: 250,
-		})
-	}
-
-	/** animate media out when bp is closed */
-	const animateOut = (node) => {
-		if (!items) {
+	/** svelte transition to control opening / changing */
+	const mediaTransition = (node, isEntering) => {
+		if (!isOpen || !items) {
+			// entrance / exit transition
+			isOpen = isEntering
 			return opts.intro
-				? fly(node, { y: -10, easing: cubicOut })
+				? fly(node, { y: isEntering ? 10 : -10, easing: cubicOut })
 				: scaleIn(node)
 		}
+		// forward / backward transition
 		return fly(node, {
-			x: movement > 0 ? -20 : 20,
+			x: (movement > 0 ? 20 : -20) * (isEntering ? 1 : -1),
 			easing: cubicOut,
 			duration: 250,
 		})
@@ -336,8 +325,8 @@
 		{#key activeItem.i}
 			<div
 				class="bp-inner"
-				in:animateIn
-				out:animateOut
+				in:mediaTransition={true}
+				out:mediaTransition={false}
 				on:pointerdown={(e) => (clickedEl = e.target)}
 				on:pointerup={function (e) {
 					// only close if left click on self and not dragged
