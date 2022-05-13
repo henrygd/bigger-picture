@@ -3,19 +3,22 @@
 
 	export let stuff
 
-	let { activeItem, calculateDimensions, setResizeFunc } = stuff
-
-	let { iframe, thumb, title, width, height } = activeItem
-
 	let loaded
 
 	let dimensions
+
+	const { activeItem, calculateDimensions, setResizeFunc } = stuff
+
+	const { iframe, thumb, title, width, height } = activeItem
 
 	const setDimensions = () => (dimensions = calculateDimensions(width, height))
 
 	setDimensions()
 
 	setResizeFunc(setDimensions)
+
+	// add src ourselves to avoid src_url_equal call (svelte stuff)
+	const addSrc = (node) => (node.src = iframe)
 </script>
 
 <div
@@ -26,8 +29,8 @@
 	"
 >
 	<iframe
+		use:addSrc
 		allow="autoplay; fullscreen"
-		src={iframe}
 		{title}
 		on:load={() => (loaded = true)}
 	/>
