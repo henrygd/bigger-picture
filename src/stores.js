@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store'
+import { cubicOut } from 'svelte/easing'
 
 /** true if gallery is in the process of closing */
 export const closing = writable(0)
@@ -10,3 +11,9 @@ export const zoomed = writable(0)
 export const prefersReducedMotion = matchMedia(
 	'(prefers-reduced-motion: reduce)'
 ).matches
+
+/** default options for tweens / transitions */
+export const defaultTweenOptions = {
+	easing: cubicOut,
+	duration: prefersReducedMotion ? 0 : 400,
+}

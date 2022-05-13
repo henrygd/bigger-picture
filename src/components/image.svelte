@@ -1,7 +1,6 @@
 <script>
 	import { tweened } from 'svelte/motion'
-	import { cubicOut } from 'svelte/easing'
-	import { zoomed, closing, prefersReducedMotion } from '../stores'
+	import { zoomed, closing, defaultTweenOptions } from '../stores'
 	import { fade } from 'svelte/transition'
 	import Loading from './loading.svelte'
 
@@ -62,16 +61,10 @@
 	/** if true, adds class to .bp-wrap to avoid image cropping */
 	let closingWhileZoomed
 
-	/** options for tweens - no animation if prefers reduced motion */
-	const tweenOptions = {
-		easing: cubicOut,
-		duration: prefersReducedMotion ? 0 : 400,
-	}
-
 	/** tween to control image size */
-	const imageDimensions = tweened(calculatedDimensions, tweenOptions)
+	const imageDimensions = tweened(calculatedDimensions, defaultTweenOptions)
 	/** translate transform for pointerDown */
-	const zoomDragTranslate = tweened([0, 0], tweenOptions)
+	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions)
 
 	$: $zoomed = $imageDimensions[0] > calculatedDimensions[0]
 
@@ -136,8 +129,7 @@
 			return
 		}
 
-		const cd = calculateDimensions(naturalWidth, naturalHeight)
-		const maxWidth = cd[0] * maxZoom
+		const maxWidth = calculatedDimensions[0] * maxZoom
 
 		const [currentImageWidth, currentImageHeight] = $imageDimensions
 
@@ -148,18 +140,17 @@
 			if (newWidth > maxWidth) {
 				// requesting size large than max zoom
 				newWidth = maxWidth
-				newHeight = cd[1] * maxZoom
+				newHeight = calculatedDimensions[1] * maxZoom
 			}
 			if (newWidth > naturalWidth) {
 				// if requesting zoom larger than natural size
 				newWidth = naturalWidth
 				newHeight = naturalHeight
 			}
-		} else if (newWidth < cd[0]) {
+		} else if (newWidth < calculatedDimensions[0]) {
 			// if requesting image smaller than starting size
-			imageDimensions.set(cd)
-			zoomDragTranslate.set([0, 0])
-			return
+			imageDimensions.set(calculatedDimensions)
+			return zoomDragTranslate.set([0, 0])
 		}
 
 		let { x, y, width, height } = e.target.getBoundingClientRect()
@@ -195,8 +186,7 @@
 		// preventDefault to stop scrolling on zoomed inline image
 		e.preventDefault()
 		// change zoom on wheel
-		const deltaY = e.deltaY / -300
-		changeZoom(e, deltaY)
+		changeZoom(e, e.deltaY / -300)
 	}
 
 	/** on drag start, store initial position and image translate values */
@@ -253,7 +243,7 @@
 			}
 		}
 
-		hasDragged = Math.hypot(x, y) > 10
+		hasDragged = dragPositions.length > 2
 
 		// image drag when zoomed
 		if ($zoomed && hasDragged && !$closing) {
@@ -269,7 +259,7 @@
 
 	const handlePinch = (e) => {
 		// update event in cache
-		eventCache = eventCache.map((ev) => (ev.pointerId == e.pointerId ? e : ev))
+		eventCache = eventCache.map((ev) => (ev.pointerId === e.pointerId ? e : ev))
 
 		// Calculate the distance between the two pointers
 		const [p1, p2] = eventCache
@@ -277,12 +267,10 @@
 		const dy = p1.clientY - p2.clientY
 		const curDiff = Math.hypot(dx, dy)
 
-		if (!prevDiff) {
-			prevDiff = curDiff
-		}
+		prevDiff = prevDiff || curDiff
 
 		// scale image
-		changeZoom(e, (prevDiff - curDiff) * -0.02)
+		changeZoom(e, (prevDiff - curDiff) * -0.03)
 
 		// Cache the distance for the next move event
 		prevDiff = curDiff
@@ -290,11 +278,13 @@
 
 	function onPointerUp(e) {
 		// remove event from event cache
-		eventCache = eventCache.filter((ev) => ev.pointerId != e.pointerId)
+		eventCache = eventCache.filter(
+			(cachedEvent) => cachedEvent.pointerId !== e.pointerId
+		)
 
 		if (isPinch) {
 			// set isPinch to false after second finger lifts
-			isPinch = eventCache.length ? true : false
+			isPinch = eventCache.length
 			prevDiff = 0
 			return
 		}
@@ -304,12 +294,12 @@
 			return
 		}
 
+		pointerDown = false
+
 		// close if overlay is clicked
 		if (e.target === this && !opts.noClose) {
 			return close()
 		}
-
-		pointerDown = false
 
 		if (!smallScreen) {
 			// if largescreen
