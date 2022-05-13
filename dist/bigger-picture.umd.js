@@ -23,14 +23,6 @@
     function safe_not_equal(a, b) {
         return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
     }
-    let src_url_equal_anchor;
-    function src_url_equal(element_src, url) {
-        if (!src_url_equal_anchor) {
-            src_url_equal_anchor = document.createElement('a');
-        }
-        src_url_equal_anchor.href = url;
-        return element_src === src_url_equal_anchor.href;
-    }
     function not_equal(a, b) {
         return a != a ? b == b : a !== b;
     }
@@ -122,11 +114,6 @@
         else if (node.getAttribute(attribute) !== value)
             node.setAttribute(attribute, value);
     }
-    function set_data(text, data) {
-        data = '' + data;
-        if (text.wholeText !== data)
-            text.data = data;
-    }
     function set_style(node, key, value, important) {
         if (value === null) {
             node.style.removeProperty(key);
@@ -169,7 +156,7 @@
             keyframes += p * 100 + `%{${fn(t, 1 - t)}}\n`;
         }
         const rule = keyframes + `100% {${fn(b, 1 - b)}}\n}`;
-        const name = `__svelte_${hash(rule)}_${uid}`;
+        const name = `bp_${hash(rule)}_${uid}`;
         const doc = document;
         const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc);
         if (!rules[name]) {
@@ -467,111 +454,6 @@
             }
         };
     }
-    function create_bidirectional_transition(node, fn, params, intro) {
-        let config = fn(node, params);
-        let t = intro ? 0 : 1;
-        let running_program = null;
-        let pending_program = null;
-        let animation_name = null;
-        function clear_animation() {
-            if (animation_name)
-                delete_rule(node, animation_name);
-        }
-        function init(program, duration) {
-            const d = (program.b - t);
-            duration *= Math.abs(d);
-            return {
-                a: t,
-                b: program.b,
-                d,
-                duration,
-                start: program.start,
-                end: program.start + duration,
-                group: program.group
-            };
-        }
-        function go(b) {
-            const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
-            const program = {
-                start: now() + delay,
-                b
-            };
-            if (!b) {
-                // @ts-ignore todo: improve typings
-                program.group = outros;
-                outros.r += 1;
-            }
-            if (running_program || pending_program) {
-                pending_program = program;
-            }
-            else {
-                // if this is an intro, and there's a delay, we need to do
-                // an initial tick and/or apply CSS animation immediately
-                if (css) {
-                    clear_animation();
-                    animation_name = create_rule(node, t, b, duration, delay, easing, css);
-                }
-                if (b)
-                    tick(0, 1);
-                running_program = init(program, duration);
-                add_render_callback(() => dispatch(node, b, 'start'));
-                loop(now => {
-                    if (pending_program && now > pending_program.start) {
-                        running_program = init(pending_program, duration);
-                        pending_program = null;
-                        dispatch(node, running_program.b, 'start');
-                        if (css) {
-                            clear_animation();
-                            animation_name = create_rule(node, t, running_program.b, running_program.duration, 0, easing, config.css);
-                        }
-                    }
-                    if (running_program) {
-                        if (now >= running_program.end) {
-                            tick(t = running_program.b, 1 - t);
-                            dispatch(node, running_program.b, 'end');
-                            if (!pending_program) {
-                                // we're done
-                                if (running_program.b) {
-                                    // intro — we can tidy up immediately
-                                    clear_animation();
-                                }
-                                else {
-                                    // outro — needs to be coordinated
-                                    if (!--running_program.group.r)
-                                        run_all(running_program.group.c);
-                                }
-                            }
-                            running_program = null;
-                        }
-                        else if (now >= running_program.start) {
-                            const p = now - running_program.start;
-                            t = running_program.a + running_program.d * easing(p / running_program.duration);
-                            tick(t, 1 - t);
-                        }
-                    }
-                    return !!(running_program || pending_program);
-                });
-            }
-        }
-        return {
-            run(b) {
-                if (is_function(config)) {
-                    wait().then(() => {
-                        // @ts-ignore
-                        config = config();
-                        go(b);
-                    });
-                }
-                else {
-                    go(b);
-                }
-            },
-            end() {
-                clear_animation();
-                running_program = pending_program = null;
-            }
-        };
-    }
     function create_component(block) {
         block && block.c();
     }
@@ -853,6 +735,12 @@
     	'(prefers-reduced-motion: reduce)'
     ).matches;
 
+    /** default options for tweens / transitions */
+    const defaultTweenOptions = {
+    	easing: cubicOut,
+    	duration: prefersReducedMotion ? 0 : 400,
+    };
+
     /* src/components/loading.svelte generated by Svelte v3.47.0 */
 
     function create_if_block$2(ctx) {
@@ -1054,7 +942,7 @@
     	};
     }
 
-    // (406:85) {#if showLoader}
+    // (396:85) {#if showLoader}
     function create_if_block$1(ctx) {
     	let loading;
     	let current;
@@ -1278,19 +1166,13 @@
     	/** if true, adds class to .bp-wrap to avoid image cropping */
     	let closingWhileZoomed;
 
-    	/** options for tweens - no animation if prefers reduced motion */
-    	const tweenOptions = {
-    		easing: cubicOut,
-    		duration: prefersReducedMotion ? 0 : 400
-    	};
-
     	/** tween to control image size */
-    	const imageDimensions = tweened(calculatedDimensions, tweenOptions);
+    	const imageDimensions = tweened(calculatedDimensions, defaultTweenOptions);
 
     	component_subscribe($$self, imageDimensions, value => $$invalidate(0, $imageDimensions = value));
 
     	/** translate transform for pointerDown */
-    	const zoomDragTranslate = tweened([0, 0], tweenOptions);
+    	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions);
 
     	component_subscribe($$self, zoomDragTranslate, value => $$invalidate(6, $zoomDragTranslate = value));
 
@@ -1354,8 +1236,7 @@
     			return;
     		}
 
-    		const cd = calculateDimensions(naturalWidth, naturalHeight);
-    		const maxWidth = cd[0] * maxZoom;
+    		const maxWidth = calculatedDimensions[0] * maxZoom;
     		const [currentImageWidth, currentImageHeight] = $imageDimensions;
     		let newWidth = currentImageWidth + currentImageWidth * amt;
     		let newHeight = currentImageHeight + currentImageHeight * amt;
@@ -1365,7 +1246,7 @@
     				// requesting size large than max zoom
     				newWidth = maxWidth;
 
-    				newHeight = cd[1] * maxZoom;
+    				newHeight = calculatedDimensions[1] * maxZoom;
     			}
 
     			if (newWidth > naturalWidth) {
@@ -1374,12 +1255,11 @@
 
     				newHeight = naturalHeight;
     			}
-    		} else if (newWidth < cd[0]) {
+    		} else if (newWidth < calculatedDimensions[0]) {
     			// if requesting image smaller than starting size
-    			imageDimensions.set(cd);
+    			imageDimensions.set(calculatedDimensions);
 
-    			zoomDragTranslate.set([0, 0]);
-    			return;
+    			return zoomDragTranslate.set([0, 0]);
     		}
 
     		let { x, y, width, height } = e.target.getBoundingClientRect();
@@ -1411,9 +1291,7 @@
     		e.preventDefault();
 
     		// change zoom on wheel
-    		const deltaY = e.deltaY / -300;
-
-    		changeZoom(e, deltaY);
+    		changeZoom(e, e.deltaY / -300);
     	};
 
     	/** on drag start, store initial position and image translate values */
@@ -1473,7 +1351,7 @@
     			}
     		}
 
-    		hasDragged = Math.hypot(x, y) > 10;
+    		hasDragged = dragPositions.length > 2;
 
     		// image drag when zoomed
     		if ($zoomed && hasDragged && !$closing) {
@@ -1483,7 +1361,7 @@
 
     	const handlePinch = e => {
     		// update event in cache
-    		eventCache = eventCache.map(ev => ev.pointerId == e.pointerId ? e : ev);
+    		eventCache = eventCache.map(ev => ev.pointerId === e.pointerId ? e : ev);
 
     		// Calculate the distance between the two pointers
     		const [p1, p2] = eventCache;
@@ -1491,13 +1369,10 @@
     		const dx = p1.clientX - p2.clientX;
     		const dy = p1.clientY - p2.clientY;
     		const curDiff = Math.hypot(dx, dy);
-
-    		if (!prevDiff) {
-    			prevDiff = curDiff;
-    		}
+    		prevDiff = prevDiff || curDiff;
 
     		// scale image
-    		changeZoom(e, (prevDiff - curDiff) * -0.02);
+    		changeZoom(e, (prevDiff - curDiff) * -0.03);
 
     		// Cache the distance for the next move event
     		prevDiff = curDiff;
@@ -1505,11 +1380,11 @@
 
     	function onPointerUp(e) {
     		// remove event from event cache
-    		eventCache = eventCache.filter(ev => ev.pointerId != e.pointerId);
+    		eventCache = eventCache.filter(cachedEvent => cachedEvent.pointerId !== e.pointerId);
 
     		if (isPinch) {
     			// set isPinch to false after second finger lifts
-    			isPinch = eventCache.length ? true : false;
+    			isPinch = eventCache.length;
 
     			prevDiff = 0;
     			return;
@@ -1520,12 +1395,12 @@
     			return;
     		}
 
+    		$$invalidate(4, pointerDown = false);
+
     		// close if overlay is clicked
     		if (e.target === this && !opts.noClose) {
     			return close();
     		}
-
-    		$$invalidate(4, pointerDown = false);
 
     		if (!smallScreen) {
     			// if largescreen
@@ -1687,7 +1562,6 @@
     function create_fragment$2(ctx) {
     	let div;
     	let iframe_1;
-    	let iframe_1_src_value;
     	let loading;
     	let current;
     	let mounted;
@@ -1695,7 +1569,7 @@
 
     	loading = new Loading({
     			props: {
-    				thumb: /*thumb*/ ctx[3],
+    				thumb: /*thumb*/ ctx[2],
     				loaded: /*loaded*/ ctx[0]
     			}
     		});
@@ -1706,8 +1580,7 @@
     			iframe_1 = element("iframe");
     			create_component(loading.$$.fragment);
     			attr(iframe_1, "allow", "autoplay; fullscreen");
-    			if (!src_url_equal(iframe_1.src, iframe_1_src_value = /*iframe*/ ctx[2])) attr(iframe_1, "src", iframe_1_src_value);
-    			attr(iframe_1, "title", /*title*/ ctx[4]);
+    			attr(iframe_1, "title", /*title*/ ctx[3]);
     			attr(div, "class", "bp-if");
     			set_style(div, "width", /*dimensions*/ ctx[1][0] + "px");
     			set_style(div, "height", /*dimensions*/ ctx[1][1] + "px");
@@ -1719,7 +1592,11 @@
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen(iframe_1, "load", /*load_handler*/ ctx[6]);
+    				dispose = [
+    					action_destroyer(/*addSrc*/ ctx[4].call(null, iframe_1)),
+    					listen(iframe_1, "load", /*load_handler*/ ctx[6])
+    				];
+
     				mounted = true;
     			}
     		},
@@ -1749,27 +1626,31 @@
     			if (detaching) detach(div);
     			destroy_component(loading);
     			mounted = false;
-    			dispose();
+    			run_all(dispose);
     		}
     	};
     }
 
     function instance$2($$self, $$props, $$invalidate) {
     	let { stuff } = $$props;
-    	let { activeItem, calculateDimensions, setResizeFunc } = stuff;
-    	let { iframe, thumb, title, width, height } = activeItem;
     	let loaded;
     	let dimensions;
+    	const { activeItem, calculateDimensions, setResizeFunc } = stuff;
+    	const { iframe, thumb, title, width, height } = activeItem;
     	const setDimensions = () => $$invalidate(1, dimensions = calculateDimensions(width, height));
     	setDimensions();
     	setResizeFunc(setDimensions);
+
+    	// add src ourselves to avoid src_url_equal call (svelte stuff)
+    	const addSrc = node => node.src = iframe;
+
     	const load_handler = () => $$invalidate(0, loaded = true);
 
     	$$self.$$set = $$props => {
     		if ('stuff' in $$props) $$invalidate(5, stuff = $$props.stuff);
     	};
 
-    	return [loaded, dimensions, iframe, thumb, title, stuff, load_handler];
+    	return [loaded, dimensions, thumb, title, addSrc, stuff, load_handler];
     }
 
     class Iframe extends SvelteComponent {
@@ -1848,29 +1729,22 @@
     function instance$1($$self, $$props, $$invalidate) {
     	let { stuff } = $$props;
     	let loaded, dimensions;
-    	let { activeItem, calculateDimensions, setResizeFunc } = stuff;
-    	let { sources, thumb, tracks = [], width, height } = activeItem;
+    	const { activeItem, calculateDimensions, setResizeFunc } = stuff;
+    	const { sources, thumb, tracks = [], width, height } = activeItem;
     	const setDimensions = () => $$invalidate(1, dimensions = calculateDimensions(width, height));
     	setDimensions();
     	setResizeFunc(setDimensions);
-    	const audio = JSON.stringify(sources).includes('audio');
 
     	/** adds attributes to a node */
     	const addAttributes = (node, obj) => {
-    		Object.keys(obj).forEach(key => attr(node, key, obj[key]));
+    		for (let key in obj) {
+    			attr(node, key, obj[key]);
+    		}
     	};
 
     	/** create audo / video element */
     	const onMount = node => {
-    		const mediaElement = element(audio ? 'audio' : 'video');
-
-    		/** add attributes to created elements */
-    		addAttributes(mediaElement, {
-    			controls: true,
-    			autoplay: true,
-    			playsinline: true,
-    			tabindex: '0'
-    		});
+    		let mediaElement;
 
     		/** takes supplied object and creates elements in video */
     		const appendToVideo = (tag, arr) => {
@@ -1878,18 +1752,28 @@
     				arr = JSON.parse(arr);
     			}
 
-    			// add attributes
     			arr.forEach(obj => {
+    				if (!mediaElement) {
+    					mediaElement = element((obj.type?.includes('audio')) ? 'audio' : 'video');
+
+    					addAttributes(mediaElement, {
+    						controls: true,
+    						autoplay: true,
+    						playsinline: true,
+    						tabindex: '0'
+    					});
+    				}
+
     				const el = element(tag);
     				addAttributes(el, obj);
     				append(mediaElement, el);
     			});
     		};
 
-    		appendToVideo('track', tracks);
     		appendToVideo('source', sources);
+    		appendToVideo('track', tracks);
     		listen(mediaElement, 'canplay', () => $$invalidate(0, loaded = true));
-    		node.prepend(mediaElement);
+    		append(node, mediaElement);
     	};
 
     	$$self.$$set = $$props => {
@@ -1911,7 +1795,7 @@
     function create_if_block(ctx) {
     	let div1;
     	let div0;
-    	let div0_transition;
+    	let div0_outro;
     	let previous_key = /*activeItem*/ ctx[6].i;
     	let key_block_anchor;
     	let containerActions_action;
@@ -1942,7 +1826,7 @@
     			current = true;
 
     			if (!mounted) {
-    				dispose = action_destroyer(containerActions_action = /*containerActions*/ ctx[21].call(null, div1));
+    				dispose = action_destroyer(containerActions_action = /*containerActions*/ ctx[16].call(null, div1));
     				mounted = true;
     			}
     		},
@@ -1998,26 +1882,20 @@
     		},
     		i(local) {
     			if (current) return;
-
-    			add_render_callback(() => {
-    				if (!div0_transition) div0_transition = create_bidirectional_transition(div0, fade, { easing: cubicOut, duration: 480 }, true);
-    				div0_transition.run(1);
-    			});
-
+    			if (div0_outro) div0_outro.end(1);
     			transition_in(key_block);
     			transition_in(if_block);
     			current = true;
     		},
     		o(local) {
-    			if (!div0_transition) div0_transition = create_bidirectional_transition(div0, fade, { easing: cubicOut, duration: 480 }, false);
-    			div0_transition.run(0);
+    			div0_outro = create_out_transition(div0, fade, { easing: cubicOut, duration: 480 });
     			transition_out(key_block);
     			transition_out(if_block);
     			current = false;
     		},
     		d(detaching) {
     			if (detaching) detach(div1);
-    			if (detaching && div0_transition) div0_transition.end();
+    			if (detaching && div0_outro) div0_outro.end();
     			key_block.d(detaching);
     			if (if_block) if_block.d();
     			mounted = false;
@@ -2026,7 +1904,7 @@
     	};
     }
 
-    // (367:7) {:else}
+    // (339:131) {:else}
     function create_else_block(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].html + "";
@@ -2050,19 +1928,13 @@
     	};
     }
 
-    // (361:35) 
+    // (339:97) 
     function create_if_block_6(ctx) {
     	let iframe;
     	let current;
 
     	iframe = new Iframe({
-    			props: {
-    				stuff: {
-    					activeItem: /*activeItem*/ ctx[6],
-    					calculateDimensions: /*calculateDimensions*/ ctx[15],
-    					setResizeFunc: /*setResizeFunc*/ ctx[14]
-    				}
-    			}
+    			props: { stuff: /*getChildProps*/ ctx[15]() }
     		});
 
     	return {
@@ -2073,17 +1945,7 @@
     			mount_component(iframe, target, anchor);
     			current = true;
     		},
-    		p(ctx, dirty) {
-    			const iframe_changes = {};
-
-    			if (dirty[0] & /*activeItem*/ 64) iframe_changes.stuff = {
-    				activeItem: /*activeItem*/ ctx[6],
-    				calculateDimensions: /*calculateDimensions*/ ctx[15],
-    				setResizeFunc: /*setResizeFunc*/ ctx[14]
-    			};
-
-    			iframe.$set(iframe_changes);
-    		},
+    		p: noop,
     		i(local) {
     			if (current) return;
     			transition_in(iframe.$$.fragment, local);
@@ -2099,19 +1961,13 @@
     	};
     }
 
-    // (355:36) 
+    // (339:36) 
     function create_if_block_5(ctx) {
     	let video;
     	let current;
 
     	video = new Video({
-    			props: {
-    				stuff: {
-    					activeItem: /*activeItem*/ ctx[6],
-    					calculateDimensions: /*calculateDimensions*/ ctx[15],
-    					setResizeFunc: /*setResizeFunc*/ ctx[14]
-    				}
-    			}
+    			props: { stuff: /*getChildProps*/ ctx[15]() }
     		});
 
     	return {
@@ -2122,17 +1978,7 @@
     			mount_component(video, target, anchor);
     			current = true;
     		},
-    		p(ctx, dirty) {
-    			const video_changes = {};
-
-    			if (dirty[0] & /*activeItem*/ 64) video_changes.stuff = {
-    				activeItem: /*activeItem*/ ctx[6],
-    				calculateDimensions: /*calculateDimensions*/ ctx[15],
-    				setResizeFunc: /*setResizeFunc*/ ctx[14]
-    			};
-
-    			video.$set(video_changes);
-    		},
+    		p: noop,
     		i(local) {
     			if (current) return;
     			transition_in(video.$$.fragment, local);
@@ -2148,25 +1994,14 @@
     	};
     }
 
-    // (339:4) {#if activeItem.img}
+    // (334:4) {#if activeItem.img}
     function create_if_block_4(ctx) {
     	let imageitem;
     	let current;
 
     	imageitem = new Image({
     			props: {
-    				stuff: {
-    					activeItem: /*activeItem*/ ctx[6],
-    					calculateDimensions: /*calculateDimensions*/ ctx[15],
-    					loadImage: /*loadImage*/ ctx[17],
-    					preloadNext: /*preloadNext*/ ctx[16],
-    					opts: /*opts*/ ctx[5],
-    					prev: /*prev*/ ctx[2],
-    					next: /*next*/ ctx[3],
-    					close: /*close*/ ctx[1],
-    					toggleControls: /*toggleControls*/ ctx[20],
-    					setResizeFunc: /*setResizeFunc*/ ctx[14]
-    				},
+    				stuff: /*getChildProps*/ ctx[15](),
     				containerWidth: /*containerWidth*/ ctx[7],
     				containerHeight: /*containerHeight*/ ctx[8],
     				smallScreen: /*smallScreen*/ ctx[10]
@@ -2183,20 +2018,6 @@
     		},
     		p(ctx, dirty) {
     			const imageitem_changes = {};
-
-    			if (dirty[0] & /*activeItem, opts*/ 96) imageitem_changes.stuff = {
-    				activeItem: /*activeItem*/ ctx[6],
-    				calculateDimensions: /*calculateDimensions*/ ctx[15],
-    				loadImage: /*loadImage*/ ctx[17],
-    				preloadNext: /*preloadNext*/ ctx[16],
-    				opts: /*opts*/ ctx[5],
-    				prev: /*prev*/ ctx[2],
-    				next: /*next*/ ctx[3],
-    				close: /*close*/ ctx[1],
-    				toggleControls: /*toggleControls*/ ctx[20],
-    				setResizeFunc: /*setResizeFunc*/ ctx[14]
-    			};
-
     			if (dirty[0] & /*containerWidth*/ 128) imageitem_changes.containerWidth = /*containerWidth*/ ctx[7];
     			if (dirty[0] & /*containerHeight*/ 256) imageitem_changes.containerHeight = /*containerHeight*/ ctx[8];
     			if (dirty[0] & /*smallScreen*/ 1024) imageitem_changes.smallScreen = /*smallScreen*/ ctx[10];
@@ -2217,17 +2038,18 @@
     	};
     }
 
-    // (367:75) {#if activeItem.caption}
+    // (339:199) {#if activeItem.caption}
     function create_if_block_3(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].caption + "";
-    	let div_transition;
+    	let div_outro;
     	let current;
 
     	return {
     		c() {
     			div = element("div");
     			attr(div, "class", "bp-cap");
+    			attr(div, "tabindex", "0");
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
@@ -2238,27 +2060,21 @@
     			if ((!current || dirty[0] & /*activeItem*/ 64) && raw_value !== (raw_value = /*activeItem*/ ctx[6].caption + "")) div.innerHTML = raw_value;		},
     		i(local) {
     			if (current) return;
-
-    			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 200 }, true);
-    				div_transition.run(1);
-    			});
-
+    			if (div_outro) div_outro.end(1);
     			current = true;
     		},
     		o(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 200 }, false);
-    			div_transition.run(0);
+    			div_outro = create_out_transition(div, fade, { duration: 200 });
     			current = false;
     		},
     		d(detaching) {
     			if (detaching) detach(div);
-    			if (detaching && div_transition) div_transition.end();
+    			if (detaching && div_outro) div_outro.end();
     		}
     	};
     }
 
-    // (328:63) {#key activeItem.i}
+    // (323:56) {#key activeItem.i}
     function create_key_block(ctx) {
     	let div;
     	let current_block_type_index;
@@ -2300,8 +2116,8 @@
 
     			if (!mounted) {
     				dispose = [
-    					listen(div, "pointerdown", /*pointerdown_handler*/ ctx[28]),
-    					listen(div, "pointerup", /*pointerup_handler*/ ctx[29])
+    					listen(div, "pointerdown", /*pointerdown_handler*/ ctx[23]),
+    					listen(div, "pointerup", /*pointerup_handler*/ ctx[24])
     				];
 
     				mounted = true;
@@ -2363,7 +2179,7 @@
 
     			add_render_callback(() => {
     				if (div_outro) div_outro.end(1);
-    				div_intro = create_in_transition(div, /*animateIn*/ ctx[18], {});
+    				div_intro = create_in_transition(div, /*mediaTransition*/ ctx[14], true);
     				div_intro.start();
     			});
 
@@ -2373,7 +2189,7 @@
     		o(local) {
     			transition_out(if_block0);
     			if (div_intro) div_intro.invalidate();
-    			div_outro = create_out_transition(div, /*animateOut*/ ctx[19], {});
+    			div_outro = create_out_transition(div, /*mediaTransition*/ ctx[14], false);
     			transition_out(if_block1);
     			current = false;
     		},
@@ -2389,11 +2205,11 @@
     	};
     }
 
-    // (367:198) {#if !smallScreen || !hideControls}
+    // (339:328) {#if !smallScreen || !hideControls}
     function create_if_block_1(ctx) {
     	let div;
     	let button;
-    	let div_transition;
+    	let div_outro;
     	let current;
     	let mounted;
     	let dispose;
@@ -2436,34 +2252,27 @@
     		},
     		i(local) {
     			if (current) return;
-
-    			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 300 }, true);
-    				div_transition.run(1);
-    			});
-
+    			if (div_outro) div_outro.end(1);
     			current = true;
     		},
     		o(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 300 }, false);
-    			div_transition.run(0);
+    			div_outro = create_out_transition(div, fade, { duration: 300 });
     			current = false;
     		},
     		d(detaching) {
     			if (detaching) detach(div);
     			if (if_block) if_block.d();
-    			if (detaching && div_transition) div_transition.end();
+    			if (detaching && div_outro) div_outro.end();
     			mounted = false;
     			dispose();
     		}
     	};
     }
 
-    // (372:6) {#if items.length > 1}
+    // (344:6) {#if items.length > 1}
     function create_if_block_2(ctx) {
     	let div;
-    	let t_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
-    	let t;
+    	let raw_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
     	let button0;
     	let button1;
     	let mounted;
@@ -2472,7 +2281,6 @@
     	return {
     		c() {
     			div = element("div");
-    			t = text(t_value);
     			button0 = element("button");
     			button1 = element("button");
     			attr(div, "class", "bp-count");
@@ -2485,7 +2293,7 @@
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
-    			append(div, t);
+    			div.innerHTML = raw_value;
     			insert(target, button0, anchor);
     			insert(target, button1, anchor);
 
@@ -2499,8 +2307,7 @@
     			}
     		},
     		p(ctx, dirty) {
-    			if (dirty[0] & /*position, items*/ 17 && t_value !== (t_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "")) set_data(t, t_value);
-    		},
+    			if (dirty[0] & /*position, items*/ 17 && raw_value !== (raw_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "")) div.innerHTML = raw_value;		},
     		d(detaching) {
     			if (detaching) detach(div);
     			if (detaching) detach(button0);
@@ -2569,7 +2376,7 @@
     function instance($$self, $$props, $$invalidate) {
     	let $closing;
     	let $zoomed;
-    	component_subscribe($$self, closing, $$value => $$invalidate(33, $closing = $$value));
+    	component_subscribe($$self, closing, $$value => $$invalidate(28, $closing = $$value));
     	component_subscribe($$self, zoomed, $$value => $$invalidate(13, $zoomed = $$value));
     	let { items = undefined } = $$props;
     	let { target = undefined } = $$props;
@@ -2666,12 +2473,12 @@
     	};
 
     	const close = () => {
-    		opts.onClose && opts.onClose();
-    		set_store_value(closing, $closing = 1, $closing);
-    		$$invalidate(0, items = false);
+    		opts.onClose?.();
+    		set_store_value(closing, $closing = true, $closing);
+    		$$invalidate(0, items = null);
 
     		// restore focus to trigger element
-    		focusTrigger && focusTrigger.focus({ preventScroll: true });
+    		focusTrigger?.focus({ preventScroll: true });
     	};
 
     	const prev = () => setPosition(position - 1);
@@ -2686,15 +2493,7 @@
      * returns next gallery position (looped if neccessary)
      * @param {number} index
      */
-    	const getNextPosition = index => {
-    		if (index >= items.length) {
-    			index = 0;
-    		} else if (index < 0) {
-    			index = items.length - 1;
-    		}
-
-    		return index;
-    	};
+    	const getNextPosition = index => (index + items.length) % items.length;
 
     	const onKeydown = e => {
     		const { key, shiftKey } = e;
@@ -2716,31 +2515,29 @@
     				const tabbable = [...focusWrap.querySelectorAll('*')].filter(n => n.tabIndex >= 0);
     				let index = tabbable.indexOf(activeElement);
     				index += tabbable.length + (shiftKey ? -1 : 1);
-    				index %= tabbable.length;
-    				tabbable[index].focus();
+    				tabbable[index % tabbable.length].focus();
     			}
     		}
     	};
 
     	/**
      * calculates dimensions within window bounds for given height / width
-     * @param {number} fullWidth full width of media
-     * @param {number} fullHeight full height of media
+     * @param {number} width full width of media
+     * @param {number} height full height of media
      * @returns {Array} [width: number, height: number]
      */
-    	const calculateDimensions = (fullWidth, fullHeight) => {
-    		fullWidth = fullWidth || 1920;
-    		fullHeight = fullHeight || 1080;
+    	const calculateDimensions = (width, height) => {
+    		width = width || 1920;
+    		height = height || 1080;
     		const scale = opts.scale || 0.99;
-    		let width, height;
     		const windowAspect = containerHeight / containerWidth;
-    		const mediaAspect = fullHeight / fullWidth;
+    		const mediaAspect = height / width;
 
     		if (mediaAspect > windowAspect) {
-    			height = Math.min(fullHeight, containerHeight * scale);
+    			height = Math.min(height, containerHeight * scale);
     			width = height / mediaAspect;
     		} else {
-    			width = Math.min(fullWidth, containerWidth * scale);
+    			width = Math.min(width, containerWidth * scale);
     			height = width * mediaAspect;
     		}
 
@@ -2749,10 +2546,12 @@
 
     	/** preloads images for previous and next items in gallery */
     	const preloadNext = () => {
-    		const nextItem = items[getNextPosition(position + 1)];
-    		const prevItem = items[getNextPosition(position - 1)];
-    		nextItem && !nextItem.preload && loadImage(nextItem);
-    		prevItem && !prevItem.preload && loadImage(prevItem);
+    		if (items) {
+    			const nextItem = items[getNextPosition(position + 1)];
+    			const prevItem = items[getNextPosition(position - 1)];
+    			!nextItem.preload && loadImage(nextItem);
+    			!prevItem.preload && loadImage(prevItem);
+    		}
     	};
 
     	/** loads / decodes image for item */
@@ -2766,38 +2565,27 @@
     		const image = element('img');
     		image.sizes = opts.sizes || `${calculateDimensions(width, height)[0]}px`;
     		image.srcset = img;
-    		item.preload = image;
+    		item.preload = true;
     		return image.decode();
     	};
 
-    	/** animate media in when bp is first opened */
-    	const animateIn = node => {
-    		if (!isOpen) {
-    			$$invalidate(25, isOpen = 1);
-    			opts.onOpen && opts.onOpen(container, activeItem);
+    	/** svelte transition to control opening / changing */
+    	const mediaTransition = (node, isEntering) => {
+    		if (!isOpen || !items) {
+    			// entrance / exit transition
+    			$$invalidate(20, isOpen = isEntering);
 
     			return opts.intro
-    			? fly(node, { y: 10, easing: cubicOut })
+    			? fly(node, {
+    					y: isEntering ? 10 : -10,
+    					easing: cubicOut
+    				})
     			: scaleIn(node);
     		}
 
+    		// forward / backward transition
     		return fly(node, {
-    			x: movement > 0 ? 20 : -20,
-    			easing: cubicOut,
-    			duration: 250
-    		});
-    	};
-
-    	/** animate media out when bp is closed */
-    	const animateOut = node => {
-    		if (!items) {
-    			return opts.intro
-    			? fly(node, { y: -10, easing: cubicOut })
-    			: scaleIn(node);
-    		}
-
-    		return fly(node, {
-    			x: movement > 0 ? -20 : 20,
+    			x: (movement > 0 ? 20 : -20) * (isEntering ? 1 : -1),
     			easing: cubicOut,
     			duration: 250
     		});
@@ -2833,11 +2621,26 @@
     	/** toggle controls shown / hidden */
     	const toggleControls = () => $$invalidate(9, hideControls = !hideControls);
 
+    	/** provides object w/ needed funcs / data to child components  */
+    	const getChildProps = () => ({
+    		activeItem,
+    		calculateDimensions,
+    		loadImage,
+    		preloadNext,
+    		opts,
+    		prev,
+    		next,
+    		close,
+    		toggleControls,
+    		setResizeFunc
+    	});
+
     	/** code to run on mount / destroy */
     	const containerActions = node => {
-    		$$invalidate(26, container = node);
+    		$$invalidate(21, container = node);
     		let removeKeydownListener;
     		let roActive;
+    		opts.onOpen?.(container, activeItem);
 
     		// don't use keyboard events for inline galleries
     		if (!inline) {
@@ -2853,10 +2656,10 @@
     					$$invalidate(10, smallScreen = containerWidth < 769);
 
     					// run child component resize function
-    					resizeFunc && resizeFunc();
+    					resizeFunc?.();
 
     					// run user defined onResize function
-    					opts.onResize && opts.onResize(container, activeItem);
+    					opts.onResize?.(container, activeItem);
     				}
 
     				roActive = true;
@@ -2867,13 +2670,13 @@
     		return {
     			destroy() {
     				ro.disconnect();
-    				removeKeydownListener && removeKeydownListener();
-    				set_store_value(closing, $closing = $$invalidate(25, isOpen = false), $closing);
+    				removeKeydownListener?.();
+    				set_store_value(closing, $closing = false, $closing);
 
     				// remove class hiding scroll
     				html.classList.remove('bp-lock');
 
-    				opts.onClosed && opts.onClosed();
+    				opts.onClosed?.();
     			}
     		};
     	};
@@ -2889,23 +2692,23 @@
 
     	$$self.$$set = $$props => {
     		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-    		if ('target' in $$props) $$invalidate(22, target = $$props.target);
+    		if ('target' in $$props) $$invalidate(17, target = $$props.target);
     	};
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty[0] & /*items, position, activeItem, isOpen, activeItemIsHtml, opts, container*/ 234881137) {
+    		if ($$self.$$.dirty[0] & /*items, position, activeItem, isOpen, activeItemIsHtml, opts, container*/ 7340145) {
     			if (items) {
     				// update active item when position changes
     				$$invalidate(6, activeItem = items[position]);
 
-    				$$invalidate(27, activeItemIsHtml = activeItem.hasOwnProperty('html'));
+    				$$invalidate(22, activeItemIsHtml = activeItem.hasOwnProperty('html'));
 
     				if (isOpen) {
     					// clear child resize function if html
     					activeItemIsHtml && setResizeFunc(null);
 
     					// run onUpdate when items updated
-    					opts.onUpdate && opts.onUpdate(container, activeItem);
+    					opts.onUpdate?.(container, activeItem);
     				}
     			}
     		}
@@ -2926,13 +2729,8 @@
     		inline,
     		clickedEl,
     		$zoomed,
-    		setResizeFunc,
-    		calculateDimensions,
-    		preloadNext,
-    		loadImage,
-    		animateIn,
-    		animateOut,
-    		toggleControls,
+    		mediaTransition,
+    		getChildProps,
     		containerActions,
     		target,
     		open,
@@ -2957,12 +2755,12 @@
     			not_equal,
     			{
     				items: 0,
-    				target: 22,
-    				open: 23,
+    				target: 17,
+    				open: 18,
     				close: 1,
     				prev: 2,
     				next: 3,
-    				setPosition: 24
+    				setPosition: 19
     			},
     			null,
     			[-1, -1]
@@ -2976,13 +2774,13 @@
 
 
     	get target() {
-    		return this.$$.ctx[22];
+    		return this.$$.ctx[17];
     	}
 
 
 
     	get open() {
-    		return this.$$.ctx[23];
+    		return this.$$.ctx[18];
     	}
 
     	get close() {
@@ -2998,7 +2796,7 @@
     	}
 
     	get setPosition() {
-    		return this.$$.ctx[24];
+    		return this.$$.ctx[19];
     	}
     }
 
