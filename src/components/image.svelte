@@ -383,7 +383,6 @@
 	on:pointerdown={onPointerDown}
 	on:pointermove={onPointerMove}
 	on:pointerup={onPointerUp}
-	on:pointercancel={onPointerUp}
 	class:bp-drag={pointerDown}
 	class:bp-close={closingWhileZoomed}
 >
