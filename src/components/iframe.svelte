@@ -1,24 +1,21 @@
 <script>
 	import Loading from './loading.svelte'
 
-	export let stuff
+	export let props
 
-	let loaded
+	let loaded, dimensions
 
-	let dimensions
+	const { activeItem } = props
 
-	const { activeItem, calculateDimensions, setResizeFunc } = stuff
-
-	const { iframe, thumb, title, width, height } = activeItem
-
-	const setDimensions = () => (dimensions = calculateDimensions(width, height))
+	const setDimensions = () =>
+		(dimensions = props.calculateDimensions(activeItem))
 
 	setDimensions()
 
-	setResizeFunc(setDimensions)
+	props.setResizeFunc(setDimensions)
 
 	// add src ourselves to avoid src_url_equal call (svelte stuff)
-	const addSrc = (node) => (node.src = iframe)
+	const addSrc = (node) => (node.src = activeItem.iframe)
 </script>
 
 <div
@@ -31,8 +28,8 @@
 	<iframe
 		use:addSrc
 		allow="autoplay; fullscreen"
-		{title}
+		title={activeItem.title}
 		on:load={() => (loaded = true)}
 	/>
-	<Loading {thumb} {loaded} />
+	<Loading thumb={activeItem.thumb} {loaded} />
 </div>

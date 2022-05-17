@@ -8,19 +8,18 @@
 	import Loading from './loading.svelte'
 	import { attr, element, append, listen } from 'svelte/internal'
 
-	export let stuff
+	export let props
 
 	let loaded, dimensions
 
-	const { activeItem, calculateDimensions, setResizeFunc } = stuff
+	const { activeItem } = props
 
-	const { sources, thumb, tracks = [], width, height } = activeItem
-
-	const setDimensions = () => (dimensions = calculateDimensions(width, height))
+	const setDimensions = () =>
+		(dimensions = props.calculateDimensions(activeItem))
 
 	setDimensions()
 
-	setResizeFunc(setDimensions)
+	props.setResizeFunc(setDimensions)
 
 	/** adds attributes to a node */
 	const addAttributes = (node, obj) => {
@@ -55,8 +54,8 @@
 				append(mediaElement, el)
 			})
 		}
-		appendToVideo('source', sources)
-		appendToVideo('track', tracks)
+		appendToVideo('source', activeItem.sources)
+		appendToVideo('track', activeItem.tracks || [])
 		listen(mediaElement, 'canplay', () => (loaded = true))
 		append(node, mediaElement)
 	}
@@ -68,8 +67,8 @@
 	style="
 			width:{dimensions[0]}px;
 			height:{dimensions[1]}px;
-			background-image:url({thumb})
+			background-image:url({activeItem.thumb})
 		"
 >
-	<Loading {thumb} {loaded} />
+	<Loading thumb={activeItem.thumb} {loaded} />
 </div>

@@ -15,7 +15,7 @@
 	/** element the gallery is mounted within (passed during initialization)*/
 	export let target = undefined
 
-	const { documentElement: html } = document
+	const html = document.documentElement
 
 	/** index of current active item */
 	let position
@@ -198,14 +198,13 @@
 
 	/** loads / decodes image for item */
 	const loadImage = (item) => {
-		const { img, width, height } = item
-		if (!img) {
-			return
-		}
-		const image = createEl('img')
+		if (item.img) {
+			const image = createEl('img')
 			image.sizes = opts.sizes || `${calculateDimensions(item)[0]}px`
-		item.preload = true
-		return image.decode()
+			image.srcset = item.img
+			item.preload = true
+			return image.decode()
+		}
 	}
 
 	/** svelte transition to control opening / changing */
@@ -333,15 +332,15 @@
 			>
 				{#if activeItem.img}
 					<ImageItem
-						stuff={getChildProps()}
+						props={getChildProps()}
 						{containerWidth}
 						{containerHeight}
 						{smallScreen}
 					/>
 				{:else if activeItem.sources}
-					<Video stuff={getChildProps()} />
+					<Video props={getChildProps()} />
 				{:else if activeItem.iframe}
-					<Iframe stuff={getChildProps()} />
+					<Iframe props={getChildProps()} />
 				{:else}
 					<div class="bp-html">
 						{@html activeItem.html}

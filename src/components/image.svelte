@@ -3,33 +3,20 @@
 	import { zoomed, closing, defaultTweenOptions } from '../stores'
 	import { fly } from 'svelte/transition'
 	import Loading from './loading.svelte'
+	import { cubicOut } from 'svelte/easing'
 
-	export let stuff
+	export let props
 	export let containerWidth
 	export let containerHeight
 	export let smallScreen
 
-	let {
-		activeItem,
-		calculateDimensions,
-		loadImage,
-		preloadNext,
-		opts,
-		prev,
-		next,
-		close,
-		toggleControls,
-		setResizeFunc,
-	} = stuff
-
-	let { inline } = opts
-	let { img: srcset, thumb, alt, width, height } = activeItem
+	let { activeItem, opts, prev, next } = props
 
 	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10
 
-	let naturalWidth = +width
-	let naturalHeight = +height
-	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
+	let naturalWidth = +activeItem.width
+	let naturalHeight = +activeItem.height
+	let calculatedDimensions = props.calculateDimensions(activeItem)
 
 	/** value of sizes attribute */
 	let sizes = calculatedDimensions[0]
@@ -182,7 +169,7 @@
 
 	const onWheel = (e) => {
 		// return if scrolling past inline gallery w/ wheel
-		if (inline && !$zoomed) {
+		if (opts.inline && !$zoomed) {
 			return
 		}
 		// preventDefault to stop scrolling on zoomed inline image
@@ -239,9 +226,9 @@
 				// pointerdown = undefined to stop pointermove from running again
 				pointerDown = next()
 			}
-			// close if swipe up (don't close if inline)
+			// close if swipe up
 			if (y < -90) {
-				!opts.noClose && close()
+				!opts.noClose && props.close()
 			}
 		}
 
@@ -300,7 +287,7 @@
 
 		// close if overlay is clicked
 		if (e.target === this && !opts.noClose) {
-			return close()
+			return props.close()
 		}
 
 		if (!smallScreen) {
@@ -322,7 +309,7 @@
 					doubleClickTimeout = 0
 				} else {
 					doubleClickTimeout = setTimeout(() => {
-						toggleControls()
+						props.toggleControls()
 						doubleClickTimeout = 0
 					}, 250)
 				}
@@ -357,8 +344,8 @@
 
 	const onMount = () => {
 		// handle window resize
-		setResizeFunc(() => {
-			calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight)
+		props.setResizeFunc(() => {
+			calculatedDimensions = props.calculateDimensions(activeItem)
 			// adjust image size / zoom on resize, but not on mobile because
 			// some browsers (ios safari 15) constantly resize screen on drag
 			if (!smallScreen) {
@@ -367,9 +354,9 @@
 			}
 		})
 		// decode initial image before rendering
-		loadImage(activeItem).then(() => {
+		props.loadImage(activeItem).then(() => {
 			loaded = true
-			preloadNext()
+			props.preloadNext()
 		})
 		// show loading indicator if needed
 		setTimeout(() => {
@@ -391,7 +378,7 @@
 	<div
 		class="bp-img"
 		style="
-			background-image:url({thumb});
+			background-image:url({activeItem.thumb});
 			width:{$imageDimensions[0]}px;
 			height:{$imageDimensions[1]}px;
 			transform:translate3d({$imageDimensions[0] / -2 +
@@ -408,7 +395,7 @@
 			/>
 		{/if}
 		{#if showLoader}
-			<Loading {thumb} {loaded} />
+			<Loading thumb={activeItem.thumb} {loaded} />
 		{/if}
 	</div>
 </div>
