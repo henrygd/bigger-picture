@@ -60,12 +60,13 @@
   height: 100%;
   position: absolute;
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .bp-html {
   display: contents;
+}
+.bp-html > :first-child {
+  margin: auto;
 }
 
 .bp-img-wrap {
@@ -195,7 +196,8 @@
 
 .bp-if,
 .bp-vid {
-  position: absolute;
+  position: relative;
+  margin: auto;
   background: #000;
   background-size: 100% 100%;
 }

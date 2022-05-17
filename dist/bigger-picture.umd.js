@@ -20,9 +20,6 @@
     function is_function(thing) {
         return typeof thing === 'function';
     }
-    function safe_not_equal(a, b) {
-        return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
-    }
     function not_equal(a, b) {
         return a != a ? b == b : a !== b;
     }
@@ -81,14 +78,6 @@
     function append(target, node) {
         target.appendChild(node);
     }
-    function append_empty_stylesheet(node) {
-        const style_element = element('style');
-        append_stylesheet(document, style_element);
-        return style_element.sheet;
-    }
-    function append_stylesheet(node, style) {
-        append(node.head || node, style);
-    }
     function insert(target, node, anchor) {
         target.insertBefore(node, anchor || null);
     }
@@ -119,7 +108,7 @@
             node.style.removeProperty(key);
         }
         else {
-            node.style.setProperty(key, value, important ? 'important' : '');
+            node.style.setProperty(key, value);
         }
     }
     function toggle_class(element, name, toggle) {
@@ -130,11 +119,9 @@
         e.initCustomEvent(type, bubbles, false, detail);
         return e;
     }
-
-    // we need to store the information for multiple documents because a Svelte application could also contain iframes
-    // https://github.com/sveltejs/svelte/issues/3624
-    const managed_styles = new Map();
+    let stylesheet;
     let active = 0;
+    let current_rules = {};
     // https://github.com/darkskyapp/string-hash/blob/master/index.js
     function hash(str) {
         let hash = 5381;
@@ -142,11 +129,6 @@
         while (i--)
             hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
         return hash >>> 0;
-    }
-    function create_style_information(doc, node) {
-        const info = { stylesheet: append_empty_stylesheet(), rules: {} };
-        managed_styles.set(doc, info);
-        return info;
     }
     function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
         const step = 16.666 / duration;
@@ -156,44 +138,40 @@
             keyframes += p * 100 + `%{${fn(t, 1 - t)}}\n`;
         }
         const rule = keyframes + `100% {${fn(b, 1 - b)}}\n}`;
-        const name = `bp_${hash(rule)}_${uid}`;
-        const doc = document;
-        const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc);
-        if (!rules[name]) {
-            rules[name] = true;
+        const name = `_bp_${hash(rule)}_${uid}`;
+        if (!current_rules[name]) {
+            if (!stylesheet) {
+                const style = element('style');
+                document.head.appendChild(style);
+                stylesheet = style.sheet;
+            }
+            current_rules[name] = true;
             stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
         }
         const animation = node.style.animation || '';
-        node.style.animation = `${animation ? `${animation}, ` : ''}${name} ${duration}ms linear ${delay}ms 1 both`;
+        node.style.animation = `${animation ? `${animation}, ` : ``}${name} ${duration}ms linear ${delay}ms 1 both`;
         active += 1;
         return name;
     }
     function delete_rule(node, name) {
-        const previous = (node.style.animation || '').split(', ');
-        const next = previous.filter(name
+        node.style.animation = (node.style.animation || '')
+            .split(', ')
+            .filter(name
             ? anim => anim.indexOf(name) < 0 // remove specific animation
-            : anim => anim.indexOf('__svelte') === -1 // remove all Svelte animations
-        );
-        const deleted = previous.length - next.length;
-        if (deleted) {
-            node.style.animation = next.join(', ');
-            active -= deleted;
-            if (!active)
-                clear_rules();
-        }
+            : anim => anim.indexOf('_bp') === -1 // remove all Svelte animations
+        )
+            .join(', ');
+        if (name && !--active)
+            clear_rules();
     }
     function clear_rules() {
         raf(() => {
             if (active)
                 return;
-            managed_styles.forEach(info => {
-                const { stylesheet } = info;
-                let i = stylesheet.cssRules.length;
-                while (i--)
-                    stylesheet.deleteRule(i);
-                info.rules = {};
-            });
-            managed_styles.clear();
+            let i = stylesheet.cssRules.length;
+            while (i--)
+                stylesheet.deleteRule(i);
+            current_rules = {};
         });
     }
 
@@ -544,8 +522,6 @@
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 $$.fragment && $$.fragment.c();
             }
-            if (options.intro)
-                transition_in(component.$$.fragment);
             mount_component(component, options.target, options.anchor, options.customElement);
             flush();
         }
@@ -582,15 +558,6 @@
         return f * f * f + 1.0;
     }
 
-    function fade(node, { delay = 0, duration = 400, easing = identity } = {}) {
-        const o = +getComputedStyle(node).opacity;
-        return {
-            delay,
-            duration,
-            easing,
-            css: t => `opacity: ${t * o}`
-        };
-    }
     function fly(node, { delay = 0, duration = 400, easing = cubicOut, x = 0, y = 0, opacity = 0 } = {}) {
         const style = getComputedStyle(node);
         const target_opacity = +style.opacity;
@@ -616,7 +583,7 @@
         let stop;
         const subscribers = new Set();
         function set(new_value) {
-            if (safe_not_equal(value, new_value)) {
+            if (not_equal(value, new_value)) {
                 value = new_value;
                 if (stop) { // store is ready
                     const run_queue = !subscriber_queue.length;
@@ -785,7 +752,7 @@
 
     			add_render_callback(() => {
     				if (div_outro) div_outro.end(1);
-    				div_intro = create_in_transition(div, fade, { duration: /*loaded*/ ctx[1] ? 300 : 0 });
+    				div_intro = create_in_transition(div, fly, { duration: /*loaded*/ ctx[1] ? 400 : 0 });
     				div_intro.start();
     			});
 
@@ -795,7 +762,7 @@
     			if (div_intro) div_intro.invalidate();
 
     			if (local) {
-    				div_outro = create_out_transition(div, fade, { duration: 200 });
+    				div_outro = create_out_transition(div, fly, { duration: 480 });
     			}
 
     			current = false;
@@ -906,23 +873,25 @@
 
     function create_if_block_1$1(ctx) {
     	let img;
+    	let img_srcset_value;
     	let img_sizes_value;
+    	let img_alt_value;
     	let img_outro;
     	let current;
 
     	return {
     		c() {
     			img = element("img");
-    			attr(img, "srcset", /*srcset*/ ctx[8]);
-    			attr(img, "sizes", img_sizes_value = /*opts*/ ctx[7].sizes || `${/*sizes*/ ctx[1]}px`);
-    			attr(img, "alt", /*alt*/ ctx[10]);
+    			attr(img, "srcset", img_srcset_value = /*activeItem*/ ctx[7].img);
+    			attr(img, "sizes", img_sizes_value = /*opts*/ ctx[8].sizes || `${/*sizes*/ ctx[1]}px`);
+    			attr(img, "alt", img_alt_value = /*activeItem*/ ctx[7].alt);
     		},
     		m(target, anchor) {
     			insert(target, img, anchor);
     			current = true;
     		},
     		p(ctx, dirty) {
-    			if (!current || dirty[0] & /*sizes*/ 2 && img_sizes_value !== (img_sizes_value = /*opts*/ ctx[7].sizes || `${/*sizes*/ ctx[1]}px`)) {
+    			if (!current || dirty[0] & /*sizes*/ 2 && img_sizes_value !== (img_sizes_value = /*opts*/ ctx[8].sizes || `${/*sizes*/ ctx[1]}px`)) {
     				attr(img, "sizes", img_sizes_value);
     			}
     		},
@@ -932,7 +901,7 @@
     			current = true;
     		},
     		o(local) {
-    			img_outro = create_out_transition(img, fade, {});
+    			img_outro = create_out_transition(img, fly, {});
     			current = false;
     		},
     		d(detaching) {
@@ -942,14 +911,14 @@
     	};
     }
 
-    // (396:85) {#if showLoader}
+    // (389:10) {#if showLoader}
     function create_if_block$1(ctx) {
     	let loading;
     	let current;
 
     	loading = new Loading({
     			props: {
-    				thumb: /*thumb*/ ctx[9],
+    				thumb: /*activeItem*/ ctx[7].thumb,
     				loaded: /*loaded*/ ctx[2]
     			}
     		});
@@ -1000,7 +969,7 @@
     			if_block0_anchor = empty();
     			if (if_block1) if_block1.c();
     			attr(div0, "class", "bp-img");
-    			set_style(div0, "background-image", "url(" + /*thumb*/ ctx[9] + ")");
+    			set_style(div0, "background-image", "url(" + /*activeItem*/ ctx[7].thumb + ")");
     			set_style(div0, "width", /*$imageDimensions*/ ctx[0][0] + "px");
     			set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
     			set_style(div0, "transform", "translate3d(" + (/*$imageDimensions*/ ctx[0][0] / -2 + /*$zoomDragTranslate*/ ctx[6][0]) + "px, " + (/*$imageDimensions*/ ctx[0][1] / -2 + /*$zoomDragTranslate*/ ctx[6][1]) + "px, 0)");
@@ -1018,12 +987,11 @@
 
     			if (!mounted) {
     				dispose = [
-    					action_destroyer(/*onMount*/ ctx[17].call(null, div1)),
-    					listen(div1, "wheel", /*onWheel*/ ctx[13]),
-    					listen(div1, "pointerdown", /*onPointerDown*/ ctx[14]),
-    					listen(div1, "pointermove", /*onPointerMove*/ ctx[15]),
-    					listen(div1, "pointerup", /*onPointerUp*/ ctx[16]),
-    					listen(div1, "pointercancel", /*onPointerUp*/ ctx[16])
+    					action_destroyer(/*onMount*/ ctx[15].call(null, div1)),
+    					listen(div1, "wheel", /*onWheel*/ ctx[11]),
+    					listen(div1, "pointerdown", /*onPointerDown*/ ctx[12]),
+    					listen(div1, "pointermove", /*onPointerMove*/ ctx[13]),
+    					listen(div1, "pointerup", /*onPointerUp*/ ctx[14])
     				];
 
     				mounted = true;
@@ -1122,19 +1090,17 @@
     	let $zoomed;
     	let $closing;
     	let $imageDimensions;
-    	component_subscribe($$self, zoomed, $$value => $$invalidate(23, $zoomed = $$value));
-    	component_subscribe($$self, closing, $$value => $$invalidate(24, $closing = $$value));
-    	let { stuff } = $$props;
+    	component_subscribe($$self, zoomed, $$value => $$invalidate(21, $zoomed = $$value));
+    	component_subscribe($$self, closing, $$value => $$invalidate(22, $closing = $$value));
+    	let { props } = $$props;
     	let { containerWidth } = $$props;
     	let { containerHeight } = $$props;
     	let { smallScreen } = $$props;
-    	let { activeItem, calculateDimensions, loadImage, preloadNext, opts, prev, next, close, toggleControls, setResizeFunc } = stuff;
-    	let { inline } = opts;
-    	let { img: srcset, thumb, alt, width, height } = activeItem;
+    	let { activeItem, opts, prev, next } = props;
     	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10;
-    	let naturalWidth = +width;
-    	let naturalHeight = +height;
-    	let calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight);
+    	let naturalWidth = +activeItem.width;
+    	let naturalHeight = +activeItem.height;
+    	let calculatedDimensions = props.calculateDimensions(activeItem);
 
     	/** value of sizes attribute */
     	let sizes = calculatedDimensions[0];
@@ -1283,7 +1249,7 @@
 
     	const onWheel = e => {
     		// return if scrolling past inline gallery w/ wheel
-    		if (inline && !$zoomed) {
+    		if (opts.inline && !$zoomed) {
     			return;
     		}
 
@@ -1345,9 +1311,9 @@
     				$$invalidate(4, pointerDown = next());
     			}
 
-    			// close if swipe up (don't close if inline)
+    			// close if swipe up
     			if (y < -90) {
-    				!opts.noClose && close();
+    				!opts.noClose && props.close();
     			}
     		}
 
@@ -1399,7 +1365,7 @@
 
     		// close if overlay is clicked
     		if (e.target === this && !opts.noClose) {
-    			return close();
+    			return props.close();
     		}
 
     		if (!smallScreen) {
@@ -1422,7 +1388,7 @@
     				} else {
     					doubleClickTimeout = setTimeout(
     						() => {
-    							toggleControls();
+    							props.toggleControls();
     							doubleClickTimeout = 0;
     						},
     						250
@@ -1458,8 +1424,8 @@
 
     	const onMount = () => {
     		// handle window resize
-    		setResizeFunc(() => {
-    			$$invalidate(22, calculatedDimensions = calculateDimensions(naturalWidth, naturalHeight));
+    		props.setResizeFunc(() => {
+    			$$invalidate(20, calculatedDimensions = props.calculateDimensions(activeItem));
 
     			// adjust image size / zoom on resize, but not on mobile because
     			// some browsers (ios safari 15) constantly resize screen on drag
@@ -1470,9 +1436,9 @@
     		});
 
     		// decode initial image before rendering
-    		loadImage(activeItem).then(() => {
+    		props.loadImage(activeItem).then(() => {
     			$$invalidate(2, loaded = true);
-    			preloadNext();
+    			props.preloadNext();
     		});
 
     		// show loading indicator if needed
@@ -1485,23 +1451,25 @@
     	};
 
     	$$self.$$set = $$props => {
-    		if ('stuff' in $$props) $$invalidate(18, stuff = $$props.stuff);
-    		if ('containerWidth' in $$props) $$invalidate(19, containerWidth = $$props.containerWidth);
-    		if ('containerHeight' in $$props) $$invalidate(20, containerHeight = $$props.containerHeight);
-    		if ('smallScreen' in $$props) $$invalidate(21, smallScreen = $$props.smallScreen);
+    		
+    		if ('containerWidth' in $$props) $$invalidate(17, containerWidth = $$props.containerWidth);
+    		if ('containerHeight' in $$props) $$invalidate(18, containerHeight = $$props.containerHeight);
+    		if ('smallScreen' in $$props) $$invalidate(19, smallScreen = $$props.smallScreen);
     	};
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 4194305) {
+    		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 1048577) {
     			set_store_value(zoomed, $zoomed = $imageDimensions[0] > calculatedDimensions[0], $zoomed);
     		}
 
-    		if ($$self.$$.dirty[0] & /*$closing, $zoomed*/ 25165824) {
+    		if ($$self.$$.dirty[0] & /*$closing, $zoomed, calculatedDimensions*/ 7340032) {
     			// if zoomed while closing, zoom out image and add class
     			// to change contain value on .bp-wrap to avoid cropping
     			if ($closing && $zoomed && !opts.intro) {
+    				const closeTweenOpts = { duration: 480, easing: cubicOut };
+    				zoomDragTranslate.set([0, 0], closeTweenOpts);
+    				imageDimensions.set(calculatedDimensions, closeTweenOpts);
     				$$invalidate(5, closingWhileZoomed = true);
-    				zoomDragTranslate.set([0, 0]);
     			}
     		}
     	};
@@ -1514,10 +1482,8 @@
     		pointerDown,
     		closingWhileZoomed,
     		$zoomDragTranslate,
+    		activeItem,
     		opts,
-    		srcset,
-    		thumb,
-    		alt,
     		imageDimensions,
     		zoomDragTranslate,
     		onWheel,
@@ -1525,7 +1491,7 @@
     		onPointerMove,
     		onPointerUp,
     		onMount,
-    		stuff,
+    		props,
     		containerWidth,
     		containerHeight,
     		smallScreen,
@@ -1546,10 +1512,10 @@
     			create_fragment$3,
     			not_equal,
     			{
-    				stuff: 18,
-    				containerWidth: 19,
-    				containerHeight: 20,
-    				smallScreen: 21
+    				props: 16,
+    				containerWidth: 17,
+    				containerHeight: 18,
+    				smallScreen: 19
     			},
     			null,
     			[-1, -1]
@@ -1561,7 +1527,7 @@
 
     function create_fragment$2(ctx) {
     	let div;
-    	let iframe_1;
+    	let iframe;
     	let loading;
     	let current;
     	let mounted;
@@ -1569,7 +1535,7 @@
 
     	loading = new Loading({
     			props: {
-    				thumb: /*thumb*/ ctx[2],
+    				thumb: /*activeItem*/ ctx[2].thumb,
     				loaded: /*loaded*/ ctx[0]
     			}
     		});
@@ -1577,24 +1543,24 @@
     	return {
     		c() {
     			div = element("div");
-    			iframe_1 = element("iframe");
+    			iframe = element("iframe");
     			create_component(loading.$$.fragment);
-    			attr(iframe_1, "allow", "autoplay; fullscreen");
-    			attr(iframe_1, "title", /*title*/ ctx[3]);
+    			attr(iframe, "allow", "autoplay; fullscreen");
+    			attr(iframe, "title", /*activeItem*/ ctx[2].title);
     			attr(div, "class", "bp-if");
     			set_style(div, "width", /*dimensions*/ ctx[1][0] + "px");
     			set_style(div, "height", /*dimensions*/ ctx[1][1] + "px");
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
-    			append(div, iframe_1);
+    			append(div, iframe);
     			mount_component(loading, div, null);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					action_destroyer(/*addSrc*/ ctx[4].call(null, iframe_1)),
-    					listen(iframe_1, "load", /*load_handler*/ ctx[6])
+    					action_destroyer(/*addSrc*/ ctx[3].call(null, iframe)),
+    					listen(iframe, "load", /*load_handler*/ ctx[5])
     				];
 
     				mounted = true;
@@ -1632,31 +1598,27 @@
     }
 
     function instance$2($$self, $$props, $$invalidate) {
-    	let { stuff } = $$props;
-    	let loaded;
-    	let dimensions;
-    	const { activeItem, calculateDimensions, setResizeFunc } = stuff;
-    	const { iframe, thumb, title, width, height } = activeItem;
-    	const setDimensions = () => $$invalidate(1, dimensions = calculateDimensions(width, height));
+    	let { props } = $$props;
+    	let loaded, dimensions;
+    	const { activeItem } = props;
+    	const setDimensions = () => $$invalidate(1, dimensions = props.calculateDimensions(activeItem));
     	setDimensions();
-    	setResizeFunc(setDimensions);
+    	props.setResizeFunc(setDimensions);
 
     	// add src ourselves to avoid src_url_equal call (svelte stuff)
-    	const addSrc = node => node.src = iframe;
+    	const addSrc = node => node.src = activeItem.iframe;
 
     	const load_handler = () => $$invalidate(0, loaded = true);
 
-    	$$self.$$set = $$props => {
-    		if ('stuff' in $$props) $$invalidate(5, stuff = $$props.stuff);
-    	};
+    	
 
-    	return [loaded, dimensions, thumb, title, addSrc, stuff, load_handler];
+    	return [loaded, dimensions, activeItem, addSrc, props, load_handler];
     }
 
     class Iframe extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$2, create_fragment$2, not_equal, { stuff: 5 });
+    		init(this, options, instance$2, create_fragment$2, not_equal, { props: 4 });
     	}
     }
 
@@ -1671,7 +1633,7 @@
 
     	loading = new Loading({
     			props: {
-    				thumb: /*thumb*/ ctx[2],
+    				thumb: /*activeItem*/ ctx[2].thumb,
     				loaded: /*loaded*/ ctx[0]
     			}
     		});
@@ -1683,7 +1645,7 @@
     			attr(div, "class", "bp-vid");
     			set_style(div, "width", /*dimensions*/ ctx[1][0] + "px");
     			set_style(div, "height", /*dimensions*/ ctx[1][1] + "px");
-    			set_style(div, "background-image", "url(" + /*thumb*/ ctx[2] + ")");
+    			set_style(div, "background-image", "url(" + /*activeItem*/ ctx[2].thumb + ")");
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
@@ -1727,13 +1689,12 @@
     }
 
     function instance$1($$self, $$props, $$invalidate) {
-    	let { stuff } = $$props;
+    	let { props } = $$props;
     	let loaded, dimensions;
-    	const { activeItem, calculateDimensions, setResizeFunc } = stuff;
-    	const { sources, thumb, tracks = [], width, height } = activeItem;
-    	const setDimensions = () => $$invalidate(1, dimensions = calculateDimensions(width, height));
+    	const { activeItem } = props;
+    	const setDimensions = () => $$invalidate(1, dimensions = props.calculateDimensions(activeItem));
     	setDimensions();
-    	setResizeFunc(setDimensions);
+    	props.setResizeFunc(setDimensions);
 
     	/** adds attributes to a node */
     	const addAttributes = (node, obj) => {
@@ -1770,23 +1731,21 @@
     			});
     		};
 
-    		appendToVideo('source', sources);
-    		appendToVideo('track', tracks);
+    		appendToVideo('source', activeItem.sources);
+    		appendToVideo('track', activeItem.tracks || []);
     		listen(mediaElement, 'canplay', () => $$invalidate(0, loaded = true));
     		append(node, mediaElement);
     	};
 
-    	$$self.$$set = $$props => {
-    		if ('stuff' in $$props) $$invalidate(4, stuff = $$props.stuff);
-    	};
+    	
 
-    	return [loaded, dimensions, thumb, onMount, stuff];
+    	return [loaded, dimensions, activeItem, onMount, props];
     }
 
     class Video extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$1, create_fragment$1, not_equal, { stuff: 4 });
+    		init(this, options, instance$1, create_fragment$1, not_equal, { props: 4 });
     	}
     }
 
@@ -1830,9 +1789,7 @@
     				mounted = true;
     			}
     		},
-    		p(new_ctx, dirty) {
-    			ctx = new_ctx;
-
+    		p(ctx, dirty) {
     			if (dirty[0] & /*activeItem*/ 64 && not_equal(previous_key, previous_key = /*activeItem*/ ctx[6].i)) {
     				group_outros();
     				transition_out(key_block, 1, 1, noop);
@@ -1888,7 +1845,7 @@
     			current = true;
     		},
     		o(local) {
-    			div0_outro = create_out_transition(div0, fade, { easing: cubicOut, duration: 480 });
+    			div0_outro = create_out_transition(div0, fly, { duration: 480 });
     			transition_out(key_block);
     			transition_out(if_block);
     			current = false;
@@ -1904,7 +1861,7 @@
     	};
     }
 
-    // (339:131) {:else}
+    // (328:131) {:else}
     function create_else_block(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].html + "";
@@ -1928,13 +1885,13 @@
     	};
     }
 
-    // (339:97) 
+    // (328:97) 
     function create_if_block_6(ctx) {
     	let iframe;
     	let current;
 
     	iframe = new Iframe({
-    			props: { stuff: /*getChildProps*/ ctx[15]() }
+    			props: { props: /*getChildProps*/ ctx[15]() }
     		});
 
     	return {
@@ -1961,13 +1918,13 @@
     	};
     }
 
-    // (339:36) 
+    // (328:36) 
     function create_if_block_5(ctx) {
     	let video;
     	let current;
 
     	video = new Video({
-    			props: { stuff: /*getChildProps*/ ctx[15]() }
+    			props: { props: /*getChildProps*/ ctx[15]() }
     		});
 
     	return {
@@ -1994,14 +1951,14 @@
     	};
     }
 
-    // (334:4) {#if activeItem.img}
+    // (323:4) {#if activeItem.img}
     function create_if_block_4(ctx) {
     	let imageitem;
     	let current;
 
     	imageitem = new Image({
     			props: {
-    				stuff: /*getChildProps*/ ctx[15](),
+    				props: /*getChildProps*/ ctx[15](),
     				containerWidth: /*containerWidth*/ ctx[7],
     				containerHeight: /*containerHeight*/ ctx[8],
     				smallScreen: /*smallScreen*/ ctx[10]
@@ -2038,7 +1995,7 @@
     	};
     }
 
-    // (339:199) {#if activeItem.caption}
+    // (328:199) {#if activeItem.caption}
     function create_if_block_3(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].caption + "";
@@ -2064,7 +2021,7 @@
     			current = true;
     		},
     		o(local) {
-    			div_outro = create_out_transition(div, fade, { duration: 200 });
+    			div_outro = create_out_transition(div, fly, { duration: 200 });
     			current = false;
     		},
     		d(detaching) {
@@ -2074,7 +2031,7 @@
     	};
     }
 
-    // (323:56) {#key activeItem.i}
+    // (312:37) {#key activeItem.i}
     function create_key_block(ctx) {
     	let div;
     	let current_block_type_index;
@@ -2205,7 +2162,7 @@
     	};
     }
 
-    // (339:328) {#if !smallScreen || !hideControls}
+    // (328:327) {#if !smallScreen || !hideControls}
     function create_if_block_1(ctx) {
     	let div;
     	let button;
@@ -2256,7 +2213,7 @@
     			current = true;
     		},
     		o(local) {
-    			div_outro = create_out_transition(div, fade, { duration: 300 });
+    			div_outro = create_out_transition(div, fly, { duration: 300 });
     			current = false;
     		},
     		d(detaching) {
@@ -2269,7 +2226,7 @@
     	};
     }
 
-    // (344:6) {#if items.length > 1}
+    // (333:6) {#if items.length > 1}
     function create_if_block_2(ctx) {
     	let div;
     	let raw_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2380,7 +2337,7 @@
     	component_subscribe($$self, zoomed, $$value => $$invalidate(13, $zoomed = $$value));
     	let { items = undefined } = $$props;
     	let { target = undefined } = $$props;
-    	const { documentElement: html } = document;
+    	const html = document.documentElement;
 
     	/** index of current active item */
     	let position;
@@ -2521,27 +2478,19 @@
     	};
 
     	/**
-     * calculates dimensions within window bounds for given height / width
+     * calculate dimensions of height / width resized to fit within container
      * @param {number} width full width of media
      * @param {number} height full height of media
      * @returns {Array} [width: number, height: number]
      */
-    	const calculateDimensions = (width, height) => {
-    		width = width || 1920;
-    		height = height || 1080;
+    	const calculateDimensions = item => {
+    		const width = item.width || 1920;
+    		const height = item.height || 1080;
     		const scale = opts.scale || 0.99;
-    		const windowAspect = containerHeight / containerWidth;
-    		const mediaAspect = height / width;
+    		const ratio = Math.min(1, containerWidth / width * scale, containerHeight / height * scale);
 
-    		if (mediaAspect > windowAspect) {
-    			height = Math.min(height, containerHeight * scale);
-    			width = height / mediaAspect;
-    		} else {
-    			width = Math.min(width, containerWidth * scale);
-    			height = width * mediaAspect;
-    		}
-
-    		return [Math.round(width), Math.round(height)];
+    		// round number so we don't use a float as the sizes attribute
+    		return [Math.round(width * ratio), Math.round(height * ratio)];
     	};
 
     	/** preloads images for previous and next items in gallery */
@@ -2556,17 +2505,13 @@
 
     	/** loads / decodes image for item */
     	const loadImage = item => {
-    		const { img, width, height } = item;
-
-    		if (!img) {
-    			return;
+    		if (item.img) {
+    			const image = element('img');
+    			image.sizes = opts.sizes || `${calculateDimensions(item)[0]}px`;
+    			image.srcset = item.img;
+    			item.preload = true;
+    			return image.decode();
     		}
-
-    		const image = element('img');
-    		image.sizes = opts.sizes || `${calculateDimensions(width, height)[0]}px`;
-    		image.srcset = img;
-    		item.preload = true;
-    		return image.decode();
     	};
 
     	/** svelte transition to control opening / changing */
@@ -2576,44 +2521,39 @@
     			$$invalidate(20, isOpen = isEntering);
 
     			return opts.intro
-    			? fly(node, {
-    					y: isEntering ? 10 : -10,
-    					easing: cubicOut
-    				})
+    			? fly(node, { y: isEntering ? 10 : -10 })
     			: scaleIn(node);
     		}
 
     		// forward / backward transition
     		return fly(node, {
     			x: (movement > 0 ? 20 : -20) * (isEntering ? 1 : -1),
-    			easing: cubicOut,
     			duration: 250
     		});
     	};
 
     	/** custom svelte transition for entrance zoom */
     	const scaleIn = node => {
-    		let bpItem = node.firstElementChild;
+    		let dimensions;
 
-    		// images and html have a wrapper div, so we must go deeper
-    		if (activeItem.img || activeItemIsHtml) {
-    			bpItem = bpItem.firstElementChild;
+    		if (activeItemIsHtml) {
+    			const bpItem = node.firstChild.firstChild;
+    			dimensions = [bpItem.clientWidth, bpItem.clientHeight];
+    		} else {
+    			dimensions = calculateDimensions(activeItem);
     		}
 
-    		const element = activeItem.element || focusTrigger;
-    		const { clientWidth, clientHeight } = bpItem;
-    		const { top, left, width, height } = element.getBoundingClientRect();
-    		const leftOffset = left - (containerWidth - width) / 2;
-    		const centerTop = top - (containerHeight - height) / 2;
-    		const scaleWidth = element.clientWidth / clientWidth;
-    		const scaleHeight = element.clientHeight / clientHeight;
+    		const rect = (activeItem.element || focusTrigger).getBoundingClientRect();
+    		const leftOffset = rect.left - (containerWidth - rect.width) / 2;
+    		const centerTop = rect.top - (containerHeight - rect.height) / 2;
+    		const scaleWidth = rect.width / dimensions[0];
+    		const scaleHeight = rect.height / dimensions[1];
 
     		return {
     			duration: 480,
     			easing: cubicOut,
-    			css: t => {
-    				const tDiff = 1 - t;
-    				return `transform:translate3d(${leftOffset * tDiff}px, ${centerTop * tDiff}px, 0) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${scaleHeight + t * (1 - scaleHeight)}, 1)`;
+    			css: (t, u) => {
+    				return `transform:translate3d(${leftOffset * u}px, ${centerTop * u}px, 0) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${scaleHeight + t * (1 - scaleHeight)}, 1)`;
     			}
     		};
     	};
