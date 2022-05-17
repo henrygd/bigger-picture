@@ -18,6 +18,7 @@
 	let isPointerDown, pointerDownPos, hasDragged
 	let dragPositions = []
 	let focusWrap
+	let closing
 
 	let translate = tweened(0, {
 		easing: cubicOut,
@@ -30,7 +31,7 @@
 	}
 
 	export const open = (options) => {
-		opts = options
+		opts = closing ? null : options
 	}
 
 	function boundTranslate(int) {
@@ -106,7 +107,11 @@
 			onUpdate(container, activeItem) {
 				position = activeItem.i
 			},
-			onClose: () => (opts = null),
+			onClose() {
+				closing = true
+				opts = null
+			},
+			onClosed: () => (closing = false),
 		})
 	}
 </script>
@@ -127,7 +132,11 @@
 		<div class="thumbnail-bp" use:onMount />
 		<div
 			class="thumbnails"
-			transition:fade={{
+			in:fade={{
+				easing: cubicOut,
+				duration: prefersReducedMotion ? 0 : 480,
+			}}
+			out:fade={{
 				easing: cubicOut,
 				duration: prefersReducedMotion ? 0 : 480,
 			}}
