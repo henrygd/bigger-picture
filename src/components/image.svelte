@@ -71,8 +71,10 @@
 	// if zoomed while closing, zoom out image and add class
 	// to change contain value on .bp-wrap to avoid cropping
 	$: if ($closing && $zoomed && !opts.intro) {
+		const closeTweenOpts = { duration: 480, easing: cubicOut }
+		zoomDragTranslate.set([0, 0], closeTweenOpts)
+		imageDimensions.set(calculatedDimensions, closeTweenOpts)
 		closingWhileZoomed = true
-		zoomDragTranslate.set([0, 0])
 	}
 
 	/** calculate translate position with bounds */

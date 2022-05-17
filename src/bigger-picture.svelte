@@ -168,27 +168,22 @@
 	}
 
 	/**
-	 * calculates dimensions within window bounds for given height / width
+	 * calculate dimensions of height / width resized to fit within container
 	 * @param {number} width full width of media
 	 * @param {number} height full height of media
 	 * @returns {Array} [width: number, height: number]
 	 */
-	const calculateDimensions = (width, height) => {
-		width = width || 1920
-		height = height || 1080
-
+	const calculateDimensions = (item) => {
+		const width = item.width || 1920
+		const height = item.height || 1080
 		const scale = opts.scale || 0.99
-		const windowAspect = containerHeight / containerWidth
-		const mediaAspect = height / width
-
-		if (mediaAspect > windowAspect) {
-			height = Math.min(height, containerHeight * scale)
-			width = height / mediaAspect
-		} else {
-			width = Math.min(width, containerWidth * scale)
-			height = width * mediaAspect
-		}
-		return [Math.round(width), Math.round(height)]
+		const ratio = Math.min(
+			1,
+			(containerWidth / width) * scale,
+			(containerHeight / height) * scale
+		)
+		// round number so we don't use a float as the sizes attribute
+		return [Math.round(width * ratio), Math.round(height * ratio)]
 	}
 
 	/** preloads images for previous and next items in gallery */
@@ -208,8 +203,7 @@
 			return
 		}
 		const image = createEl('img')
-		image.sizes = opts.sizes || `${calculateDimensions(width, height)[0]}px`
-		image.srcset = img
+			image.sizes = opts.sizes || `${calculateDimensions(item)[0]}px`
 		item.preload = true
 		return image.decode()
 	}
@@ -232,30 +226,27 @@
 
 	/** custom svelte transition for entrance zoom */
 	const scaleIn = (node) => {
-		let bpItem = node.firstElementChild
+		let dimensions
 
-		// images and html have a wrapper div, so we must go deeper
-		if (activeItem.img || activeItemIsHtml) {
-			bpItem = bpItem.firstElementChild
+		if (activeItemIsHtml) {
+			const bpItem = node.firstChild.firstChild
+			dimensions = [bpItem.clientWidth, bpItem.clientHeight]
+		} else {
+			dimensions = calculateDimensions(activeItem)
 		}
 
-		const element = activeItem.element || focusTrigger
-
-		const { clientWidth, clientHeight } = bpItem
-
-		const { top, left, width, height } = element.getBoundingClientRect()
-		const leftOffset = left - (containerWidth - width) / 2
-		const centerTop = top - (containerHeight - height) / 2
-		const scaleWidth = element.clientWidth / clientWidth
-		const scaleHeight = element.clientHeight / clientHeight
+		const rect = (activeItem.element || focusTrigger).getBoundingClientRect()
+		const leftOffset = rect.left - (containerWidth - rect.width) / 2
+		const centerTop = rect.top - (containerHeight - rect.height) / 2
+		const scaleWidth = rect.width / dimensions[0]
+		const scaleHeight = rect.height / dimensions[1]
 
 		return {
 			duration: 480,
 			easing: cubicOut,
-			css: (t) => {
-				const tDiff = 1 - t
-				return `transform:translate3d(${leftOffset * tDiff}px, ${
-					centerTop * tDiff
+			css: (t, u) => {
+				return `transform:translate3d(${leftOffset * u}px, ${
+					centerTop * u
 				}px, 0) scale3d(${scaleWidth + t * (1 - scaleWidth)}, ${
 					scaleHeight + t * (1 - scaleHeight)
 				}, 1)`
