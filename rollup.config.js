@@ -12,7 +12,7 @@ const terserOptions = {
 	mangle: {
 		properties: {
 			regex:
-				/^(duration|easing|delay|activeItem|containerWidth|containerHeight|fragment|calculateDimensions|dirty|tick|preloadNext|toggleControls|loadImage|smallScreen|stuff|setResizeFunc)$/,
+				/^(duration|easing|delay|activeItem|containerWidth|containerHeight|fragment|calculateDimensions|dirty|tick|preloadNext|toggleControls|opts|prev|next|close|loadImage|smallScreen|props|setResizeFunc)$/,
 		},
 	},
 	compress: {
@@ -50,12 +50,16 @@ const cleanSvelteWhitespace = {
 const findReplaceOptions = [
 	[/^\s*validate_store.+$|throw.+interpolate.+$/gm, ''],
 	['if (options.hydrate)', 'if (false)'],
+	['if (options.intro)', 'if (false)'],
+	[`, important ? 'important' : ''`, ''],
+	[/if \('props' in \$\$props.+;$/gm, ''],
+	[/\$\$self\.\$\$set = \$\$props => {\s+};$/gm, ''],
 	[
 		/if \(type === 'object'\) {(.|\n)+if \(type === 'number'\)/gm,
 		`if (type === 'number')`,
 	],
 	[': blank_object()', ': {}'],
-	['__svelte_', 'bp_'],
+	['__svelte', '_bp'],
 	[`typeof window !== 'undefined'`, 'true'],
 	['const doc = get_root_for_style(node)', 'const doc = document'],
 	[/get_root_for_style\(node\),/g, 'document,'],
