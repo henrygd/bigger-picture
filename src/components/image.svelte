@@ -1,7 +1,7 @@
 <script>
 	import { tweened } from 'svelte/motion'
 	import { zoomed, closing, defaultTweenOptions } from '../stores'
-	import { fade } from 'svelte/transition'
+	import { fly } from 'svelte/transition'
 	import Loading from './loading.svelte'
 
 	export let stuff
@@ -398,7 +398,12 @@
 		"
 	>
 		{#if loaded}
-			<img {srcset} sizes={opts.sizes || `${sizes}px`} {alt} out:fade />
+			<img
+				srcset={activeItem.img}
+				sizes={opts.sizes || `${sizes}px`}
+				alt={activeItem.alt}
+				out:fly
+			/>
 		{/if}
 		{#if showLoader}
 			<Loading {thumb} {loaded} />

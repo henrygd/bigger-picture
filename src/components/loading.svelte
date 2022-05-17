@@ -1,5 +1,5 @@
 <script>
-	import { fade } from 'svelte/transition'
+	import { fly } from 'svelte/transition'
 	import { closing } from '../stores'
 
 	export let thumb
@@ -9,8 +9,8 @@
 {#if !loaded || $closing}
 	<div
 		class="bp-load"
-		in:fade={{ duration: loaded ? 300 : 0 }}
-		out:fade|local={{ duration: 200 }}
+		in:fly={{ duration: loaded ? 400 : 0 }}
+		out:fly|local={{ duration: 480 }}
 		style="background-image:url({thumb})"
 	>
 		{#if !$closing}

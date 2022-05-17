@@ -1,7 +1,7 @@
 <svelte:options accessors={true} immutable={true} />
 
 <script>
-	import { fly, fade } from 'svelte/transition'
+	import { fly } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 	import ImageItem from './components/image.svelte'
 	import Iframe from './components/iframe.svelte'
@@ -220,13 +220,12 @@
 			// entrance / exit transition
 			isOpen = isEntering
 			return opts.intro
-				? fly(node, { y: isEntering ? 10 : -10, easing: cubicOut })
+				? fly(node, { y: isEntering ? 10 : -10 })
 				: scaleIn(node)
 		}
 		// forward / backward transition
 		return fly(node, {
 			x: (movement > 0 ? 20 : -20) * (isEntering ? 1 : -1),
-			easing: cubicOut,
 			duration: 250,
 		})
 	}
@@ -327,7 +326,7 @@
 		class:bp-inline={inline}
 		class:bp-noclose={opts.noClose}
 	>
-		<div out:fade={{ easing: cubicOut, duration: 480 }} />
+		<div out:fly={{ duration: 480 }} />
 		{#key activeItem.i}
 			<div
 				class="bp-inner"
@@ -359,14 +358,14 @@
 				{/if}
 			</div>
 			{#if activeItem.caption}
-				<div class="bp-cap" tabindex="0" out:fade={{ duration: 200 }}>
+				<div class="bp-cap" tabindex="0" out:fly={{ duration: 200 }}>
 					{@html activeItem.caption}
 				</div>
 			{/if}
 		{/key}
 
 		{#if !smallScreen || !hideControls}
-			<div class="bp-controls" out:fade={{ duration: 300 }}>
+			<div class="bp-controls" out:fly={{ duration: 300 }}>
 				<!-- close button -->
 				<button
 					class="bp-x"
