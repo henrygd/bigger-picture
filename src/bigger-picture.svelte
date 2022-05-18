@@ -169,8 +169,7 @@
 
 	/**
 	 * calculate dimensions of height / width resized to fit within container
-	 * @param {number} width full width of media
-	 * @param {number} height full height of media
+	 * @param {object} item object with height / width properties
 	 * @returns {Array} [width: number, height: number]
 	 */
 	const calculateDimensions = (item) => {
