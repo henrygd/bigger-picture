@@ -156,7 +156,7 @@
 			// allow browser to handle tab into video controls only
 			if (shiftKey || !activeElement.controls) {
 				e.preventDefault()
-				const focusWrap = opts.focusWrap || container
+				const { focusWrap = container } = opts
 				const tabbable = [...focusWrap.querySelectorAll('*')].filter(
 					(n) => n.tabIndex >= 0
 				)
@@ -172,10 +172,8 @@
 	 * @param {object} item object with height / width properties
 	 * @returns {Array} [width: number, height: number]
 	 */
-	const calculateDimensions = (item) => {
-		const width = item.width || 1920
-		const height = item.height || 1080
-		const scale = opts.scale || 0.99
+	const calculateDimensions = ({ width = 1920, height = 1080 }) => {
+		const { scale = 0.99 } = opts
 		const ratio = Math.min(
 			1,
 			(containerWidth / width) * scale,
@@ -233,6 +231,7 @@
 			dimensions = calculateDimensions(activeItem)
 		}
 
+		// rect is bounding rect of trigger element
 		const rect = (activeItem.element || focusTrigger).getBoundingClientRect()
 		const leftOffset = rect.left - (containerWidth - rect.width) / 2
 		const centerTop = rect.top - (containerHeight - rect.height) / 2

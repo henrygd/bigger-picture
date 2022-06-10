@@ -23,7 +23,7 @@
 
 	/** adds attributes to a node */
 	const addAttributes = (node, obj) => {
-		for (let key in obj) {
+		for (const key in obj) {
 			attr(node, key, obj[key])
 		}
 	}
@@ -37,7 +37,8 @@
 			if (!Array.isArray(arr)) {
 				arr = JSON.parse(arr)
 			}
-			arr.forEach((obj) => {
+			for (const obj of arr) {
+				// create media element if it doesn't exist
 				if (!mediaElement) {
 					mediaElement = element(
 						obj.type?.includes('audio') ? 'audio' : 'video'
@@ -49,10 +50,11 @@
 						tabindex: '0',
 					})
 				}
+				// add sources / tracks to media element
 				const el = element(tag)
 				addAttributes(el, obj)
 				append(mediaElement, el)
-			})
+			}
 		}
 		appendToVideo('source', activeItem.sources)
 		appendToVideo('track', activeItem.tracks || [])

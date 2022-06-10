@@ -3,7 +3,6 @@
 	import { zoomed, closing, defaultTweenOptions } from '../stores'
 	import { fly } from 'svelte/transition'
 	import Loading from './loading.svelte'
-	import { cubicOut } from 'svelte/easing'
 
 	export let props
 	export let containerWidth
@@ -14,8 +13,6 @@
 
 	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10
 
-	let naturalWidth = +activeItem.width
-	let naturalHeight = +activeItem.height
 	let calculatedDimensions = props.calculateDimensions(activeItem)
 
 	/** value of sizes attribute */
@@ -41,6 +38,8 @@
 
 	/** if true, adds class to .bp-wrap to avoid image cropping */
 	let closingWhileZoomed
+
+	const naturalWidth = +activeItem.width
 
 	/** store positions for drag inertia */
 	const dragPositions = []
@@ -137,7 +136,7 @@
 			if (newWidth > naturalWidth) {
 				// if requesting zoom larger than natural size
 				newWidth = naturalWidth
-				newHeight = naturalHeight
+				newHeight = +activeItem.height
 			}
 		} else if (newWidth < calculatedDimensions[0]) {
 			// if requesting image smaller than starting size
@@ -258,10 +257,8 @@
 		const dy = p1.clientY - p2.clientY
 		const curDiff = Math.hypot(dx, dy)
 
-		prevDiff = prevDiff || curDiff
-
 		// scale image
-		changeZoom(e, (prevDiff - curDiff) * -0.03)
+		changeZoom(e, ((prevDiff || curDiff) - curDiff) * -0.03)
 
 		// Cache the distance for the next move event
 		prevDiff = curDiff
@@ -318,22 +315,17 @@
 
 		// add drag inertia / snap back to bounds
 		if (hasDragged) {
-			dragPositions = dragPositions.slice(-3)
-			let coords
-			let xDiff = dragPositions[1].x - dragPositions[2].x
-			let yDiff = dragPositions[1].y - dragPositions[2].y
+			const [posOne, posTwo, posThree] = dragPositions.slice(-3)
+			const xDiff = posTwo.x - posThree.x
+			const yDiff = posTwo.y - posThree.y
 			if (Math.hypot(xDiff, yDiff) > 5) {
-				xDiff = dragPositions[0].x - dragPositions[2].x
-				yDiff = dragPositions[0].y - dragPositions[2].y
-				coords = [
-					$zoomDragTranslate[0] - xDiff * 5,
-					$zoomDragTranslate[1] - yDiff * 5,
-				]
-			} else {
-				coords = $zoomDragTranslate
+				zoomDragTranslate.set(
+					boundTranslateValues([
+						$zoomDragTranslate[0] - (posOne.x - posThree.x) * 5,
+						$zoomDragTranslate[1] - (posOne.y - posThree.y) * 5,
+					])
+				)
 			}
-
-			zoomDragTranslate.set(boundTranslateValues(coords))
 		}
 
 		// reset pointer states
