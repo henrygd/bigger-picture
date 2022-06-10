@@ -13,7 +13,7 @@ export const prefersReducedMotion = matchMedia(
 ).matches
 
 /** default options for tweens / transitions */
-export const defaultTweenOptions = {
+export const defaultTweenOptions = (duration) => ({
 	easing: cubicOut,
-	duration: prefersReducedMotion ? 0 : 400,
-}
+	duration: prefersReducedMotion ? 0 : duration,
+})

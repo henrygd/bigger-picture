@@ -49,16 +49,19 @@
 	let closingWhileZoomed
 
 	/** tween to control image size */
-	const imageDimensions = tweened(calculatedDimensions, defaultTweenOptions)
+	const imageDimensions = tweened(
+		calculatedDimensions,
+		defaultTweenOptions(400)
+	)
 	/** translate transform for pointerDown */
-	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions)
+	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions(400))
 
 	$: $zoomed = $imageDimensions[0] > calculatedDimensions[0]
 
 	// if zoomed while closing, zoom out image and add class
 	// to change contain value on .bp-wrap to avoid cropping
 	$: if ($closing && $zoomed && !opts.intro) {
-		const closeTweenOpts = { duration: 480, easing: cubicOut }
+		const closeTweenOpts = defaultTweenOptions(480)
 		zoomDragTranslate.set([0, 0], closeTweenOpts)
 		imageDimensions.set(calculatedDimensions, closeTweenOpts)
 		closingWhileZoomed = true
