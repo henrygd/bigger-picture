@@ -24,12 +24,6 @@
 	/** tracks load state of image */
 	let loaded, showLoader
 
-	/** cache events to handle pinch */
-	let eventCache = []
-
-	/** store positions for drag inertia */
-	let dragPositions = []
-
 	/** bool true if multiple touch events */
 	let isPinch
 
@@ -47,6 +41,12 @@
 
 	/** if true, adds class to .bp-wrap to avoid image cropping */
 	let closingWhileZoomed
+
+	/** store positions for drag inertia */
+	const dragPositions = []
+
+	/** cache pointer events to handle pinch */
+	const pointerCache = new Map()
 
 	/** tween to control image size */
 	const imageDimensions = tweened(
@@ -187,7 +187,7 @@
 		if (e.button !== 2) {
 			e.preventDefault()
 			pointerDown = true
-			eventCache.push(e)
+			pointerCache.set(e.pointerId, e)
 			dragStartX = e.clientX
 			dragStartY = e.clientY
 			dragStartTranslateX = $zoomDragTranslate[0]
@@ -197,7 +197,7 @@
 
 	/** on drag, update image translate val */
 	const onPointerMove = (e) => {
-		if (eventCache.length > 1) {
+		if (pointerCache.size > 1) {
 			isPinch = true
 			pointerDown = false
 			return handlePinch(e)
@@ -250,11 +250,10 @@
 	}
 
 	const handlePinch = (e) => {
-		// update event in cache
-		eventCache = eventCache.map((ev) => (ev.pointerId === e.pointerId ? e : ev))
+		// update event in cache and get values
+		const [p1, p2] = pointerCache.set(e.pointerId, e).values()
 
 		// Calculate the distance between the two pointers
-		const [p1, p2] = eventCache
 		const dx = p1.clientX - p2.clientX
 		const dy = p1.clientY - p2.clientY
 		const curDiff = Math.hypot(dx, dy)
@@ -269,14 +268,12 @@
 	}
 
 	function onPointerUp(e) {
-		// remove event from event cache
-		eventCache = eventCache.filter(
-			(cachedEvent) => cachedEvent.pointerId !== e.pointerId
-		)
+		// remove event from pointer event cache
+		pointerCache.delete(e.pointerId)
 
 		if (isPinch) {
 			// set isPinch to false after second finger lifts
-			isPinch = eventCache.length
+			isPinch = pointerCache.size
 			prevDiff = 0
 			return
 		}
@@ -342,7 +339,7 @@
 		// reset pointer states
 		hasDragged = false
 		// reset dragPositions
-		dragPositions = []
+		dragPositions.length = 0
 	}
 
 	const onMount = () => {
