@@ -61,6 +61,7 @@ const findReplaceOptions = [
 	[': blank_object()', ': {}'],
 	['__svelte', '_bp'],
 	[`typeof window !== 'undefined'`, 'true'],
+	['window', 'globalThis'],
 	['const doc = get_root_for_style(node)', 'const doc = document'],
 	[/get_root_for_style\(node\),/g, 'document,'],
 ].map(([find, replace]) => modify({ find, replace }))
