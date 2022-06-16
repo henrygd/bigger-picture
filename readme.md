@@ -141,6 +141,8 @@ Default: `false`
 
 Specifies that the lightbox is inline. Interaction events are modified to avoid hijacking scroll and tab press.
 
+> Note: The container element for an inline gallery should be set to position: relative
+
 ### noClose
 
 Type: `boolean`<br>
