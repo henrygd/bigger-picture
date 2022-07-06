@@ -1,6 +1,6 @@
 <script>
 	import { tweened } from 'svelte/motion'
-	import { zoomed, closing, defaultTweenOptions } from '../stores'
+	import { closing, defaultTweenOptions } from '../stores'
 	import { fly } from 'svelte/transition'
 	import Loading from './loading.svelte'
 
@@ -9,7 +9,7 @@
 	export let containerHeight
 	export let smallScreen
 
-	let { activeItem, opts, prev, next } = props
+	let { activeItem, opts, prev, next, zoomed } = props
 
 	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10
 

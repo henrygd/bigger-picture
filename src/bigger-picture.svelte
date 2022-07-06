@@ -6,7 +6,8 @@
 	import ImageItem from './components/image.svelte'
 	import Iframe from './components/iframe.svelte'
 	import Video from './components/video.svelte'
-	import { zoomed, closing } from './stores'
+	import { writable } from 'svelte/store'
+	import { closing } from './stores'
 	import { listen, element as createEl } from 'svelte/internal'
 
 	/** items currently displayed in gallery */
@@ -57,6 +58,9 @@
 	let resizeFunc
 	/** used by child components to set resize function */
 	const setResizeFunc = (fn) => (resizeFunc = fn)
+
+	// /** true if image is currently zoomed past starting size */
+	const zoomed = writable(0)
 
 	$: if (items) {
 		// update active item when position changes
@@ -266,6 +270,7 @@
 		close,
 		toggleControls,
 		setResizeFunc,
+		zoomed,
 	})
 
 	/** code to run on mount / destroy */
