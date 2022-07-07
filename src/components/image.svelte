@@ -5,11 +5,9 @@
 	import Loading from './loading.svelte'
 
 	export let props
-	export let containerWidth
-	export let containerHeight
 	export let smallScreen
 
-	let { activeItem, opts, prev, next, zoomed } = props
+	let { activeItem, opts, prev, next, zoomed, container } = props
 
 	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10
 
@@ -69,8 +67,8 @@
 	/** calculate translate position with bounds */
 	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
 		// image drag translate bounds
-		const maxTranslateX = (newDimensions[0] - containerWidth) / 2
-		const maxTranslateY = (newDimensions[1] - containerHeight) / 2
+		const maxTranslateX = (newDimensions[0] - container.w) / 2
+		const maxTranslateY = (newDimensions[1] - container.h) / 2
 		// x max drag
 		if (maxTranslateX < 0) {
 			x = 0

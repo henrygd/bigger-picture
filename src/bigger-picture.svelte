@@ -30,13 +30,10 @@
 	/** dom element to restore focus to on close */
 	let focusTrigger
 
-	/** container element */
-	let container, containerWidth, containerHeight
-
 	/** bool controlling visual state of controls */
 	let hideControls
 
-	/** bool true if containerWidth < 769 */
+	/** bool true if container width < 769 */
 	let smallScreen
 
 	/** bool value of inline option passed in open method */
@@ -59,6 +56,9 @@
 	/** used by child components to set resize function */
 	const setResizeFunc = (fn) => (resizeFunc = fn)
 
+	/** container element (el) / width (w) / height (h) */
+	const container = {}
+
 	// /** true if image is currently zoomed past starting size */
 	const zoomed = writable(0)
 
@@ -70,7 +70,7 @@
 			// clear child resize function if html
 			activeItemIsHtml && setResizeFunc(null)
 			// run onUpdate when items updated
-			opts.onUpdate?.(container, activeItem)
+			opts.onUpdate?.(container.el, activeItem)
 		}
 	}
 
@@ -85,10 +85,10 @@
 			html.classList.add('bp-lock')
 		}
 		focusTrigger = document.activeElement
-		containerWidth = target.offsetWidth
-		containerHeight =
+		container.w = target.offsetWidth
+		container.h =
 			target === document.body ? window.innerHeight : target.clientHeight
-		smallScreen = containerWidth < 769
+		smallScreen = container.w < 769
 		position = opts.position || 0
 		// reset controls
 		hideControls = false
@@ -160,7 +160,7 @@
 			// allow browser to handle tab into video controls only
 			if (shiftKey || !activeElement.controls) {
 				e.preventDefault()
-				const { focusWrap = container } = opts
+				const { focusWrap = container.el } = opts
 				const tabbable = [...focusWrap.querySelectorAll('*')].filter(
 					(n) => n.tabIndex >= 0
 				)
@@ -180,8 +180,8 @@
 		const { scale = 0.99 } = opts
 		const ratio = Math.min(
 			1,
-			(containerWidth / width) * scale,
-			(containerHeight / height) * scale
+			(container.w / width) * scale,
+			(container.h / height) * scale
 		)
 		// round number so we don't use a float as the sizes attribute
 		return [Math.round(width * ratio), Math.round(height * ratio)]
@@ -237,8 +237,8 @@
 
 		// rect is bounding rect of trigger element
 		const rect = (activeItem.element || focusTrigger).getBoundingClientRect()
-		const leftOffset = rect.left - (containerWidth - rect.width) / 2
-		const centerTop = rect.top - (containerHeight - rect.height) / 2
+		const leftOffset = rect.left - (container.w - rect.width) / 2
+		const centerTop = rect.top - (container.h - rect.height) / 2
 		const scaleWidth = rect.width / dimensions[0]
 		const scaleHeight = rect.height / dimensions[1]
 
@@ -271,14 +271,15 @@
 		toggleControls,
 		setResizeFunc,
 		zoomed,
+		container,
 	})
 
 	/** code to run on mount / destroy */
 	const containerActions = (node) => {
-		container = node
+		container.el = node
 		let removeKeydownListener
 		let roActive
-		opts.onOpen?.(container, activeItem)
+		opts.onOpen?.(container.el, activeItem)
 		// don't use keyboard events for inline galleries
 		if (!inline) {
 			removeKeydownListener = listen(window, 'keydown', onKeydown)
@@ -287,13 +288,13 @@
 		const ro = new ResizeObserver((entries) => {
 			// use roActive to avoid running on initial open
 			if (roActive) {
-				containerWidth = entries[0].contentRect.width
-				containerHeight = entries[0].contentRect.height
-				smallScreen = containerWidth < 769
+				container.w = entries[0].contentRect.width
+				container.h = entries[0].contentRect.height
+				smallScreen = container.w < 769
 				// run child component resize function
 				resizeFunc?.()
 				// run user defined onResize function
-				opts.onResize?.(container, activeItem)
+				opts.onResize?.(container.el, activeItem)
 			}
 			roActive = true
 		})
@@ -334,12 +335,7 @@
 				}}
 			>
 				{#if activeItem.img}
-					<ImageItem
-						props={getChildProps()}
-						{containerWidth}
-						{containerHeight}
-						{smallScreen}
-					/>
+					<ImageItem props={getChildProps()} {smallScreen} />
 				{:else if activeItem.sources}
 					<Video props={getChildProps()} />
 				{:else if activeItem.iframe}
