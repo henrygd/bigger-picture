@@ -768,6 +768,7 @@ body:not(.using-mouse) {
 .hide-controls {
 	.bp-controls {
 		opacity: 0;
+		transition: opacity 0s;
 	}
 }
 
