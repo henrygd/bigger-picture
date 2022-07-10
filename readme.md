@@ -150,6 +150,18 @@ Default: `false`
 
 Hides the close button and prevents the lightbox from closing unless the [`close`](#close) method is called. Recommended to use in combination with an inline gallery.
 
+### noPinch
+
+Type: `function`<br>
+
+Return a truthy value to disable pinch zoom. Function is executed at the time of the pinch. Supplies `container` - the gallery's wrapper element.
+
+```js
+bp.open({
+  noPinch: (container) => container.clientWidth < 800,
+})
+```
+
 ### focusWrap
 
 Type: `node`
@@ -165,17 +177,11 @@ Restricts an image's maximum zoom level to `maxZoom` times the starting size, ev
 
 > Note: If `maxZoom` is set on an individual item it will override the value set in options.
 
-### onResize
-
-Type: `function`
-
-Executes when the dimensions of the container element (not the window) are changed. Supplies `container` and `activeItem`.
-
 ### onOpen
 
 Type: `function`
 
-Executes just before intro animation. Supplies `container` - the wrapper element that is added to page, and `activeItem` - an object containing the currently displayed item's data.
+Executes just before intro animation. Supplies `container` - the gallery's wrapper element, and `activeItem` - an object containing the currently displayed item's data.
 
 ```js
 bp.open({
@@ -209,6 +215,20 @@ Executes just before outro animation.
 Type: `function`
 
 Executes just after the lightbox has been closed and removed from the page.
+
+### onResize
+
+Type: `function`
+
+Executes when the dimensions of the gallery (not the window) are changed. Supplies `container` and `activeItem`.
+
+### onImageClick
+
+Type: `function`
+
+Executes when an image is clicked. Return a truthy value to prevent zooming. Supplies `container` and `activeItem`.
+
+This method was added to make it easier to open a full screen instance when an image is clicked within an inline gallery ([example CodeSandbox](https://codesandbox.io/s/bp-inline-second-instance-gqzkcw)), but could be used for other purposes.
 
 ## Item Properties
 
