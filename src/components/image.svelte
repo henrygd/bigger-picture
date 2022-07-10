@@ -50,7 +50,7 @@
 	/** translate transform for pointerDown */
 	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions(400))
 
-	$: zoomed.set($imageDimensions[0] - 5 > calculatedDimensions[0])
+	$: zoomed.set($imageDimensions[0] - 10 > calculatedDimensions[0])
 
 	// if zoomed while closing, zoom out image and add class
 	// to change contain value on .bp-wrap to avoid cropping
@@ -296,7 +296,7 @@
 				)
 			}
 		} else if (!opts.onImageClick?.(container.el, activeItem)) {
-			changeZoom(e, $zoomed ? -5 : maxZoom)
+			changeZoom(e, $zoomed ? -maxZoom : maxZoom)
 		}
 
 		// reset pointer states
