@@ -1267,7 +1267,7 @@ function instance$3($$self, $$props, $$invalidate) {
 		if (pointerCache.size > 1) {
 			isPinch = true;
 			$$invalidate(4, pointerDown = false);
-			return opts.noPinch?.(container) || handlePinch(e);
+			return opts.noPinch?.(container.el) || handlePinch(e);
 		}
 
 		if (!pointerDown) {
