@@ -53,7 +53,7 @@
 	/** translate transform for pointerDown */
 	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions(400))
 
-	$: $zoomed = $imageDimensions[0] > calculatedDimensions[0]
+	$: zoomed.set($imageDimensions[0] - 5 > calculatedDimensions[0])
 
 	// if zoomed while closing, zoom out image and add class
 	// to change contain value on .bp-wrap to avoid cropping
