@@ -30,9 +30,6 @@
 	/** dom element to restore focus to on close */
 	let focusTrigger
 
-	/** bool controlling visual state of controls */
-	let hideControls
-
 	/** bool true if container width < 769 */
 	let smallScreen
 
@@ -90,8 +87,6 @@
 			target === document.body ? window.innerHeight : target.clientHeight
 		smallScreen = container.w < 769
 		position = opts.position || 0
-		// reset controls
-		hideControls = false
 		// make array w/ dataset to work with
 		if (Array.isArray(openItems)) {
 			// array was passed
@@ -255,9 +250,6 @@
 		}
 	}
 
-	/** toggle controls shown / hidden */
-	const toggleControls = () => (hideControls = !hideControls)
-
 	/** provides object w/ needed funcs / data to child components  */
 	const getChildProps = () => ({
 		activeItem,
@@ -268,7 +260,6 @@
 		prev,
 		next,
 		close,
-		toggleControls,
 		setResizeFunc,
 		zoomed,
 		container,
@@ -316,8 +307,9 @@
 	<div
 		use:containerActions
 		class="bp-wrap"
-		class:zoomed={$zoomed}
+		class:bp-zoomed={$zoomed}
 		class:bp-inline={inline}
+		class:bp-small={smallScreen}
 		class:bp-noclose={opts.noClose}
 	>
 		<div out:fly={{ duration: 480 }} />
@@ -353,36 +345,29 @@
 			{/if}
 		{/key}
 
-		{#if !smallScreen || !hideControls}
-			<div class="bp-controls" out:fly={{ duration: 300 }}>
-				<!-- close button -->
-				<button
-					class="bp-x"
-					title="Close"
-					aria-label="Close"
-					on:click={close}
-				/>
+		<div class="bp-controls" out:fly>
+			<!-- close button -->
+			<button class="bp-x" title="Close" aria-label="Close" on:click={close} />
 
-				{#if items.length > 1}
-					<!-- counter -->
-					<div class="bp-count">
-						{@html `${position + 1} / ${items.length}`}
-					</div>
-					<!-- foward / back buttons -->
-					<button
-						class="bp-prev"
-						title="Previous"
-						aria-label="Previous"
-						on:click={prev}
-					/>
-					<button
-						class="bp-next"
-						title="Next"
-						aria-label="Next"
-						on:click={next}
-					/>
-				{/if}
-			</div>
-		{/if}
+			{#if items.length > 1}
+				<!-- counter -->
+				<div class="bp-count">
+					{@html `${position + 1} / ${items.length}`}
+				</div>
+				<!-- foward / back buttons -->
+				<button
+					class="bp-prev"
+					title="Previous"
+					aria-label="Previous"
+					on:click={prev}
+				/>
+				<button
+					class="bp-next"
+					title="Next"
+					aria-label="Next"
+					on:click={next}
+				/>
+			{/if}
+		</div>
 	</div>
 {/if}

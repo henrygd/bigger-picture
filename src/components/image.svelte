@@ -31,9 +31,6 @@
 	/** zoomDragTranslate values on start of drag */
 	let dragStartTranslateX, dragStartTranslateY
 
-	/** double click timeout (mobile controls) */
-	let doubleClickTimeout
-
 	/** if true, adds class to .bp-wrap to avoid image cropping */
 	let closingWhileZoomed
 
@@ -285,32 +282,6 @@
 			return props.close()
 		}
 
-		if (!smallScreen) {
-			// if largescreen
-			// single tap zooms in / out
-			if ($zoomed) {
-				hasDragged || changeZoom(e, -5)
-			} else {
-				// zoom in if not zoomed and drag scrolling page
-				dragPositions.length < 2 && !$zoomed && changeZoom(e)
-			}
-		} else {
-			// if smallscreen
-			// toggle controls on click / zoom on double click
-			if (!hasDragged) {
-				if (doubleClickTimeout) {
-					clearTimeout(doubleClickTimeout)
-					changeZoom(e, $zoomed ? -5 : 5)
-					doubleClickTimeout = 0
-				} else {
-					doubleClickTimeout = setTimeout(() => {
-						props.toggleControls()
-						doubleClickTimeout = 0
-					}, 250)
-				}
-			}
-		}
-
 		// add drag inertia / snap back to bounds
 		if (hasDragged) {
 			const [posOne, posTwo, posThree] = dragPositions.slice(-3)
@@ -324,6 +295,8 @@
 					])
 				)
 			}
+		} else {
+			changeZoom(e, $zoomed ? -5 : maxZoom)
 		}
 
 		// reset pointer states
