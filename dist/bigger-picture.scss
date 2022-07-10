@@ -102,7 +102,7 @@
 		display: none;
 	}
 }
-.zoomed {
+.bp-zoomed {
 	.bp-img {
 		cursor: grab;
 	}
@@ -112,11 +112,20 @@
 	}
 }
 
+// when zoomed on small screens, hide controls
+.bp-zoomed.bp-small .bp-controls {
+	opacity: 0;
+	button {
+		pointer-events: none;
+	}
+}
+
 .bp-controls {
 	position: absolute;
 	@include bpfillall;
 	pointer-events: none;
 	text-align: left;
+	transition: opacity 0.3s;
 	animation: bp-fadein 0.3s;
 	button {
 		pointer-events: auto;
@@ -270,7 +279,7 @@
 	.bp-x {
 		display: none;
 	}
-	&:not(.zoomed) {
+	&:not(.bp-zoomed) {
 		touch-action: pan-y;
 		.bp-img-wrap {
 			cursor: zoom-in;

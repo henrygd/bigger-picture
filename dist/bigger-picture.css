@@ -105,12 +105,19 @@
   display: none;
 }
 
-.zoomed .bp-img {
+.bp-zoomed .bp-img {
   cursor: grab;
 }
-.zoomed .bp-cap {
+.bp-zoomed .bp-cap {
   opacity: 0;
   animation: none !important;
+}
+
+.bp-zoomed.bp-small .bp-controls {
+  opacity: 0;
+}
+.bp-zoomed.bp-small .bp-controls button {
+  pointer-events: none;
 }
 
 .bp-controls {
@@ -121,6 +128,7 @@
   height: 100%;
   pointer-events: none;
   text-align: left;
+  transition: opacity 0.3s;
   animation: bp-fadein 0.3s;
 }
 .bp-controls button {
@@ -283,10 +291,10 @@
 .bp-noclose .bp-x {
   display: none;
 }
-.bp-noclose:not(.zoomed) {
+.bp-noclose:not(.bp-zoomed) {
   touch-action: pan-y;
 }
-.bp-noclose:not(.zoomed) .bp-img-wrap {
+.bp-noclose:not(.bp-zoomed) .bp-img-wrap {
   cursor: zoom-in;
 }
 

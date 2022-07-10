@@ -1,6 +1,6 @@
 {
 	"name": "bigger-picture",
-	"version": "1.0.5",
+	"version": "1.1.0",
 	"main": "dist/bigger-picture.umd.js",
 	"module": "dist/bigger-picture.mjs",
 	"svelte": "src/bigger-picture.js",
