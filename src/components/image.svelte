@@ -197,7 +197,7 @@
 		if (pointerCache.size > 1) {
 			isPinch = true
 			pointerDown = false
-			return handlePinch(e)
+			return opts.noPinch?.(container) || handlePinch(e)
 		}
 
 		if (!pointerDown) {
