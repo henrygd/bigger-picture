@@ -338,7 +338,7 @@
 			calculatedDimensions = props.calculateDimensions(activeItem)
 			// adjust image size / zoom on resize, but not on mobile because
 			// some browsers (ios safari 15) constantly resize screen on drag
-			if (!smallScreen) {
+			if (opts.inline || !smallScreen) {
 				imageDimensions.set(calculatedDimensions)
 				zoomDragTranslate.set([0, 0])
 			}
