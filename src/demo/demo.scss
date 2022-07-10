@@ -674,10 +674,12 @@ body:not(.using-mouse) {
 		line-height: 1.35;
 		font-size: 1.1em;
 		margin: 0;
-	}
-	img {
-		border-radius: 10px;
-		margin: 17px 0 0;
+		img {
+			background: #eee;
+			width: 100%;
+			border-radius: 10px;
+			margin: 17px 0 0;
+		}
 	}
 }
 
@@ -754,6 +756,18 @@ body:not(.using-mouse) {
 				opacity: 0;
 			}
 		}
+	}
+}
+
+.show-controls.bp-zoomed.bp-small .bp-controls {
+	opacity: 1;
+	button {
+		pointer-events: auto;
+	}
+}
+.hide-controls {
+	.bp-controls {
+		opacity: 0;
 	}
 }
 

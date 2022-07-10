@@ -736,7 +736,7 @@
 				<pre
 					class="language-javascript"
 					tabindex="0"
-				><code class="language-javascript"><span class="token comment">// initialize BiggerPicture</span>
+				><code class="language-javascript"><span class="token comment">// initialize</span>
 <span class="token keyword">let</span> bp <span class="token operator">=</span> <span class="token function">BiggerPicture</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
 	<span class="token literal-property property">target</span><span class="token operator">:</span> document<span class="token punctuation">.</span>body<span class="token punctuation">,</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span>
@@ -744,9 +744,9 @@
 <span class="token comment">// grab image links</span>
 <span class="token keyword">let</span> imageLinks <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">'#images &gt; a'</span><span class="token punctuation">)</span>
 
-<span class="token comment">// add click listener on links to open BiggerPicture</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> imageLinks<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-	imageLinks<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> openGallery<span class="token punctuation">)</span>
+<span class="token comment">// add click listener to open BiggerPicture</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> link <span class="token keyword">of</span> imageLinks<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  link<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> openGallery<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token comment">// function to open BiggerPicture</span>
@@ -824,10 +824,10 @@
 <span class="token comment">&lt;!-- iframe embed --&gt;</span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span>
 	<span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"https://www.youtube.com/watch?v=286jXjwdst0"</span>
-	<span class="token attr-name">data-iframe</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"https://www.youtube.com/embed/286jXjwdst0?autoplay=1&amp;playsinline=1"</span>
 	<span class="token attr-name">data-width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"1920"</span>
 	<span class="token attr-name">data-height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"1012"</span>
 	<span class="token attr-name">data-thumb</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/uebok.jpg"</span>
+	<span class="token attr-name">data-iframe</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"https://www.youtube.com/embed/286jXjwdst0?autoplay=1&amp;playsinline=1"</span>
 <span class="token punctuation">&gt;</span></span>
 	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span>
 		<span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>"images/uebok.jpg"</span>
@@ -845,8 +845,8 @@
 <span class="token keyword">let</span> links <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 <span class="token comment">// add click listener on links to open BiggerPicture</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> links<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  links<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> openBiggerPicture<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> link <span class="token keyword">of</span> links<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  link<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> openBiggerPicture<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token comment">// function to open BiggerPicture</span>

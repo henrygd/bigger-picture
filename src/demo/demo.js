@@ -10,9 +10,13 @@ import FlexMasonry from 'flexmasonry/src/flexmasonry.js'
 // import Prism from 'prismjs'
 import plausible from './plausible'
 
-let bodyBp, inlineBp, bpThumbnails
-
 let { body } = document
+
+let inlineBp, bpThumbnails
+
+let bodyBp = BiggerPicture({
+	target: body,
+})
 
 let imageLinks = document.querySelectorAll('#images a')
 let vidIframeLinks = document.querySelectorAll('#vids a')
@@ -23,22 +27,14 @@ let firewatch = document.getElementById('firewatch')
 let thumbnails = document.querySelectorAll('#thumbnails a')
 let responsiveExample = document.querySelectorAll('#responsive_example')
 
-function initBodyBp() {
-	if (!bodyBp) {
-		bodyBp = BiggerPicture({
-			target: body,
-		})
-	}
-}
-
 function handleNodes(nodes) {
-	for (let i = 0; i < nodes.length; i++) {
-		nodes[i].addEventListener('click', openBiggerPicture.bind(null, nodes))
+	for (let node of nodes) {
+		node.addEventListener('click', openBiggerPicture.bind(null, nodes))
 	}
 }
 function handleVids(nodes) {
-	for (let i = 0; i < nodes.length; i++) {
-		nodes[i].addEventListener('click', openBiggerPictureVids)
+	for (let node of nodes) {
+		node.addEventListener('click', openBiggerPictureVids)
 	}
 }
 
@@ -53,14 +49,14 @@ function handleMasonry(sections) {
 
 function openBiggerPicture(items, e) {
 	e.preventDefault()
-	initBodyBp()
 	bodyBp.open({
 		el: e.currentTarget,
 		// position: 3,
 		items,
-		maxZoom: 4,
+		maxZoom: 3,
 		// scale: 0.8,
 		// noClose: true,
+		// noPinch: () => true,
 		// onOpen: (container) => {
 		// console.log('container', container)
 		// container.classList.add('example')
@@ -75,7 +71,6 @@ function openBiggerPicture(items, e) {
 }
 function openBiggerPictureVids(e) {
 	e.preventDefault()
-	initBodyBp()
 	let { currentTarget } = e
 	bodyBp.open({
 		el: currentTarget,
@@ -136,12 +131,31 @@ function initInlineGallery() {
 		noClose: true,
 		inline: true,
 		maxZoom: 4,
+		noPinch: (container) => container.clientWidth <= 768,
+		onImageClick(container, activeItem) {
+			if (container.clientWidth <= 768) {
+				const bpImg = container.querySelector('.bp-img')
+				new BiggerPicture({ target: body }).open({
+					items: [
+						Object.assign(activeItem, {
+							thumb: bpImg.firstChild?.currentSrc ?? activeItem.thumb,
+							element: bpImg,
+						}),
+					],
+					onOpen(newInstanceContainer) {
+						container.classList.add('hide-controls')
+						newInstanceContainer.classList.add('show-controls')
+					},
+					onClosed: () => container.classList.remove('hide-controls'),
+				})
+				return true
+			}
+		},
 	})
 }
 
 function openCode(e, node) {
 	e.preventDefault()
-	initBodyBp()
 	bodyBp.open({
 		el: node,
 		items: [
@@ -188,14 +202,13 @@ handleNodes(responsiveExample)
 handleVids(vidIframeLinks)
 
 // code modals
-for (let i = 0; i < htmlLinks.length; i++) {
-	htmlLinks[i].addEventListener('click', (e) => openCode(e, htmlLinks[i]))
+for (let link of htmlLinks) {
+	link.addEventListener('click', (e) => openCode(e, link))
 }
 
 // firewatch click
 firewatch.addEventListener('click', (e) => {
 	e.preventDefault()
-	initBodyBp()
 	let component
 	bodyBp.open({
 		onClose() {
@@ -213,7 +226,6 @@ firewatch.addEventListener('click', (e) => {
 // dialog modal example
 document.getElementById('dialog').addEventListener('click', (e) => {
 	e.preventDefault()
-	initBodyBp()
 	bodyBp.open({
 		intro: 'fadeup',
 		items: [{ html: '' }],
@@ -231,7 +243,6 @@ document.getElementById('dialog').addEventListener('click', (e) => {
 // tweet
 document.getElementById('tweet').addEventListener('click', (e) => {
 	e.preventDefault()
-	initBodyBp()
 	let tweets = [
 		{
 			html: makeTweetHtml(
@@ -246,7 +257,7 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 				'Human Mel',
 				'melhuman',
 				'1329824596288299011/m6MLoRZA_normal.jpg',
-				`<p>"There was no place like it, in the whole world, like Coney Island when I was a youngster. No place in the world like it, and it was so fabulous. Now it's shrunk down to almost nothing."<a href="https://t.co/f4qRyQ1y0W" target="_blank"><img src="https://assets.henrygd.me/bp/images/bernie.jpg" alt="bernie sanders against backdrop of godspeed you black emperor album"/></a></p>`
+				`<p>"There was no place like it, in the whole world, like Coney Island when I was a youngster. No place in the world like it, and it was so fabulous. Now it's shrunk down to almost nothing."<a href="https://t.co/f4qRyQ1y0W" target="_blank" style="width:100%"><img src="https://assets.henrygd.me/bp/images/bernie.jpg" style="aspect-ratio:1/1" alt="bernie sanders against backdrop of godspeed you black emperor album"/></a></p>`
 			),
 		},
 	]
@@ -256,8 +267,8 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 	})
 })
 
-for (let i = 0; i < thumbnails.length; i++) {
-	thumbnails[i].addEventListener('click', openThumbnails)
+for (let thumbnail of thumbnails) {
+	thumbnail.addEventListener('click', openThumbnails)
 }
 
 createObserver()
