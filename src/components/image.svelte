@@ -295,7 +295,7 @@
 					])
 				)
 			}
-		} else {
+		} else if (!opts.onImageClick?.(container.el, activeItem)) {
 			changeZoom(e, $zoomed ? -5 : maxZoom)
 		}
 
