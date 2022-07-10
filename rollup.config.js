@@ -12,7 +12,7 @@ const terserOptions = {
 	mangle: {
 		properties: {
 			regex:
-				/^(duration|easing|delay|activeItem|containerWidth|containerHeight|fragment|calculateDimensions|dirty|tick|preloadNext|toggleControls|opts|prev|next|close|loadImage|smallScreen|props|setResizeFunc)$/,
+				/^(duration|easing|delay|activeItem|fragment|calculateDimensions|dirty|tick|preloadNext|opts|prev|next|close|loadImage|smallScreen|props|setResizeFunc)$/,
 		},
 	},
 	compress: {
