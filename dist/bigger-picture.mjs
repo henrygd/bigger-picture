@@ -903,7 +903,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (353:10) {#if showLoader}
+// (357:10) {#if showLoader}
 function create_if_block$1(ctx) {
 	let loading;
 	let current;
@@ -979,12 +979,12 @@ function create_fragment$3(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					action_destroyer(/*onMount*/ ctx[16].call(null, div1)),
+					action_destroyer(/*onMount*/ ctx[17].call(null, div1)),
 					listen(div1, "wheel", /*onWheel*/ ctx[12]),
 					listen(div1, "pointerdown", /*onPointerDown*/ ctx[13]),
 					listen(div1, "pointermove", /*onPointerMove*/ ctx[14]),
-					listen(div1, "pointerup", /*onPointerUp*/ ctx[15]),
-					listen(div1, "pointercancel", /*onPointerUp*/ ctx[15])
+					listen(div1, "pointerup", /*onPointerUp*/ ctx[16]),
+					listen(div1, "pointercancel", /*removeEventFromCache*/ ctx[15])
 				];
 
 				mounted = true;
@@ -1083,11 +1083,11 @@ function instance$3($$self, $$props, $$invalidate) {
 	let $zoomDragTranslate;
 	let $closing;
 	let $imageDimensions;
-	component_subscribe($$self, closing, $$value => $$invalidate(21, $closing = $$value));
+	component_subscribe($$self, closing, $$value => $$invalidate(22, $closing = $$value));
 	let { props } = $$props;
 	let { smallScreen } = $$props;
 	let { activeItem, opts, prev, next, zoomed, container } = props;
-	component_subscribe($$self, zoomed, value => $$invalidate(20, $zoomed = value));
+	component_subscribe($$self, zoomed, value => $$invalidate(21, $zoomed = value));
 	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10;
 	let calculatedDimensions = props.calculateDimensions(activeItem);
 
@@ -1277,8 +1277,9 @@ function instance$3($$self, $$props, $$invalidate) {
 		let x = e.clientX;
 		let y = e.clientY;
 
-		// store positions for inertia
-		dragPositions.push({ x, y });
+		// store positions in dragPositions for inertia
+		// set hasDragged if > 2 pointer move events
+		hasDragged = dragPositions.push({ x, y }) > 2;
 
 		// overall drag diff from start location
 		x = x - dragStartX;
@@ -1287,25 +1288,26 @@ function instance$3($$self, $$props, $$invalidate) {
 
 		// handle unzoomed left / right / up swipes
 		if (!$zoomed) {
-			// previous if swipe left
-			if (x > 40) {
-				// pointerdown = undefined to stop pointermove from running again
-				$$invalidate(4, pointerDown = prev());
-			}
-
-			// next if swipe right
-			if (x < -40) {
-				// pointerdown = undefined to stop pointermove from running again
-				$$invalidate(4, pointerDown = next());
-			}
-
 			// close if swipe up
 			if (y < -90) {
 				!opts.noClose && props.close();
 			}
-		}
 
-		hasDragged = dragPositions.length > 2;
+			// only handle left / right if not swiping vertically
+			if (Math.abs(y) < 30) {
+				// previous if swipe left
+				if (x > 40) {
+					// pointerdown = undefined to stop pointermove from running again
+					$$invalidate(4, pointerDown = prev());
+				}
+
+				// next if swipe right
+				if (x < -40) {
+					// pointerdown = undefined to stop pointermove from running again
+					$$invalidate(4, pointerDown = next());
+				}
+			}
+		}
 
 		// image drag when zoomed
 		if ($zoomed && hasDragged && !$closing) {
@@ -1330,9 +1332,11 @@ function instance$3($$self, $$props, $$invalidate) {
 		prevDiff = curDiff;
 	};
 
+	/** remove event from pointer event cache */
+	const removeEventFromCache = e => pointerCache.delete(e.pointerId);
+
 	function onPointerUp(e) {
-		// remove event from pointer event cache
-		pointerCache.delete(e.pointerId);
+		removeEventFromCache(e);
 
 		if (isPinch) {
 			// set isPinch to false after second finger lifts
@@ -1380,7 +1384,7 @@ function instance$3($$self, $$props, $$invalidate) {
 	const onMount = () => {
 		// handle globalThis resize
 		props.setResizeFunc(() => {
-			$$invalidate(19, calculatedDimensions = props.calculateDimensions(activeItem));
+			$$invalidate(20, calculatedDimensions = props.calculateDimensions(activeItem));
 
 			// adjust image size / zoom on resize, but not on mobile because
 			// some browsers (ios safari 15) constantly resize screen on drag
@@ -1407,15 +1411,15 @@ function instance$3($$self, $$props, $$invalidate) {
 
 	$$self.$$set = $$props => {
 		
-		if ('smallScreen' in $$props) $$invalidate(18, smallScreen = $$props.smallScreen);
+		if ('smallScreen' in $$props) $$invalidate(19, smallScreen = $$props.smallScreen);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 524289) {
+		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 1048577) {
 			zoomed.set($imageDimensions[0] - 10 > calculatedDimensions[0]);
 		}
 
-		if ($$self.$$.dirty[0] & /*$closing, $zoomed, calculatedDimensions*/ 3670016) {
+		if ($$self.$$.dirty[0] & /*$closing, $zoomed, calculatedDimensions*/ 7340032) {
 			// if zoomed while closing, zoom out image and add class
 			// to change contain value on .bp-wrap to avoid cropping
 			if ($closing && $zoomed && !opts.intro) {
@@ -1443,6 +1447,7 @@ function instance$3($$self, $$props, $$invalidate) {
 		onWheel,
 		onPointerDown,
 		onPointerMove,
+		removeEventFromCache,
 		onPointerUp,
 		onMount,
 		props,
@@ -1456,7 +1461,7 @@ function instance$3($$self, $$props, $$invalidate) {
 class Image extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance$3, create_fragment$3, not_equal, { props: 17, smallScreen: 18 }, null, [-1, -1]);
+		init(this, options, instance$3, create_fragment$3, not_equal, { props: 18, smallScreen: 19 }, null, [-1, -1]);
 	}
 }
 
@@ -2312,7 +2317,7 @@ function instance($$self, $$props, $$invalidate) {
 	};
 
 	const close = () => {
-		opts.onClose?.();
+		opts.onClose?.(container.el, activeItem);
 		set_store_value(closing, $closing = true, $closing);
 		$$invalidate(0, items = null);
 
