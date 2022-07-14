@@ -141,13 +141,14 @@ function initInlineGallery() {
 			if (!(inlineContainer.clientWidth < 800)) {
 				return
 			}
-			const bpImg = inlineContainer.querySelector('.bp-img')
+			const bpImg = getLastBpImg(inlineContainer)
 			new BiggerPicture({ target: document.body }).open({
 				items: items.map((item) => ({
 					...item,
 					element: bpImg,
 				})),
 				position: inlineActiveItem.i,
+				maxZoom: 3,
 				onUpdate(c, activeItem) {
 					inlineBp.setPosition(activeItem.i)
 					setTimeout(() => {
