@@ -114,6 +114,11 @@ function openThumbnails(e) {
 	})
 }
 
+function getLastBpImg(container) {
+	let elements = container.querySelectorAll('.bp-img')
+	return elements[elements.length - 1]
+}
+
 function initInlineGallery() {
 	if (!inlineBp) {
 		inlineBp = new BiggerPicture({
@@ -131,25 +136,34 @@ function initInlineGallery() {
 		noClose: true,
 		inline: true,
 		maxZoom: 4,
-		noPinch: (container) => container.clientWidth <= 768,
-		onImageClick(container, activeItem) {
-			if (container.clientWidth <= 768) {
-				const bpImg = container.querySelector('.bp-img')
-				new BiggerPicture({ target: body }).open({
-					items: [
-						Object.assign(activeItem, {
-							thumb: bpImg.firstChild?.currentSrc ?? activeItem.thumb,
-							element: bpImg,
-						}),
-					],
-					onOpen(newInstanceContainer) {
-						container.classList.add('hide-controls')
-						newInstanceContainer.classList.add('show-controls')
-					},
-					onClosed: () => container.classList.remove('hide-controls'),
-				})
-				return true
+		noPinch: (container) => container.clientWidth < 800,
+		onImageClick(inlineContainer, inlineActiveItem) {
+			if (!(inlineContainer.clientWidth < 800)) {
+				return
 			}
+			const bpImg = inlineContainer.querySelector('.bp-img')
+			new BiggerPicture({ target: document.body }).open({
+				items: items.map((item) => ({
+					...item,
+					element: bpImg,
+				})),
+				position: inlineActiveItem.i,
+				onUpdate(c, activeItem) {
+					inlineBp.setPosition(activeItem.i)
+					setTimeout(() => {
+						activeItem.element = getLastBpImg(inlineContainer)
+					}, 0)
+				},
+				onClose(container, activeItem) {
+					// overwrite thumb to be the inline image src if loaded
+					let inlineImage = getLastBpImg(inlineContainer)
+					let thumb = inlineImage.firstChild?.currentSrc ?? activeItem.img
+					getLastBpImg(container).style.backgroundImage = `url(${thumb})`
+				},
+				onOpen: () => inlineContainer.classList.add('hide-controls'),
+				onClosed: () => inlineContainer.classList.remove('hide-controls'),
+			})
+			return true
 		},
 	})
 }

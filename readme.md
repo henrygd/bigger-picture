@@ -228,7 +228,7 @@ Type: `function`
 
 Executes when an image is clicked. Return a truthy value to prevent zooming. Supplies `container` and `activeItem`.
 
-This method was added to make it easier to open a full screen instance when an image is clicked within an inline gallery ([example CodeSandbox](https://codesandbox.io/s/bp-inline-second-instance-gqzkcw)), but could be used for other purposes.
+This method was added to make it easier to open a full screen instance when an image is clicked within an inline gallery ([example CodeSandbox](https://codesandbox.io/s/bp-inline-second-instance-forked-ezfzfv)), but could be used for other purposes.
 
 ## Item Properties
 

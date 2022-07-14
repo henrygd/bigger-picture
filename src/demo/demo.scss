@@ -759,17 +759,9 @@ body:not(.using-mouse) {
 	}
 }
 
-.show-controls.bp-zoomed.bp-small .bp-controls {
-	opacity: 1;
-	button {
-		pointer-events: auto;
-	}
-}
-.hide-controls {
-	.bp-controls {
-		opacity: 0;
-		transition: opacity 0s;
-	}
+.hide-controls :where(.bp-inner, .bp-controls) {
+	opacity: 0;
+	transition: opacity 0s;
 }
 
 @media (max-width: 800px) {
