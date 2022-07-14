@@ -208,7 +208,7 @@ bp.open({
 
 Type: `function`
 
-Executes just before outro animation.
+Executes just before outro animation. Supplies `container` and `activeItem`.
 
 ### onClosed
 

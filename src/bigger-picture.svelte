@@ -113,7 +113,7 @@
 
 	/** closes gallery */
 	export const close = () => {
-		opts.onClose?.()
+		opts.onClose?.(container.el, activeItem)
 		$closing = true
 		items = null
 		// restore focus to trigger element
