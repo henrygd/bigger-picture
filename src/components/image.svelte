@@ -204,8 +204,9 @@
 		let x = e.clientX
 		let y = e.clientY
 
-		// store positions for inertia
-		dragPositions.push({ x, y })
+		// store positions in dragPositions for inertia
+		// set hasDragged if > 2 pointer move events
+		hasDragged = dragPositions.push({ x, y }) > 2
 
 		// overall drag diff from start location
 		x = x - dragStartX
@@ -213,23 +214,24 @@
 
 		// handle unzoomed left / right / up swipes
 		if (!$zoomed) {
-			// previous if swipe left
-			if (x > 40) {
-				// pointerdown = undefined to stop pointermove from running again
-				pointerDown = prev()
-			}
-			// next if swipe right
-			if (x < -40) {
-				// pointerdown = undefined to stop pointermove from running again
-				pointerDown = next()
-			}
 			// close if swipe up
 			if (y < -90) {
 				!opts.noClose && props.close()
 			}
+			// only handle left / right if not swiping vertically
+			if (Math.abs(y) < 30) {
+				// previous if swipe left
+				if (x > 40) {
+					// pointerdown = undefined to stop pointermove from running again
+					pointerDown = prev()
+				}
+				// next if swipe right
+				if (x < -40) {
+					// pointerdown = undefined to stop pointermove from running again
+					pointerDown = next()
+				}
+			}
 		}
-
-		hasDragged = dragPositions.length > 2
 
 		// image drag when zoomed
 		if ($zoomed && hasDragged && !$closing) {
