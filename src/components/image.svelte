@@ -259,9 +259,11 @@
 		prevDiff = curDiff
 	}
 
+	/** remove event from pointer event cache */
+	const removeEventFromCache = (e) => pointerCache.delete(e.pointerId)
+
 	function onPointerUp(e) {
-		// remove event from pointer event cache
-		pointerCache.delete(e.pointerId)
+		removeEventFromCache(e)
 
 		if (isPinch) {
 			// set isPinch to false after second finger lifts
@@ -335,7 +337,7 @@
 	on:pointerdown={onPointerDown}
 	on:pointermove={onPointerMove}
 	on:pointerup={onPointerUp}
-	on:pointercancel={onPointerUp}
+	on:pointercancel={removeEventFromCache}
 	class:bp-drag={pointerDown}
 	class:bp-close={closingWhileZoomed}
 >
