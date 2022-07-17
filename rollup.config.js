@@ -109,6 +109,13 @@ if (production) {
 				file: 'dist/bigger-picture.umd.js',
 				strict: false,
 			},
+			{
+				format: 'cjs',
+				name: 'BiggerPicture',
+				file: 'dist/bigger-picture.cjs',
+				strict: false,
+				exports: 'default',
+			},
 		],
 		plugins: [
 			commonjs(),
