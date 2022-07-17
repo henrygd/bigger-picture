@@ -6,3 +6,4 @@ public/demo.js
 public/videos/*
 public/img/*
 .kopiaignore
+svelte.d.ts
