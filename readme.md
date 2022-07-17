@@ -16,9 +16,9 @@ https://user-images.githubusercontent.com/8519632/165216178-bd9a0b03-6ee5-42fd-b
 
 - **High Performance** - Smooth even with huge images, especially if using srcset.
 - **Lightweight** - Less than half the size of lightGallery or PhotoSwipe (the king - not bashing it).
-- **Zoomable** - Click, wheel, pinch, or double tap to zoom photos up to native resolution.
+- **Zoomable** - Click, wheel, or pinch to zoom photos up to native resolution.
 - **Responsive images** - Pass in a srcset value and Bigger Picture will handle the rest.
-- **Supports video, audio, iframes, and html** - No need for multiple libraries, plugins, or hacky workarounds.
+- **Video, audio, iframe, and html support** - No need for multiple libraries, plugins, or hacky workarounds.
 - **Inline galleries and custom layouts** - Bigger Picture can be mounted anywhere and has an easy-to-use API.
 - **Accessible** - Supports alt text, image / video captions, iframe titles, keyboard navigation, respects prefers-reduced-motion, and manages focus.
 - **Free software** - MIT licensed. Do whatever you want with it, just don't be an asshole please.
@@ -29,9 +29,9 @@ https://user-images.githubusercontent.com/8519632/165216178-bd9a0b03-6ee5-42fd-b
 npm install bigger-picture
 ```
 
-Add the required [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) to your project. If possible, import from the package so you won't need to manually replace styles when you update.
+Add the required [CSS](dist/bigger-picture.css) or [SCSS](dist/bigger-picture.scss) to your project. You can `import "bigger-picture/css"` to avoid manually replacing styles when you update.
 
-Alternatively, you can include the script directly in a script tag or load from a CDN like [jsDelivr](https://www.jsdelivr.com/package/npm/bigger-picture?path=dist).
+Alternatively, you can load from a CDN like [jsDelivr](https://www.jsdelivr.com/package/npm/bigger-picture?path=dist).
 
 ## Usage
 
@@ -277,11 +277,11 @@ Type: `string`
 
 HTML that will be rendered in the container. When using HTML, please control dimensions with CSS. No need to pass `width` or `height`.
 
-For advanced use, you can pass an empty string, then mount a component using the [`onOpen`](#onopen) or [`onUpdate`](#onupdate) methods:
+For advanced use, you can pass an empty string, then mount a component using the [`onOpen`](#onopen) method:
 
 ```js
 // mounting svelte component (firewatch example from demo site)
-onOpen: (container) => {
+onOpen(container) {
   new Firewatch({
     target: container.querySelector('.bp-html'),
   })
@@ -358,10 +358,10 @@ bp.open({
 
 ## Usage with Svelte
 
-Please import `src/bigger-picture.js`, which uses the uncompiled Svelte files. Depending on your setup this may happen automatically, but to be sure you can use the import statement below. This will decrease the size of the library by 20 to 30 percent in most cases.
+Use the source `.svelte` files directly by importing `bigger-picture/svelte`. This will decrease the size of the library by 20 to 30 percent in most cases.
 
 ```js
-import BiggerPicture from 'bigger-picture/src/bigger-picture.js'
+import BiggerPicture from 'bigger-picture/svelte'
 ```
 
 ## License
