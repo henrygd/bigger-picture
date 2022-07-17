@@ -1,9 +1,21 @@
 {
 	"name": "bigger-picture",
 	"version": "1.1.2",
-	"main": "dist/bigger-picture.umd.js",
-	"module": "dist/bigger-picture.mjs",
-	"svelte": "src/bigger-picture.js",
+	"type": "module",
+  "exports": {
+		"." :{
+			"import": "./dist/bigger-picture.mjs",
+			"require": "./dist/bigger-picture.cjs",
+			"default": "./dist/bigger-picture.mjs"
+		},
+		"./src/bigger-picture.js": "./src/bigger-picture.js",
+		"./svelte": "./src/bigger-picture.js",
+		"./dist/bigger-picture.css": "./dist/bigger-picture.css",
+		"./dist/bigger-picture.scss": "./dist/bigger-picture.scss",
+		"./css": "./dist/bigger-picture.css",
+		"./scss": "./dist/bigger-picture.scss"
+	},
+	"types": "index.d.ts",
 	"description": "Javascript photo / video / iframe / html lightbox gallery",
 	"license": "MIT",
 	"author": "Hank Dollman <hank@henrygd.me> (https://henrygd.me)",
