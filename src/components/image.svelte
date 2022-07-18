@@ -19,8 +19,11 @@
 	/** tracks load state of image */
 	let loaded, showLoader
 
-	/** bool true if multiple touch events */
-	let isPinch
+	/** stores pinch info if multiple touch events active */
+	let pinchDetails
+
+	/** image html element (.bp-img) */
+	let bpImg
 
 	/** track distance for pinch events */
 	let prevDiff = 0
@@ -139,7 +142,7 @@
 			return zoomDragTranslate.set([0, 0])
 		}
 
-		let { x, y, width, height } = e.target.getBoundingClientRect()
+		let { x, y, width, height } = bpImg.getBoundingClientRect()
 
 		// distance clicked from center of image
 		const offsetX = e.clientX - x - width / 2
@@ -192,7 +195,7 @@
 	/** on drag, update image translate val */
 	const onPointerMove = (e) => {
 		if (pointerCache.size > 1) {
-			isPinch = true
+			// if multiple pointer events, pass to handlePinch function
 			pointerDown = false
 			return opts.noPinch?.(container.el) || handlePinch(e)
 		}
@@ -254,8 +257,14 @@
 		const dy = p1.clientY - p2.clientY
 		const curDiff = Math.hypot(dx, dy)
 
+		// cache the original pinch center
+		pinchDetails = pinchDetails || {
+			clientX: (p1.clientX + p2.clientX) / 2,
+			clientY: (p1.clientY + p2.clientY) / 2,
+		}
+
 		// scale image
-		changeZoom(e, ((prevDiff || curDiff) - curDiff) * -0.03)
+		changeZoom(pinchDetails, ((prevDiff || curDiff) - curDiff) / -35)
 
 		// Cache the distance for the next move event
 		prevDiff = curDiff
@@ -267,11 +276,11 @@
 	function onPointerUp(e) {
 		removeEventFromCache(e)
 
-		if (isPinch) {
-			// set isPinch to false after second finger lifts
-			isPinch = pointerCache.size
-			prevDiff = 0
-			return
+		if (pinchDetails) {
+			// reset prevDiff and clear pointerDown to trigger return below
+			pointerDown = prevDiff = 0
+			// set pinchDetails to null after last finger lifts
+			pinchDetails = pointerCache.size ? pinchDetails : null
 		}
 
 		// make sure pointer events don't carry over to next image
@@ -309,7 +318,8 @@
 		dragPositions.length = 0
 	}
 
-	const onMount = () => {
+	const onMount = (node) => {
+		bpImg = node
 		// handle window resize
 		props.setResizeFunc(() => {
 			calculatedDimensions = props.calculateDimensions(activeItem)
@@ -334,7 +344,6 @@
 
 <div
 	class="bp-img-wrap"
-	use:onMount
 	on:wheel={onWheel}
 	on:pointerdown={onPointerDown}
 	on:pointermove={onPointerMove}
@@ -344,6 +353,7 @@
 	class:bp-close={closingWhileZoomed}
 >
 	<div
+		use:onMount
 		class="bp-img"
 		style="
 			background-image:url({activeItem.thumb});
