@@ -76,11 +76,11 @@
 		opts = options
 		inline = opts.inline
 		const openItems = opts.items
-		// update trigger element to restore focus
 		// add class to hide scroll if not inline gallery
 		if (!inline && html.scrollHeight > html.clientHeight) {
 			html.classList.add('bp-lock')
 		}
+		// update trigger element to restore focus
 		focusTrigger = document.activeElement
 		container.w = target.offsetWidth
 		container.h =
@@ -114,7 +114,7 @@
 	/** closes gallery */
 	export const close = () => {
 		opts.onClose?.(container.el, activeItem)
-		$closing = true
+		closing.set(true)
 		items = null
 		// restore focus to trigger element
 		focusTrigger?.focus({ preventScroll: true })
@@ -157,7 +157,7 @@
 				e.preventDefault()
 				const { focusWrap = container.el } = opts
 				const tabbable = [...focusWrap.querySelectorAll('*')].filter(
-					(n) => n.tabIndex >= 0
+					(node) => node.tabIndex >= 0
 				)
 				let index = tabbable.indexOf(activeElement)
 				index += tabbable.length + (shiftKey ? -1 : 1)
@@ -294,7 +294,7 @@
 			destroy() {
 				ro.disconnect()
 				removeKeydownListener?.()
-				$closing = false
+				closing.set(false)
 				// remove class hiding scroll
 				html.classList.remove('bp-lock')
 				opts.onClosed?.()
