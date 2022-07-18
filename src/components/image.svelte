@@ -216,7 +216,7 @@
 		if (!$zoomed) {
 			// close if swipe up
 			if (y < -90) {
-				!opts.noClose && props.close()
+				pointerDown = !opts.noClose && props.close()
 			}
 			// only handle left / right if not swiping vertically
 			if (Math.abs(y) < 30) {
