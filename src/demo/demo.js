@@ -1,9 +1,13 @@
+// @ts-check
+
 import BiggerPicture from '../bigger-picture'
+// @ts-ignore
 import Firewatch from './components/firewatch.svelte'
+// @ts-ignore
 import Dialog from './components/dialog.svelte'
+// @ts-ignore
 import BiggerPictureThumbnails from './bp-thumbnails.svelte'
 import { listen, self } from 'svelte/internal'
-// import Macy from 'macy'
 import FlexMasonry from 'flexmasonry/src/flexmasonry.js'
 
 // import hideShowScroll from 'hide-show-scroll'
@@ -12,11 +16,9 @@ import plausible from './plausible'
 
 let { body } = document
 
-let inlineBp, bpThumbnails
+let bpThumbnails
 
-let bodyBp = BiggerPicture({
-	target: body,
-})
+let bodyBp = BiggerPicture({ target: document.body })
 
 let imageLinks = document.querySelectorAll('#images a')
 let vidIframeLinks = document.querySelectorAll('#vids a')
@@ -120,12 +122,11 @@ function getLastBpImg(container) {
 }
 
 function initInlineGallery() {
-	if (!inlineBp) {
-		inlineBp = new BiggerPicture({
-			target: inlineWrap,
-		})
-	}
+	let inlineBp = BiggerPicture({
+		target: inlineWrap,
+	})
 	let items = Array.from(imageLinks).map((link) => ({
+		// @ts-ignore
 		...link.dataset,
 	}))
 	inlineBp.open({
@@ -142,7 +143,7 @@ function initInlineGallery() {
 				return
 			}
 			const bpImg = getLastBpImg(inlineContainer)
-			new BiggerPicture({ target: document.body }).open({
+			bodyBp.open({
 				items: items.map((item) => ({
 					...item,
 					element: bpImg,

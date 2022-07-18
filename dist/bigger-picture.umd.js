@@ -36,10 +36,6 @@
     function component_subscribe(component, store, callback) {
         component.$$.on_destroy.push(subscribe(store, callback));
     }
-    function set_store_value(store, ret, value) {
-        store.set(value);
-        return ret;
-    }
     function action_destroyer(action_result) {
         return action_result && is_function(action_result.destroy) ? action_result.destroy : noop;
     }
@@ -908,7 +904,7 @@
     	};
     }
 
-    // (357:10) {#if showLoader}
+    // (367:10) {#if showLoader}
     function create_if_block$1(ctx) {
     	let loading;
     	let current;
@@ -984,7 +980,7 @@
 
     			if (!mounted) {
     				dispose = [
-    					action_destroyer(/*onMount*/ ctx[17].call(null, div1)),
+    					action_destroyer(/*onMount*/ ctx[17].call(null, div0)),
     					listen(div1, "wheel", /*onWheel*/ ctx[12]),
     					listen(div1, "pointerdown", /*onPointerDown*/ ctx[13]),
     					listen(div1, "pointermove", /*onPointerMove*/ ctx[14]),
@@ -1102,8 +1098,11 @@
     	/** tracks load state of image */
     	let loaded, showLoader;
 
-    	/** bool true if multiple touch events */
-    	let isPinch;
+    	/** stores pinch info if multiple touch events active */
+    	let pinchDetails;
+
+    	/** image html element (.bp-img) */
+    	let bpImg;
 
     	/** track distance for pinch events */
     	let prevDiff = 0;
@@ -1221,7 +1220,7 @@
     			return zoomDragTranslate.set([0, 0]);
     		}
 
-    		let { x, y, width, height } = e.target.getBoundingClientRect();
+    		let { x, y, width, height } = bpImg.getBoundingClientRect();
 
     		// distance clicked from center of image
     		const offsetX = e.clientX - x - width / 2;
@@ -1270,8 +1269,9 @@
     	/** on drag, update image translate val */
     	const onPointerMove = e => {
     		if (pointerCache.size > 1) {
-    			isPinch = true;
+    			// if multiple pointer events, pass to handlePinch function
     			$$invalidate(4, pointerDown = false);
+
     			return opts.noPinch?.(container.el) || handlePinch(e);
     		}
 
@@ -1295,7 +1295,7 @@
     		if (!$zoomed) {
     			// close if swipe up
     			if (y < -90) {
-    				!opts.noClose && props.close();
+    				$$invalidate(4, pointerDown = !opts.noClose && props.close());
     			}
 
     			// only handle left / right if not swiping vertically
@@ -1330,8 +1330,14 @@
     		const dy = p1.clientY - p2.clientY;
     		const curDiff = Math.hypot(dx, dy);
 
+    		// cache the original pinch center
+    		pinchDetails = pinchDetails || {
+    			clientX: (p1.clientX + p2.clientX) / 2,
+    			clientY: (p1.clientY + p2.clientY) / 2
+    		};
+
     		// scale image
-    		changeZoom(e, ((prevDiff || curDiff) - curDiff) * -0.03);
+    		changeZoom(pinchDetails, ((prevDiff || curDiff) - curDiff) / -35);
 
     		// Cache the distance for the next move event
     		prevDiff = curDiff;
@@ -1343,12 +1349,12 @@
     	function onPointerUp(e) {
     		removeEventFromCache(e);
 
-    		if (isPinch) {
-    			// set isPinch to false after second finger lifts
-    			isPinch = pointerCache.size;
+    		if (pinchDetails) {
+    			// reset prevDiff and clear pointerDown to trigger return below
+    			$$invalidate(4, pointerDown = prevDiff = 0);
 
-    			prevDiff = 0;
-    			return;
+    			// set pinchDetails to null after last finger lifts
+    			pinchDetails = pointerCache.size ? pinchDetails : null;
     		}
 
     		// make sure pointer events don't carry over to next image
@@ -1386,7 +1392,9 @@
     		dragPositions.length = 0;
     	}
 
-    	const onMount = () => {
+    	const onMount = node => {
+    		bpImg = node;
+
     		// handle globalThis resize
     		props.setResizeFunc(() => {
     			$$invalidate(20, calculatedDimensions = props.calculateDimensions(activeItem));
@@ -2221,9 +2229,7 @@
     }
 
     function instance($$self, $$props, $$invalidate) {
-    	let $closing;
     	let $zoomed;
-    	component_subscribe($$self, closing, $$value => $$invalidate(26, $closing = $$value));
     	let { items = undefined } = $$props;
     	let { target = undefined } = $$props;
     	const html = document.documentElement;
@@ -2277,13 +2283,14 @@
     		$$invalidate(8, inline = opts.inline);
     		const openItems = opts.items;
 
-    		// update trigger element to restore focus
     		// add class to hide scroll if not inline gallery
     		if (!inline && html.scrollHeight > html.clientHeight) {
     			html.classList.add('bp-lock');
     		}
 
+    		// update trigger element to restore focus
     		focusTrigger = document.activeElement;
+
     		$$invalidate(20, container.w = target.offsetWidth, container);
 
     		$$invalidate(
@@ -2323,7 +2330,7 @@
 
     	const close = () => {
     		opts.onClose?.(container.el, activeItem);
-    		set_store_value(closing, $closing = true, $closing);
+    		closing.set(true);
     		$$invalidate(0, items = null);
 
     		// restore focus to trigger element
@@ -2361,7 +2368,7 @@
     			if (shiftKey || !activeElement.controls) {
     				e.preventDefault();
     				const { focusWrap = container.el } = opts;
-    				const tabbable = [...focusWrap.querySelectorAll('*')].filter(n => n.tabIndex >= 0);
+    				const tabbable = [...focusWrap.querySelectorAll('*')].filter(node => node.tabIndex >= 0);
     				let index = tabbable.indexOf(activeElement);
     				index += tabbable.length + (shiftKey ? -1 : 1);
     				tabbable[index % tabbable.length].focus();
@@ -2500,7 +2507,7 @@
     			destroy() {
     				ro.disconnect();
     				removeKeydownListener?.();
-    				set_store_value(closing, $closing = false, $closing);
+    				closing.set(false);
 
     				// remove class hiding scroll
     				html.classList.remove('bp-lock');

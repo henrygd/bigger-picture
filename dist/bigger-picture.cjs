@@ -2641,4 +2641,4 @@ function biggerPicture (options) {
 	})
 }
 
-export { biggerPicture as default };
+module.exports = biggerPicture;
