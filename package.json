@@ -1,6 +1,6 @@
 {
 	"name": "bigger-picture",
-	"version": "1.1.4",
+	"version": "1.1.5",
 	"type": "module",
   "exports": {
 		"." :{
@@ -15,6 +15,7 @@
 		"./css": "./dist/bigger-picture.css",
 		"./scss": "./dist/bigger-picture.scss"
 	},
+	"svelte": "./src/bigger-picture.js",
 	"types": "index.d.ts",
 	"description": "Javascript photo / video / iframe / html lightbox gallery",
 	"license": "MIT",
