@@ -89,7 +89,7 @@ interface item {
   element?: HTMLElement|EventTarget;
 }
 
-interface BiggerPictureInstance {
+export interface BiggerPictureInstance {
   /** Opens the instance. */
   open: (options: options) => void;
   /** Closes the lightbox. */
