@@ -199,7 +199,7 @@
 			image.sizes = opts.sizes || `${calculateDimensions(item)[0]}px`
 			image.srcset = item.img
 			item.preload = true
-			return image.decode()
+			return image.decode().catch((error) => {})
 		}
 	}
 

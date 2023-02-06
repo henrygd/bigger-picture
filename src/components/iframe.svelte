@@ -5,7 +5,7 @@
 
 	let loaded, dimensions
 
-	const { activeItem } = props
+	const { activeItem, opts, container } = props
 
 	const setDimensions = () =>
 		(dimensions = props.calculateDimensions(activeItem))
@@ -30,6 +30,7 @@
 		allow="autoplay; fullscreen"
 		title={activeItem.title}
 		on:load={() => (loaded = true)}
+		on:error={(error) => opts.onError?.(container, activeItem, error)}
 	/>
 	<Loading thumb={activeItem.thumb} {loaded} />
 </div>
