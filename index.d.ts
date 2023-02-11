@@ -42,6 +42,8 @@ interface options {
   onResize?: (container?: HTMLElement, activeItem?: item) => void;
   /** Executes when an image is clicked. Return a truthy value to prevent zooming. Supplies `container` and `activeItem`. */
   onImageClick?: (container?: HTMLElement, activeItem?: item) => any;
+  /** Executes when an error is thrown when loading an item (image, audio, video or iframe). */
+  onError?: (container?: HTMLElement, activeItem?: item, error?: Error) => void;
 }
 
 interface item {

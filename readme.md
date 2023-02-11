@@ -230,6 +230,12 @@ Executes when an image is clicked. Return a truthy value to prevent zooming. Sup
 
 This method was added to make it easier to open a full screen instance when an image is clicked within an inline gallery ([example CodeSandbox](https://codesandbox.io/s/bp-inline-second-instance-forked-ezfzfv)), but could be used for other purposes.
 
+### onError
+
+Type: `function`
+
+Executes when an error is thrown when loading an item (image, audio, video or iframe). Supplies `container`, `activeItem` and `error`.
+
 ## Item Properties
 
 ### width
