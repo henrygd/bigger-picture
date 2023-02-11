@@ -339,7 +339,7 @@
 				{/if}
 			</div>
 			{#if activeItem.caption}
-				<div class="bp-cap" tabindex="0" out:fly={{ duration: 200 }}>
+				<div class="bp-cap" out:fly={{ duration: 200 }}>
 					{@html activeItem.caption}
 				</div>
 			{/if}
