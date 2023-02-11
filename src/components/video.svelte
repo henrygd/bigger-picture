@@ -53,15 +53,17 @@
 				// add sources / tracks to media element
 				const el = element(tag)
 				addAttributes(el, obj)
-				if(tag == 'source'){
-					listen(el, 'error', (error) => opts.onError?.(container, activeItem, error))
+				if (tag == 'source') {
+					listen(el, 'error', (error) =>
+						opts.onError?.(container, activeItem, error)
+					)
 				}
 				append(mediaElement, el)
 			}
 		}
 		appendToVideo('source', activeItem.sources)
 		appendToVideo('track', activeItem.tracks || [])
-		listen(mediaElement, 'canplay', () => (loaded = true))		
+		listen(mediaElement, 'canplay', () => (loaded = true))
 		append(node, mediaElement)
 	}
 </script>
