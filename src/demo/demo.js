@@ -16,9 +16,11 @@ import plausible from './plausible'
 
 let { body } = document
 
-let bpThumbnails
-
 let bodyBp = BiggerPicture({ target: document.body })
+
+let bpThumbnails = new BiggerPictureThumbnails({
+	target: body,
+})
 
 let imageLinks = document.querySelectorAll('#images a')
 let vidIframeLinks = document.querySelectorAll('#vids a')
@@ -101,11 +103,6 @@ function openBiggerPictureVids(e) {
 
 function openThumbnails(e) {
 	e.preventDefault()
-	if (!bpThumbnails) {
-		bpThumbnails = new BiggerPictureThumbnails({
-			target: body,
-		})
-	}
 	bpThumbnails.open({
 		// position: 2,
 		// scale: 1,
@@ -262,9 +259,9 @@ document.getElementById('tweet').addEventListener('click', (e) => {
 	let tweets = [
 		{
 			html: makeTweetHtml(
-				'The Baller of the First Sin',
+				'iPad Expert',
 				'ByYourLogic',
-				'1477900291475484674/FHyfowH4_normal.jpg',
+				'1604592010140139520/oqRxNqLA_400x400.jpg',
 				`<p>this picture is so fucking iconic. this was when Barney was in the studio for 16 hour sessions perfecting "Clean Up." believe it or not, people were writing him off because he hadn't had a hit in a while. little did they know he was about to change everything<a href="https://t.co/AFwh7OkKvn" target="_blank"><img src="https://assets.henrygd.me/bp/images/barney.jpg" alt="barney at desk"/></a></p>`
 			),
 		},
