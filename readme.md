@@ -234,7 +234,7 @@ This method was added to make it easier to open a full screen instance when an i
 
 Type: `function`
 
-Executes when an error is thrown when loading an item (image, audio, video or iframe). Supplies `container`, `activeItem` and `error`.
+Executes if an error is thrown when loading an image, audio, or video item. Supplies `container`, `activeItem` and `error`.
 
 ## Item Properties
 
