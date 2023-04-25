@@ -31,19 +31,23 @@ interface options {
 	/** Restricts an image's maximum zoom level to `maxZoom` times the starting size, even if the item's `width` / `height` is larger. For example, a `maxZoom` of 2 on an image that is 800px wide when zoomed out would limit the image to a maximum zoom of 1600px width. */
 	maxZoom?: number
 	/** Executes just before intro animation. Supplies `container` - the gallery's wrapper element, and `activeItem` - an object containing the currently displayed item's data. */
-	onOpen?: (container: HTMLElement, activeItem: item) => void
+	onOpen?: (container: HTMLElement, activeItem: activeItem) => void
 	/** Executes just after the active item is updated. Supplies `container` and `activeItem`. */
-	onUpdate?: (container?: HTMLElement, activeItem?: item) => void
+	onUpdate?: (container?: HTMLElement, activeItem?: activeItem) => void
 	/** Executes just before outro animation. Supplies `container` and `activeItem`. */
-	onClose?: (container?: HTMLElement, activeItem?: item) => void
+	onClose?: (container?: HTMLElement, activeItem?: activeItem) => void
 	/** Executes just after the lightbox has been closed and removed from the page. */
 	onClosed?: () => void
 	/** Executes when the dimensions of the gallery (not the window) are changed. Supplies `container` and `activeItem`. */
-	onResize?: (container?: HTMLElement, activeItem?: item) => void
+	onResize?: (container?: HTMLElement, activeItem?: activeItem) => void
 	/** Executes when an image is clicked. Return a truthy value to prevent zooming. Supplies `container` and `activeItem`. */
-	onImageClick?: (container?: HTMLElement, activeItem?: item) => any
+	onImageClick?: (container?: HTMLElement, activeItem?: activeItem) => any
 	/** Executes when an error is thrown when loading an item (image, audio, video or iframe). */
-	onError?: (container?: HTMLElement, activeItem?: item, error?: Error) => void
+	onError?: (
+		container?: HTMLElement,
+		activeItem?: activeItem,
+		error?: Error
+	) => void
 }
 
 interface item {
@@ -89,6 +93,11 @@ interface item {
 	tracks?: string | object[]
 	/** To control the default open / close animation, add a property `element` to each item that contains a node on the page. The active item's `element` will be where the animation opens from / closes to. If you're not using the default scale animation, this is not needed. */
 	element?: HTMLElement | EventTarget
+}
+
+export interface activeItem extends item {
+	/** Read or set zoom state */
+	zoom?: boolean
 }
 
 export interface BiggerPictureInstance {
