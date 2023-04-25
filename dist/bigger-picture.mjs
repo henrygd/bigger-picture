@@ -908,7 +908,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (368:10) {#if showLoader}
+// (375:10) {#if showLoader}
 function create_if_block$1(ctx) {
 	let loading;
 	let current;
@@ -1193,7 +1193,7 @@ function instance$3($$self, $$props, $$invalidate) {
 	};
 
 	/** updates zoom level in or out based on amt value */
-	const changeZoom = (e, amt = maxZoom) => {
+	function changeZoom(amt = maxZoom, e) {
 		if ($closing) {
 			return;
 		}
@@ -1227,9 +1227,9 @@ function instance$3($$self, $$props, $$invalidate) {
 		let { x, y, width, height } = bpImg.getBoundingClientRect();
 
 		// distance clicked from center of image
-		const offsetX = e.clientX - x - width / 2;
+		const offsetX = e ? e.clientX - x - width / 2 : 0;
 
-		const offsetY = e.clientY - y - height / 2;
+		const offsetY = e ? e.clientY - y - height / 2 : 0;
 		x = -offsetX * (newWidth / width) + offsetX;
 		y = -offsetY * (newHeight / height) + offsetY;
 		const newDimensions = [newWidth, newHeight];
@@ -1241,7 +1241,14 @@ function instance$3($$self, $$props, $$invalidate) {
 
 		// update translate value
 		zoomDragTranslate.set(boundTranslateValues([$zoomDragTranslate[0] + x, $zoomDragTranslate[1] + y], newDimensions));
-	};
+	}
+
+	// allow zoom to be read / set externally
+	Object.defineProperty(activeItem, 'zoom', {
+		configurable: true,
+		get: () => $zoomed,
+		set: bool => changeZoom(bool ? maxZoom : -maxZoom)
+	});
 
 	const onWheel = e => {
 		// return if scrolling past inline gallery w/ wheel
@@ -1253,7 +1260,7 @@ function instance$3($$self, $$props, $$invalidate) {
 		e.preventDefault();
 
 		// change zoom on wheel
-		changeZoom(e, e.deltaY / -300);
+		changeZoom(e.deltaY / -300, e);
 	};
 
 	/** on drag start, store initial position and image translate values */
@@ -1341,7 +1348,7 @@ function instance$3($$self, $$props, $$invalidate) {
 		};
 
 		// scale image
-		changeZoom(pinchDetails, ((prevDiff || curDiff) - curDiff) / -35);
+		changeZoom(((prevDiff || curDiff) - curDiff) / -35, pinchDetails);
 
 		// Cache the distance for the next move event
 		prevDiff = curDiff;
@@ -1386,7 +1393,7 @@ function instance$3($$self, $$props, $$invalidate) {
 				]));
 			}
 		} else if (!opts.onImageClick?.(container.el, activeItem)) {
-			changeZoom(e, $zoomed ? -maxZoom : maxZoom);
+			changeZoom($zoomed ? -maxZoom : maxZoom, e);
 		}
 
 		// reset pointer states
