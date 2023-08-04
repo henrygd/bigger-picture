@@ -300,6 +300,12 @@ Type: `string`
 
 Image alternative text
 
+### iframe
+
+Type: `string`
+
+URL or path to iframe source
+
 ### title
 
 Type: `string`

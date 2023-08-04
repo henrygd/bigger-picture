@@ -79,6 +79,8 @@ interface item {
 	html?: string
 	/** Image alternative text */
 	alt?: string
+	/** URL or path to iframe source */
+	iframe?: string
 	/** Title attribute for iframes */
 	title?: string
 	/** Text to be displayed using built in caption. You may pass html tags and styles can be overriden via CSS. */
