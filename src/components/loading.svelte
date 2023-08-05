@@ -9,7 +9,7 @@
 {#if !loaded || $closing}
 	<div
 		class="bp-load"
-		in:fly={{ duration: loaded ? 400 : 0 }}
+		in:fly|local={{ duration: loaded ? 400 : 0 }}
 		out:fly|local={{ duration: 480 }}
 		style="background-image:url({thumb})"
 	>

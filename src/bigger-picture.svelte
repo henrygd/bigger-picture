@@ -312,12 +312,12 @@
 		class:bp-small={smallScreen}
 		class:bp-noclose={opts.noClose}
 	>
-		<div out:fly={{ duration: 480 }} />
+		<div out:fly|local={{ duration: 480 }} />
 		{#key activeItem.i}
 			<div
 				class="bp-inner"
-				in:mediaTransition={true}
-				out:mediaTransition={false}
+				in:mediaTransition|global={true}
+				out:mediaTransition|global={false}
 				on:pointerdown={(e) => (clickedEl = e.target)}
 				on:pointerup={function (e) {
 					// only close if left click on self and not dragged
@@ -339,13 +339,13 @@
 				{/if}
 			</div>
 			{#if activeItem.caption}
-				<div class="bp-cap" out:fly={{ duration: 200 }}>
+				<div class="bp-cap" out:fly|global={{ duration: 200 }}>
 					{@html activeItem.caption}
 				</div>
 			{/if}
 		{/key}
 
-		<div class="bp-controls" out:fly>
+		<div class="bp-controls" out:fly|local>
 			<!-- close button -->
 			<button class="bp-x" title="Close" aria-label="Close" on:click={close} />
 
