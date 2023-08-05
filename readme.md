@@ -329,7 +329,7 @@ Sets the sizes attribute if you're using `srcset`.
 Type: `number`<br>
 Default: `10`
 
-Restricts an image's maximum zoom level to `maxZoom` times the starting size, even if the item's `width` / `height` is larger. For example, a `maxZoom` of 2 on an image that is 800px wide when zoomed out would limit the image to a maximum zoom of 1600px width.
+Restricts an image's maximum zoom to `maxZoom` times the starting size, even if the item's `width` / `height` is larger. For example, a `maxZoom` of 2 on an image that starts at 800px width would limit the image to a maximum zoom of 1600px width. A `maxZoom` of 1 would prevent zooming entirely.
 
 > Note: If `maxZoom` is set on an individual item it will override the value set in options. Attribute name is `data-max-zoom`.
 
