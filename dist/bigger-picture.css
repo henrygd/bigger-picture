@@ -77,7 +77,10 @@
   position: absolute;
   contain: strict;
 }
-.bp-img-wrap.bp-drag .bp-img {
+.bp-img-wrap .bp-canzoom {
+  cursor: zoom-in;
+}
+.bp-img-wrap .bp-drag {
   cursor: grabbing;
 }
 
@@ -90,7 +93,6 @@
   top: 50%;
   left: 50%;
   user-select: none;
-  cursor: zoom-in;
   background-size: 100% 100%;
 }
 .bp-img img,
@@ -105,7 +107,7 @@
   display: none;
 }
 
-.bp-zoomed .bp-img {
+.bp-zoomed .bp-img:not(.bp-drag) {
   cursor: grab;
 }
 .bp-zoomed .bp-cap {

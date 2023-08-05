@@ -74,10 +74,11 @@
 	@include bpfillall;
 	position: absolute;
 	contain: strict;
-	&.bp-drag {
-		.bp-img {
-			cursor: grabbing;
-		}
+	.bp-canzoom {
+		cursor: zoom-in;
+	}
+	.bp-drag {
+		cursor: grabbing;
 	}
 }
 
@@ -91,7 +92,6 @@
 	top: 50%;
 	left: 50%;
 	user-select: none;
-	cursor: zoom-in;
 	background-size: 100% 100%;
 	img,
 	div {
@@ -103,7 +103,7 @@
 	}
 }
 .bp-zoomed {
-	.bp-img {
+	.bp-img:not(.bp-drag) {
 		cursor: grab;
 	}
 	.bp-cap {

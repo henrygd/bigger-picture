@@ -881,7 +881,7 @@ function create_if_block_1$1(ctx) {
 			current = true;
 
 			if (!mounted) {
-				dispose = listen(img, "error", /*error_handler*/ ctx[24]);
+				dispose = listen(img, "error", /*error_handler*/ ctx[26]);
 				mounted = true;
 			}
 		},
@@ -908,7 +908,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (375:10) {#if showLoader}
+// (374:10) {#if showLoader}
 function create_if_block$1(ctx) {
 	let loading;
 	let current;
@@ -970,8 +970,9 @@ function create_fragment$3(ctx) {
 			set_style(div0, "width", /*$imageDimensions*/ ctx[0][0] + "px");
 			set_style(div0, "height", /*$imageDimensions*/ ctx[0][1] + "px");
 			set_style(div0, "transform", "translate3d(" + (/*$imageDimensions*/ ctx[0][0] / -2 + /*$zoomDragTranslate*/ ctx[6][0]) + "px, " + (/*$imageDimensions*/ ctx[0][1] / -2 + /*$zoomDragTranslate*/ ctx[6][1]) + "px, 0)");
+			toggle_class(div0, "bp-drag", /*pointerDown*/ ctx[4]);
+			toggle_class(div0, "bp-canzoom", /*maxZoom*/ ctx[11] > 1 && /*$imageDimensions*/ ctx[0][0] < /*naturalWidth*/ ctx[12]);
 			attr(div1, "class", "bp-img-wrap");
-			toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[4]);
 			toggle_class(div1, "bp-close", /*closingWhileZoomed*/ ctx[5]);
 		},
 		m(target, anchor) {
@@ -984,12 +985,12 @@ function create_fragment$3(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					action_destroyer(/*onMount*/ ctx[18].call(null, div0)),
-					listen(div1, "wheel", /*onWheel*/ ctx[13]),
-					listen(div1, "pointerdown", /*onPointerDown*/ ctx[14]),
-					listen(div1, "pointermove", /*onPointerMove*/ ctx[15]),
-					listen(div1, "pointerup", /*onPointerUp*/ ctx[17]),
-					listen(div1, "pointercancel", /*removeEventFromCache*/ ctx[16])
+					action_destroyer(/*onMount*/ ctx[20].call(null, div0)),
+					listen(div1, "wheel", /*onWheel*/ ctx[15]),
+					listen(div1, "pointerdown", /*onPointerDown*/ ctx[16]),
+					listen(div1, "pointermove", /*onPointerMove*/ ctx[17]),
+					listen(div1, "pointerup", /*onPointerUp*/ ctx[19]),
+					listen(div1, "pointercancel", /*removeEventFromCache*/ ctx[18])
 				];
 
 				mounted = true;
@@ -1055,7 +1056,11 @@ function create_fragment$3(ctx) {
 			}
 
 			if (dirty[0] & /*pointerDown*/ 16) {
-				toggle_class(div1, "bp-drag", /*pointerDown*/ ctx[4]);
+				toggle_class(div0, "bp-drag", /*pointerDown*/ ctx[4]);
+			}
+
+			if (dirty[0] & /*maxZoom, $imageDimensions, naturalWidth*/ 6145) {
+				toggle_class(div0, "bp-canzoom", /*maxZoom*/ ctx[11] > 1 && /*$imageDimensions*/ ctx[0][0] < /*naturalWidth*/ ctx[12]);
 			}
 
 			if (dirty[0] & /*closingWhileZoomed*/ 32) {
@@ -1088,11 +1093,11 @@ function instance$3($$self, $$props, $$invalidate) {
 	let $zoomDragTranslate;
 	let $closing;
 	let $imageDimensions;
-	component_subscribe($$self, closing, $$value => $$invalidate(23, $closing = $$value));
+	component_subscribe($$self, closing, $$value => $$invalidate(25, $closing = $$value));
 	let { props } = $$props;
 	let { smallScreen } = $$props;
 	let { activeItem, opts, prev, next, zoomed, container } = props;
-	component_subscribe($$self, zoomed, value => $$invalidate(22, $zoomed = value));
+	component_subscribe($$self, zoomed, value => $$invalidate(24, $zoomed = value));
 	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10;
 	let calculatedDimensions = props.calculateDimensions(activeItem);
 
@@ -1199,9 +1204,8 @@ function instance$3($$self, $$props, $$invalidate) {
 		}
 
 		const maxWidth = calculatedDimensions[0] * maxZoom;
-		const [currentImageWidth, currentImageHeight] = $imageDimensions;
-		let newWidth = currentImageWidth + currentImageWidth * amt;
-		let newHeight = currentImageHeight + currentImageHeight * amt;
+		let newWidth = $imageDimensions[0] + $imageDimensions[0] * amt;
+		let newHeight = $imageDimensions[1] + $imageDimensions[1] * amt;
 
 		if (amt > 0) {
 			if (newWidth > maxWidth) {
@@ -1408,7 +1412,7 @@ function instance$3($$self, $$props, $$invalidate) {
 
 		// handle globalThis resize
 		props.setResizeFunc(() => {
-			$$invalidate(21, calculatedDimensions = props.calculateDimensions(activeItem));
+			$$invalidate(23, calculatedDimensions = props.calculateDimensions(activeItem));
 
 			// adjust image size / zoom on resize, but not on mobile because
 			// some browsers (ios safari 15) constantly resize screen on drag
@@ -1437,15 +1441,15 @@ function instance$3($$self, $$props, $$invalidate) {
 
 	$$self.$$set = $$props => {
 		
-		if ('smallScreen' in $$props) $$invalidate(20, smallScreen = $$props.smallScreen);
+		if ('smallScreen' in $$props) $$invalidate(22, smallScreen = $$props.smallScreen);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 2097153) {
+		if ($$self.$$.dirty[0] & /*$imageDimensions, calculatedDimensions*/ 8388609) {
 			zoomed.set($imageDimensions[0] - 10 > calculatedDimensions[0]);
 		}
 
-		if ($$self.$$.dirty[0] & /*$closing, $zoomed, calculatedDimensions*/ 14680064) {
+		if ($$self.$$.dirty[0] & /*$closing, $zoomed, calculatedDimensions*/ 58720256) {
 			// if zoomed while closing, zoom out image and add class
 			// to change contain value on .bp-wrap to avoid cropping
 			if ($closing && $zoomed && !opts.intro) {
@@ -1469,6 +1473,8 @@ function instance$3($$self, $$props, $$invalidate) {
 		opts,
 		zoomed,
 		container,
+		maxZoom,
+		naturalWidth,
 		imageDimensions,
 		zoomDragTranslate,
 		onWheel,
@@ -1489,7 +1495,7 @@ function instance$3($$self, $$props, $$invalidate) {
 class Image extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance$3, create_fragment$3, not_equal, { props: 19, smallScreen: 20 }, null, [-1, -1]);
+		init(this, options, instance$3, create_fragment$3, not_equal, { props: 21, smallScreen: 22 }, null, [-1, -1]);
 	}
 }
 
