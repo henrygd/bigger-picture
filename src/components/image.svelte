@@ -376,7 +376,7 @@
 				sizes={opts.sizes || `${sizes}px`}
 				alt={activeItem.alt}
 				on:error={(error) => opts.onError?.(container, activeItem, error)}
-				out:fly|local
+				out:fly|global
 			/>
 		{/if}
 		{#if showLoader}
