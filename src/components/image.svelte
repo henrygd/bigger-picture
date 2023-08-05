@@ -120,10 +120,8 @@
 
 		const maxWidth = calculatedDimensions[0] * maxZoom
 
-		const [currentImageWidth, currentImageHeight] = $imageDimensions
-
-		let newWidth = currentImageWidth + currentImageWidth * amt
-		let newHeight = currentImageHeight + currentImageHeight * amt
+		let newWidth = $imageDimensions[0] + $imageDimensions[0] * amt
+		let newHeight = $imageDimensions[1] + $imageDimensions[1] * amt
 
 		if (amt > 0) {
 			if (newWidth > maxWidth) {
@@ -356,12 +354,13 @@
 	on:pointermove={onPointerMove}
 	on:pointerup={onPointerUp}
 	on:pointercancel={removeEventFromCache}
-	class:bp-drag={pointerDown}
 	class:bp-close={closingWhileZoomed}
 >
 	<div
 		use:onMount
 		class="bp-img"
+		class:bp-drag={pointerDown}
+		class:bp-canzoom={maxZoom > 1 && $imageDimensions[0] < naturalWidth}
 		style="
 			background-image:url({activeItem.thumb});
 			width:{$imageDimensions[0]}px;
