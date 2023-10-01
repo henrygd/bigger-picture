@@ -4,18 +4,17 @@
 
 	export let thumb
 	export let loaded
+
+	const style = `background-image:url(${thumb})`
 </script>
 
-{#if !loaded || $closing}
-	<div
-		class="bp-load"
-		in:fly|local={{ duration: loaded ? 400 : 0 }}
-		out:fly|local={{ duration: 480 }}
-		style="background-image:url({thumb})"
-	>
-		{#if !$closing}
-			<span class="bp-bar" />
-			<span class="bp-o" />
-		{/if}
+{#if !loaded}
+	<div class="bp-load" out:fly|local={{ duration: 480 }} {style}>
+		<span class="bp-bar" />
+		<span class="bp-o" />
 	</div>
+{/if}
+
+{#if $closing}
+	<div class="bp-load" in:fly|global={{ duration: 480 }} {style} />
 {/if}
