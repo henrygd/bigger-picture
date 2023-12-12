@@ -334,7 +334,11 @@
 					<Iframe props={getChildProps()} />
 				{:else}
 					<div class="bp-html">
-						{@html activeItem.html}
+						{#if activeItem.html}
+							{@html activeItem.html}
+						{:else}
+							{@html activeItem.element.outerHTML}
+						{/if}
 					</div>
 				{/if}
 			</div>
