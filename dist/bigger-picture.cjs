@@ -15,6 +15,9 @@ function run_all(fns) {
 function is_function(thing) {
     return typeof thing === 'function';
 }
+function safe_not_equal(a, b) {
+    return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
+}
 function not_equal(a, b) {
     return a != a ? b == b : a !== b;
 }
@@ -69,6 +72,14 @@ function loop(callback) {
 function append(target, node) {
     target.appendChild(node);
 }
+function append_empty_stylesheet(node) {
+    const style_element = element('style');
+    append_stylesheet(document, style_element);
+    return style_element.sheet;
+}
+function append_stylesheet(node, style) {
+    append(node.head || node, style);
+}
 function insert(target, node, anchor) {
     target.insertBefore(node, anchor || null);
 }
@@ -110,17 +121,57 @@ function custom_event(type, detail, bubbles = false) {
     e.initCustomEvent(type, bubbles, false, detail);
     return e;
 }
-let stylesheet;
+class HtmlTag {
+    constructor() {
+        this.e = this.n = null;
+    }
+    c(html) {
+        this.h(html);
+    }
+    m(html, target, anchor = null) {
+        if (!this.e) {
+            this.e = element(target.nodeName);
+            this.t = target;
+            this.c(html);
+        }
+        this.i(anchor);
+    }
+    h(html) {
+        this.e.innerHTML = html;
+        this.n = Array.from(this.e.childNodes);
+    }
+    i(anchor) {
+        for (let i = 0; i < this.n.length; i += 1) {
+            insert(this.t, this.n[i], anchor);
+        }
+    }
+    p(html) {
+        this.d();
+        this.h(html);
+        this.i(this.a);
+    }
+    d() {
+        this.n.forEach(detach);
+    }
+}
+
+// we need to store the information for multiple documents because a Svelte application could also contain iframes
+// https://github.com/sveltejs/svelte/issues/3624
+const managed_styles = new Map();
 let active = 0;
-let current_rules = {};
 // https://github.com/darkskyapp/string-hash/blob/master/index.js
-// function hash(str) {
-//     let hash = 5381;
-//     let i = str.length;
-//     while (i--)
-//         hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
-//     return hash >>> 0;
-// }
+function hash(str) {
+    let hash = 5381;
+    let i = str.length;
+    while (i--)
+        hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
+    return hash >>> 0;
+}
+function create_style_information(doc, node) {
+    const info = { stylesheet: append_empty_stylesheet(), rules: {} };
+    managed_styles.set(doc, info);
+    return info;
+}
 function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
     const step = 16.666 / duration;
     let keyframes = '{\n';
@@ -129,40 +180,44 @@ function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
         keyframes += p * 100 + `%{${fn(t, 1 - t)}}\n`;
     }
     const rule = keyframes + `100% {${fn(b, 1 - b)}}\n}`;
-    const name = `_bp_${Math.round(Math.random() * 1e9)}_${uid}`;
-    if (!current_rules[name]) {
-        if (!stylesheet) {
-            const style = element('style');
-            document.head.appendChild(style);
-            stylesheet = style.sheet;
-        }
-        current_rules[name] = true;
+    const name = `_bp_${hash(rule)}_${uid}`;
+    const doc = document;
+    const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc);
+    if (!rules[name]) {
+        rules[name] = true;
         stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
     }
     const animation = node.style.animation || '';
-    node.style.animation = `${animation ? `${animation}, ` : ``}${name} ${duration}ms linear ${delay}ms 1 both`;
+    node.style.animation = `${animation ? `${animation}, ` : ''}${name} ${duration}ms linear ${delay}ms 1 both`;
     active += 1;
     return name;
 }
 function delete_rule(node, name) {
-    node.style.animation = (node.style.animation || '')
-        .split(', ')
-        .filter(name
+    const previous = (node.style.animation || '').split(', ');
+    const next = previous.filter(name
         ? anim => anim.indexOf(name) < 0 // remove specific animation
         : anim => anim.indexOf('_bp') === -1 // remove all Svelte animations
-    )
-        .join(', ');
-    if (name && !--active)
-        clear_rules();
+    );
+    const deleted = previous.length - next.length;
+    if (deleted) {
+        node.style.animation = next.join(', ');
+        active -= deleted;
+        if (!active)
+            clear_rules();
+    }
 }
 function clear_rules() {
     raf(() => {
         if (active)
             return;
-        let i = stylesheet.cssRules.length;
-        while (i--)
-            stylesheet.deleteRule(i);
-        current_rules = {};
+        managed_styles.forEach(info => {
+            const { stylesheet } = info;
+            let i = stylesheet.cssRules.length;
+            while (i--)
+                stylesheet.deleteRule(i);
+            info.rules = {};
+        });
+        managed_styles.clear();
     });
 }
 
@@ -574,7 +629,7 @@ function writable(value, start = noop) {
     let stop;
     const subscribers = new Set();
     function set(new_value) {
-        if (not_equal(value, new_value)) {
+        if (safe_not_equal(value, new_value)) {
             value = new_value;
             if (stop) { // store is ready
                 const run_queue = !subscriber_queue.length;
@@ -1876,23 +1931,43 @@ function create_if_block(ctx) {
 // (319:199) {:else}
 function create_else_block(ctx) {
 	let div;
-	let raw_value = /*activeItem*/ ctx[6].html + "";
+
+	function select_block_type_1(ctx, dirty) {
+		if (/*activeItem*/ ctx[6].html) return create_if_block_6;
+		return create_else_block_1;
+	}
+
+	let current_block_type = select_block_type_1(ctx);
+	let if_block = current_block_type(ctx);
 
 	return {
 		c() {
 			div = element("div");
+			if_block.c();
 			attr(div, "class", "bp-html");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
-			div.innerHTML = raw_value;
+			if_block.m(div, null);
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) div.innerHTML = raw_value;		},
+			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
+				if_block.p(ctx, dirty);
+			} else {
+				if_block.d(1);
+				if_block = current_block_type(ctx);
+
+				if (if_block) {
+					if_block.c();
+					if_block.m(div, null);
+				}
+			}
+		},
 		i: noop,
 		o: noop,
 		d(detaching) {
 			if (detaching) detach(div);
+			if_block.d();
 		}
 	};
 }
@@ -2003,7 +2078,59 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (319:267) {#if activeItem.caption}
+// (319:271) {:else}
+function create_else_block_1(ctx) {
+	let html_tag;
+	let raw_value = /*activeItem*/ ctx[6].element.outerHTML + "";
+	let html_anchor;
+
+	return {
+		c() {
+			html_tag = new HtmlTag();
+			html_anchor = empty();
+			html_tag.a = html_anchor;
+		},
+		m(target, anchor) {
+			html_tag.m(raw_value, target, anchor);
+			insert(target, html_anchor, anchor);
+		},
+		p(ctx, dirty) {
+			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].element.outerHTML + "")) html_tag.p(raw_value);
+		},
+		d(detaching) {
+			if (detaching) detach(html_anchor);
+			if (detaching) html_tag.d();
+		}
+	};
+}
+
+// (319:227) {#if activeItem.html}
+function create_if_block_6(ctx) {
+	let html_tag;
+	let raw_value = /*activeItem*/ ctx[6].html + "";
+	let html_anchor;
+
+	return {
+		c() {
+			html_tag = new HtmlTag();
+			html_anchor = empty();
+			html_tag.a = html_anchor;
+		},
+		m(target, anchor) {
+			html_tag.m(raw_value, target, anchor);
+			insert(target, html_anchor, anchor);
+		},
+		p(ctx, dirty) {
+			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) html_tag.p(raw_value);
+		},
+		d(detaching) {
+			if (detaching) detach(html_anchor);
+			if (detaching) html_tag.d();
+		}
+	};
+}
+
+// (319:336) {#if activeItem.caption}
 function create_if_block_2(ctx) {
 	let div;
 	let raw_value = /*activeItem*/ ctx[6].caption + "";
@@ -2169,7 +2296,7 @@ function create_key_block(ctx) {
 	};
 }
 
-// (319:522) {#if items.length > 1}
+// (319:591) {#if items.length > 1}
 function create_if_block_1(ctx) {
 	let div;
 	let raw_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
