@@ -105,7 +105,7 @@
 					if (opts.el === element) {
 						position = i
 					}
-					return { element, i, ...element.dataset }
+					return { element, html: element.outerHTML, i, ...element.dataset }
 				}
 			)
 		}
@@ -334,11 +334,7 @@
 					<Iframe props={getChildProps()} />
 				{:else}
 					<div class="bp-html">
-						{#if activeItem.html}
-							{@html activeItem.html}
-						{:else}
-							{@html activeItem.element.outerHTML}
-						{/if}
+						{@html activeItem.html}
 					</div>
 				{/if}
 			</div>
