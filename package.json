@@ -64,6 +64,7 @@
 		"sass-watch-demo": "sass --watch --no-source-map src/demo/demo.scss:public/demo.css",
 		"sass-build": "sass --style expanded --no-source-map src/demo/_bigger-picture.scss:dist/bigger-picture.css && sass --style compressed --no-source-map src/demo/demo.scss:public/demo.css && cp src/demo/_bigger-picture.scss dist/bigger-picture.scss"
 	},
+	"packageManager": "pnpm@8.12.0",
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^21.1.0",
 		"@rollup/plugin-node-resolve": "^13.3.0",
