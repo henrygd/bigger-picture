@@ -121,39 +121,6 @@ function custom_event(type, detail, bubbles = false) {
     e.initCustomEvent(type, bubbles, false, detail);
     return e;
 }
-class HtmlTag {
-    constructor() {
-        this.e = this.n = null;
-    }
-    c(html) {
-        this.h(html);
-    }
-    m(html, target, anchor = null) {
-        if (!this.e) {
-            this.e = element(target.nodeName);
-            this.t = target;
-            this.c(html);
-        }
-        this.i(anchor);
-    }
-    h(html) {
-        this.e.innerHTML = html;
-        this.n = Array.from(this.e.childNodes);
-    }
-    i(anchor) {
-        for (let i = 0; i < this.n.length; i += 1) {
-            insert(this.t, this.n[i], anchor);
-        }
-    }
-    p(html) {
-        this.d();
-        this.h(html);
-        this.i(this.a);
-    }
-    d() {
-        this.n.forEach(detach);
-    }
-}
 
 // we need to store the information for multiple documents because a Svelte application could also contain iframes
 // https://github.com/sveltejs/svelte/issues/3624
@@ -1931,43 +1898,23 @@ function create_if_block(ctx) {
 // (319:199) {:else}
 function create_else_block(ctx) {
 	let div;
-
-	function select_block_type_1(ctx, dirty) {
-		if (/*activeItem*/ ctx[6].html) return create_if_block_6;
-		return create_else_block_1;
-	}
-
-	let current_block_type = select_block_type_1(ctx);
-	let if_block = current_block_type(ctx);
+	let raw_value = /*activeItem*/ ctx[6].html + "";
 
 	return {
 		c() {
 			div = element("div");
-			if_block.c();
 			attr(div, "class", "bp-html");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
-			if_block.m(div, null);
+			div.innerHTML = raw_value;
 		},
 		p(ctx, dirty) {
-			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
-				if_block.p(ctx, dirty);
-			} else {
-				if_block.d(1);
-				if_block = current_block_type(ctx);
-
-				if (if_block) {
-					if_block.c();
-					if_block.m(div, null);
-				}
-			}
-		},
+			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) div.innerHTML = raw_value;		},
 		i: noop,
 		o: noop,
 		d(detaching) {
 			if (detaching) detach(div);
-			if_block.d();
 		}
 	};
 }
@@ -2078,59 +2025,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (319:271) {:else}
-function create_else_block_1(ctx) {
-	let html_tag;
-	let raw_value = /*activeItem*/ ctx[6].element.outerHTML + "";
-	let html_anchor;
-
-	return {
-		c() {
-			html_tag = new HtmlTag();
-			html_anchor = empty();
-			html_tag.a = html_anchor;
-		},
-		m(target, anchor) {
-			html_tag.m(raw_value, target, anchor);
-			insert(target, html_anchor, anchor);
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].element.outerHTML + "")) html_tag.p(raw_value);
-		},
-		d(detaching) {
-			if (detaching) detach(html_anchor);
-			if (detaching) html_tag.d();
-		}
-	};
-}
-
-// (319:227) {#if activeItem.html}
-function create_if_block_6(ctx) {
-	let html_tag;
-	let raw_value = /*activeItem*/ ctx[6].html + "";
-	let html_anchor;
-
-	return {
-		c() {
-			html_tag = new HtmlTag();
-			html_anchor = empty();
-			html_tag.a = html_anchor;
-		},
-		m(target, anchor) {
-			html_tag.m(raw_value, target, anchor);
-			insert(target, html_anchor, anchor);
-		},
-		p(ctx, dirty) {
-			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) html_tag.p(raw_value);
-		},
-		d(detaching) {
-			if (detaching) detach(html_anchor);
-			if (detaching) html_tag.d();
-		}
-	};
-}
-
-// (319:336) {#if activeItem.caption}
+// (319:267) {#if activeItem.caption}
 function create_if_block_2(ctx) {
 	let div;
 	let raw_value = /*activeItem*/ ctx[6].caption + "";
@@ -2296,7 +2191,7 @@ function create_key_block(ctx) {
 	};
 }
 
-// (319:591) {#if items.length > 1}
+// (319:522) {#if items.length > 1}
 function create_if_block_1(ctx) {
 	let div;
 	let raw_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2495,7 +2390,12 @@ function instance($$self, $$props, $$invalidate) {
 					$$invalidate(4, position = i);
 				}
 
-				return { element, i, ...element.dataset };
+				return {
+					element,
+					html: element.outerHTML,
+					i,
+					...element.dataset
+				};
 			}));
 		}
 	};
