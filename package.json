@@ -6,7 +6,8 @@
 		".": {
 			"import": "./dist/bigger-picture.mjs",
 			"require": "./dist/bigger-picture.cjs",
-			"default": "./dist/bigger-picture.mjs"
+			"default": "./dist/bigger-picture.mjs",
+			"svelte": "./src/bigger-picture.js"
 		},
 		"./src/bigger-picture.js": "./src/bigger-picture.js",
 		"./svelte": "./src/bigger-picture.js",
