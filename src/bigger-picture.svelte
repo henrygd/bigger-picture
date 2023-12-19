@@ -6,7 +6,7 @@
 	import ImageItem from './components/image.svelte'
 	import Iframe from './components/iframe.svelte'
 	import Video from './components/video.svelte'
-	import { writable } from 'svelte/store'
+	import { get, writable } from 'svelte/store'
 	import { closing } from './stores'
 	import { listen, element as createEl } from 'svelte/internal'
 
@@ -105,7 +105,18 @@
 					if (opts.el === element) {
 						position = i
 					}
-					return { element, html: element.outerHTML, i, ...element.dataset }
+					return {
+						element,
+						i,
+						/**
+						 * Defaults html to outerHTML
+						 * element.dataset.html can override this
+						 */
+						get html() {
+							return element.outerHTML
+						},
+						...element.dataset,
+					}
 				}
 			)
 		}
