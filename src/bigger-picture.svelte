@@ -6,7 +6,7 @@
 	import ImageItem from './components/image.svelte'
 	import Iframe from './components/iframe.svelte'
 	import Video from './components/video.svelte'
-	import { writable } from 'svelte/store'
+	import { get, writable } from 'svelte/store'
 	import { closing } from './stores'
 	import { listen, element as createEl } from 'svelte/internal'
 
@@ -334,7 +334,7 @@
 					<Iframe props={getChildProps()} />
 				{:else}
 					<div class="bp-html">
-						{@html activeItem.html}
+						{@html activeItem.html ?? activeItem.element.outerHTML}
 					</div>
 				{/if}
 			</div>
