@@ -105,18 +105,7 @@
 					if (opts.el === element) {
 						position = i
 					}
-					return {
-						element,
-						i,
-						/**
-						 * Defaults html to outerHTML
-						 * element.dataset.html can override this
-						 */
-						get html() {
-							return element.outerHTML
-						},
-						...element.dataset,
-					}
+					return { element, i, ...element.dataset }
 				}
 			)
 		}
@@ -345,7 +334,7 @@
 					<Iframe props={getChildProps()} />
 				{:else}
 					<div class="bp-html">
-						{@html activeItem.html}
+						{@html activeItem.html ?? activeItem.element.outerHTML}
 					</div>
 				{/if}
 			</div>
