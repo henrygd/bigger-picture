@@ -15,9 +15,6 @@ function run_all(fns) {
 function is_function(thing) {
     return typeof thing === 'function';
 }
-function safe_not_equal(a, b) {
-    return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
-}
 function not_equal(a, b) {
     return a != a ? b == b : a !== b;
 }
@@ -72,14 +69,6 @@ function loop(callback) {
 function append(target, node) {
     target.appendChild(node);
 }
-function append_empty_stylesheet(node) {
-    const style_element = element('style');
-    append_stylesheet(document, style_element);
-    return style_element.sheet;
-}
-function append_stylesheet(node, style) {
-    append(node.head || node, style);
-}
 function insert(target, node, anchor) {
     target.insertBefore(node, anchor || null);
 }
@@ -121,24 +110,17 @@ function custom_event(type, detail, bubbles = false) {
     e.initCustomEvent(type, bubbles, false, detail);
     return e;
 }
-
-// we need to store the information for multiple documents because a Svelte application could also contain iframes
-// https://github.com/sveltejs/svelte/issues/3624
-const managed_styles = new Map();
+let stylesheet;
 let active = 0;
+let current_rules = {};
 // https://github.com/darkskyapp/string-hash/blob/master/index.js
-function hash(str) {
-    let hash = 5381;
-    let i = str.length;
-    while (i--)
-        hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
-    return hash >>> 0;
-}
-function create_style_information(doc, node) {
-    const info = { stylesheet: append_empty_stylesheet(), rules: {} };
-    managed_styles.set(doc, info);
-    return info;
-}
+// function hash(str) {
+//     let hash = 5381;
+//     let i = str.length;
+//     while (i--)
+//         hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
+//     return hash >>> 0;
+// }
 function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
     const step = 16.666 / duration;
     let keyframes = '{\n';
@@ -147,44 +129,40 @@ function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
         keyframes += p * 100 + `%{${fn(t, 1 - t)}}\n`;
     }
     const rule = keyframes + `100% {${fn(b, 1 - b)}}\n}`;
-    const name = `_bp_${hash(rule)}_${uid}`;
-    const doc = document;
-    const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc);
-    if (!rules[name]) {
-        rules[name] = true;
+    const name = `_bp_${Math.round(Math.random() * 1e9)}_${uid}`;
+    if (!current_rules[name]) {
+        if (!stylesheet) {
+            const style = element('style');
+            document.head.appendChild(style);
+            stylesheet = style.sheet;
+        }
+        current_rules[name] = true;
         stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
     }
     const animation = node.style.animation || '';
-    node.style.animation = `${animation ? `${animation}, ` : ''}${name} ${duration}ms linear ${delay}ms 1 both`;
+    node.style.animation = `${animation ? `${animation}, ` : ``}${name} ${duration}ms linear ${delay}ms 1 both`;
     active += 1;
     return name;
 }
 function delete_rule(node, name) {
-    const previous = (node.style.animation || '').split(', ');
-    const next = previous.filter(name
+    node.style.animation = (node.style.animation || '')
+        .split(', ')
+        .filter(name
         ? anim => anim.indexOf(name) < 0 // remove specific animation
         : anim => anim.indexOf('_bp') === -1 // remove all Svelte animations
-    );
-    const deleted = previous.length - next.length;
-    if (deleted) {
-        node.style.animation = next.join(', ');
-        active -= deleted;
-        if (!active)
-            clear_rules();
-    }
+    )
+        .join(', ');
+    if (name && !--active)
+        clear_rules();
 }
 function clear_rules() {
     raf(() => {
         if (active)
             return;
-        managed_styles.forEach(info => {
-            const { stylesheet } = info;
-            let i = stylesheet.cssRules.length;
-            while (i--)
-                stylesheet.deleteRule(i);
-            info.rules = {};
-        });
-        managed_styles.clear();
+        let i = stylesheet.cssRules.length;
+        while (i--)
+            stylesheet.deleteRule(i);
+        current_rules = {};
     });
 }
 
@@ -596,7 +574,7 @@ function writable(value, start = noop) {
     let stop;
     const subscribers = new Set();
     function set(new_value) {
-        if (safe_not_equal(value, new_value)) {
+        if (not_equal(value, new_value)) {
             value = new_value;
             if (stop) { // store is ready
                 const run_queue = !subscriber_queue.length;
@@ -1898,7 +1876,7 @@ function create_if_block(ctx) {
 // (319:199) {:else}
 function create_else_block(ctx) {
 	let div;
-	let raw_value = /*activeItem*/ ctx[6].html + "";
+	let raw_value = (/*activeItem*/ ctx[6].html ?? /*activeItem*/ ctx[6].element.outerHTML) + "";
 
 	return {
 		c() {
@@ -1910,7 +1888,7 @@ function create_else_block(ctx) {
 			div.innerHTML = raw_value;
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = /*activeItem*/ ctx[6].html + "")) div.innerHTML = raw_value;		},
+			if (dirty[0] & /*activeItem*/ 64 && raw_value !== (raw_value = (/*activeItem*/ ctx[6].html ?? /*activeItem*/ ctx[6].element.outerHTML) + "")) div.innerHTML = raw_value;		},
 		i: noop,
 		o: noop,
 		d(detaching) {
@@ -2025,7 +2003,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (319:267) {#if activeItem.caption}
+// (319:299) {#if activeItem.caption}
 function create_if_block_2(ctx) {
 	let div;
 	let raw_value = /*activeItem*/ ctx[6].caption + "";
@@ -2102,8 +2080,8 @@ function create_key_block(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(div, "pointerdown", /*pointerdown_handler*/ ctx[21]),
-					listen(div, "pointerup", /*pointerup_handler*/ ctx[22])
+					listen(div, "pointerdown", /*pointerdown_handler*/ ctx[20]),
+					listen(div, "pointerup", /*pointerup_handler*/ ctx[21])
 				];
 
 				mounted = true;
@@ -2191,7 +2169,7 @@ function create_key_block(ctx) {
 	};
 }
 
-// (319:522) {#if items.length > 1}
+// (319:554) {#if items.length > 1}
 function create_if_block_1(ctx) {
 	let div;
 	let raw_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2328,8 +2306,8 @@ function instance($$self, $$props, $$invalidate) {
 	/** active item object */
 	let activeItem;
 
-	/** true if activeItem is html */
-	let activeItemIsHtml;
+	/** returns true if `activeItem` is html */
+	const activeItemIsHtml = () => !activeItem.img && !activeItem.sources && !activeItem.iframe;
 
 	/** function set by child component to run when container resized */
 	let resizeFunc;
@@ -2358,10 +2336,10 @@ function instance($$self, $$props, $$invalidate) {
 		// update trigger element to restore focus
 		focusTrigger = document.activeElement;
 
-		$$invalidate(20, container.w = target.offsetWidth, container);
+		$$invalidate(19, container.w = target.offsetWidth, container);
 
 		$$invalidate(
-			20,
+			19,
 			container.h = target === document.body
 			? globalThis.innerHeight
 			: target.clientHeight,
@@ -2390,12 +2368,7 @@ function instance($$self, $$props, $$invalidate) {
 					$$invalidate(4, position = i);
 				}
 
-				return {
-					element,
-					html: element.outerHTML,
-					i,
-					...element.dataset
-				};
+				return { element, i, ...element.dataset };
 			}));
 		}
 	};
@@ -2507,7 +2480,7 @@ function instance($$self, $$props, $$invalidate) {
 	const scaleIn = node => {
 		let dimensions;
 
-		if (activeItemIsHtml) {
+		if (activeItemIsHtml()) {
 			const bpItem = node.firstChild.firstChild;
 			dimensions = [bpItem.clientWidth, bpItem.clientHeight];
 		} else {
@@ -2548,7 +2521,7 @@ function instance($$self, $$props, $$invalidate) {
 
 	/** code to run on mount / destroy */
 	const containerActions = node => {
-		$$invalidate(20, container.el = node, container);
+		$$invalidate(19, container.el = node, container);
 		let removeKeydownListener;
 		let roActive;
 		opts.onOpen?.(container.el, activeItem);
@@ -2562,12 +2535,14 @@ function instance($$self, $$props, $$invalidate) {
 		const ro = new ResizeObserver(entries => {
 				// use roActive to avoid running on initial open
 				if (roActive) {
-					$$invalidate(20, container.w = entries[0].contentRect.width, container);
-					$$invalidate(20, container.h = entries[0].contentRect.height, container);
+					$$invalidate(19, container.w = entries[0].contentRect.width, container);
+					$$invalidate(19, container.h = entries[0].contentRect.height, container);
 					$$invalidate(7, smallScreen = container.w < 769);
 
 					// run child component resize function
-					resizeFunc?.();
+					if (!activeItemIsHtml()) {
+						resizeFunc?.();
+					}
 
 					// run user defined onResize function
 					opts.onResize?.(container.el, activeItem);
@@ -2607,17 +2582,12 @@ function instance($$self, $$props, $$invalidate) {
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty[0] & /*items, position, activeItem, isOpen, activeItemIsHtml, opts, container*/ 1835121) {
+		if ($$self.$$.dirty[0] & /*items, position, isOpen, opts, container, activeItem*/ 786545) {
 			if (items) {
 				// update active item when position changes
 				$$invalidate(6, activeItem = items[position]);
 
-				$$invalidate(19, activeItemIsHtml = activeItem.hasOwnProperty('html'));
-
 				if (isOpen) {
-					// clear child resize function if html
-					activeItemIsHtml && setResizeFunc(null);
-
 					// run onUpdate when items updated
 					opts.onUpdate?.(container.el, activeItem);
 				}
@@ -2645,7 +2615,6 @@ function instance($$self, $$props, $$invalidate) {
 		open,
 		setPosition,
 		isOpen,
-		activeItemIsHtml,
 		container,
 		pointerdown_handler,
 		pointerup_handler
