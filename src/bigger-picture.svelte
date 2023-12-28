@@ -6,7 +6,7 @@
 	import ImageItem from './components/image.svelte'
 	import Iframe from './components/iframe.svelte'
 	import Video from './components/video.svelte'
-	import { get, writable } from 'svelte/store'
+	import { writable } from 'svelte/store'
 	import { closing } from './stores'
 	import { listen, element as createEl } from 'svelte/internal'
 
@@ -45,8 +45,9 @@
 	/** active item object */
 	let activeItem
 
-	/** true if activeItem is html */
-	let activeItemIsHtml
+	/** returns true if `activeItem` is html */
+	const activeItemIsHtml = () =>
+		!activeItem.img && !activeItem.sources && !activeItem.iframe
 
 	/** function set by child component to run when container resized */
 	let resizeFunc
@@ -62,10 +63,7 @@
 	$: if (items) {
 		// update active item when position changes
 		activeItem = items[position]
-		activeItemIsHtml = activeItem.hasOwnProperty('html')
 		if (isOpen) {
-			// clear child resize function if html
-			activeItemIsHtml && setResizeFunc(null)
 			// run onUpdate when items updated
 			opts.onUpdate?.(container.el, activeItem)
 		}
@@ -223,7 +221,7 @@
 	const scaleIn = (node) => {
 		let dimensions
 
-		if (activeItemIsHtml) {
+		if (activeItemIsHtml()) {
 			const bpItem = node.firstChild.firstChild
 			dimensions = [bpItem.clientWidth, bpItem.clientHeight]
 		} else {
@@ -283,7 +281,9 @@
 				container.h = entries[0].contentRect.height
 				smallScreen = container.w < 769
 				// run child component resize function
-				resizeFunc?.()
+				if (!activeItemIsHtml()) {
+					resizeFunc?.()
+				}
 				// run user defined onResize function
 				opts.onResize?.(container.el, activeItem)
 			}
