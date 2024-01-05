@@ -12,7 +12,7 @@ import FlexMasonry from 'flexmasonry/src/flexmasonry.js'
 
 // import hideShowScroll from 'hide-show-scroll'
 // import Prism from 'prismjs'
-import plausible from './plausible'
+// import plausible from './plausible'
 
 let { body } = document
 
@@ -287,7 +287,7 @@ for (let thumbnail of thumbnails) {
 createObserver()
 
 // plausible analytics
-plausible()
+// plausible()
 
 body.addEventListener('mousedown', () => body.classList.add('using-mouse'))
 body.addEventListener('keydown', () => body.classList.remove('using-mouse'))
