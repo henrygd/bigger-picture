@@ -31,5 +31,5 @@
 		title={activeItem.title}
 		on:load={() => (loaded = true)}
 	/>
-	<Loading thumb={activeItem.thumb} {loaded} />
+	<Loading {activeItem} {loaded} />
 </div>

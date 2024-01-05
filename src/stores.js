@@ -14,3 +14,6 @@ export const defaultTweenOptions = (duration) => ({
 	easing: cubicOut,
 	duration: prefersReducedMotion ? 0 : duration,
 })
+
+export const getThumbBackground = (activeItem) =>
+	!activeItem.thumb || `url(${activeItem.thumb})`

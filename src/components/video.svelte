@@ -7,6 +7,7 @@
 
 	import Loading from './loading.svelte'
 	import { attr, element, append, listen } from 'svelte/internal'
+	import { getThumbBackground } from '../stores'
 
 	export let props
 
@@ -71,11 +72,11 @@
 <div
 	class="bp-vid"
 	use:onMount
+	style:background-image={getThumbBackground(activeItem)}
 	style="
 			width:{dimensions[0]}px;
 			height:{dimensions[1]}px;
-			background-image:url({activeItem.thumb})
 		"
 >
-	<Loading thumb={activeItem.thumb} {loaded} />
+	<Loading {activeItem} {loaded} />
 </div>

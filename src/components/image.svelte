@@ -1,6 +1,6 @@
 <script>
 	import { tweened } from 'svelte/motion'
-	import { closing, defaultTweenOptions } from '../stores'
+	import { closing, defaultTweenOptions, getThumbBackground } from '../stores'
 	import { fly } from 'svelte/transition'
 	import Loading from './loading.svelte'
 
@@ -361,13 +361,13 @@
 		class="bp-img"
 		class:bp-drag={pointerDown}
 		class:bp-canzoom={maxZoom > 1 && $imageDimensions[0] < naturalWidth}
+		style:background-image={getThumbBackground(activeItem)}
+		style:transform="translate3d({$imageDimensions[0] / -2 +
+			$zoomDragTranslate[0]}px, {$imageDimensions[1] / -2 +
+			$zoomDragTranslate[1]}px, 0)"
 		style="
-			background-image:url({activeItem.thumb});
 			width:{$imageDimensions[0]}px;
 			height:{$imageDimensions[1]}px;
-			transform:translate3d({$imageDimensions[0] / -2 +
-			$zoomDragTranslate[0]}px, {$imageDimensions[1] / -2 +
-			$zoomDragTranslate[1]}px, 0)
 		"
 	>
 		{#if loaded}
@@ -380,7 +380,7 @@
 			/>
 		{/if}
 		{#if showLoader}
-			<Loading thumb={activeItem.thumb} {loaded} />
+			<Loading {activeItem} {loaded} />
 		{/if}
 	</div>
 </div>
