@@ -17,7 +17,7 @@
 		{#each layers as layer, i}
 			<img
 				style="transform: translate(0,{(-y * i) / (layers.length - 1)}px)"
-				src="https://www.firewatchgame.com/images/parallax/parallax{i}.png"
+				src="https://assets.henrygd.me/bp/images/firewatch/parallax{i}.png"
 				alt="parallax layer {layer}"
 				decoding="async"
 			/>
