@@ -266,6 +266,12 @@ URL or path to full image. Can be a `srcset` value.
 
 When using `srcset`, the `sizes` value will update automatically when an image is zoomed. You may override this behavior by setting the [`sizes`](#sizes) value.
 
+### iframe
+
+Type: `string`
+
+URL or path to iframe source
+
 ### sources
 
 Type: `Array` or `string`
@@ -294,17 +300,22 @@ onOpen(container) {
 },
 ```
 
+### attr
+
+Type: `object` or `string`
+
+Add or override default attributes on the `<img>`, `<iframe>`, `<video>`, or `<audio>` elements.
+
+<!-- prettier-ignore -->
+```html
+<div data-attr='{"credentialless": true, "referrerpolicy": "no-referrer"}'>
+```
+
 ### alt
 
 Type: `string`
 
 Image alternative text
-
-### iframe
-
-Type: `string`
-
-URL or path to iframe source
 
 ### title
 

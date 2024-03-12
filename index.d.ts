@@ -95,6 +95,8 @@ interface item {
 	tracks?: string | object[]
 	/** To control the default open / close animation, add a property `element` to each item that contains a node on the page. The active item's `element` will be where the animation opens from / closes to. If you're not using the default scale animation, this is not needed. */
 	element?: HTMLElement | EventTarget
+	/** Object of attributes to add to the `<img>`, `<iframe>`, `<video>`, `<audio>` elements. */
+	attr?: Record<string, string | boolean> | string
 }
 
 export interface activeItem extends item {

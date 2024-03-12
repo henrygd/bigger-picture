@@ -1,6 +1,11 @@
 <script>
 	import { tweened } from 'svelte/motion'
-	import { closing, defaultTweenOptions, getThumbBackground } from '../stores'
+	import {
+		addAttributes,
+		closing,
+		defaultTweenOptions,
+		getThumbBackground,
+	} from '../stores'
 	import { fly } from 'svelte/transition'
 	import Loading from './loading.svelte'
 
@@ -345,6 +350,11 @@
 			showLoader = !loaded
 		}, 250)
 	}
+
+	const addSrc = (node) => {
+		addAttributes(node, activeItem.attr)
+		node.srcset = activeItem.img
+	}
 </script>
 
 <div
@@ -372,7 +382,7 @@
 	>
 		{#if loaded}
 			<img
-				srcset={activeItem.img}
+				use:addSrc
 				sizes={opts.sizes || `${sizes}px`}
 				alt={activeItem.alt}
 				on:error={(error) => opts.onError?.(container, activeItem, error)}

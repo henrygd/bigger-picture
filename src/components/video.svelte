@@ -6,8 +6,8 @@
 	*/
 
 	import Loading from './loading.svelte'
-	import { attr, element, append, listen } from 'svelte/internal'
-	import { getThumbBackground } from '../stores'
+	import { element, append, listen } from 'svelte/internal'
+	import { addAttributes, getThumbBackground } from '../stores'
 
 	export let props
 
@@ -21,13 +21,6 @@
 	setDimensions()
 
 	props.setResizeFunc(setDimensions)
-
-	/** adds attributes to a node */
-	const addAttributes = (node, obj) => {
-		for (const key in obj) {
-			attr(node, key, obj[key])
-		}
-	}
 
 	/** create audo / video element */
 	const onMount = (node) => {
@@ -50,6 +43,7 @@
 						playsinline: true,
 						tabindex: '0',
 					})
+					addAttributes(mediaElement, activeItem.attr)
 				}
 				// add sources / tracks to media element
 				const el = element(tag)

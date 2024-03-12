@@ -1,4 +1,5 @@
 <script>
+	import { addAttributes } from '../stores'
 	import Loading from './loading.svelte'
 
 	export let props
@@ -14,8 +15,10 @@
 
 	props.setResizeFunc(setDimensions)
 
-	// add src ourselves to avoid src_url_equal call (svelte stuff)
-	const addSrc = (node) => (node.src = activeItem.iframe)
+	const addSrc = (node) => {
+		addAttributes(node, activeItem.attr)
+		node.src = activeItem.iframe
+	}
 </script>
 
 <div
