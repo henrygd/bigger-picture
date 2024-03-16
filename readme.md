@@ -362,20 +362,18 @@ Below is an example for passing English and Spanish captions. See the [MDN page 
 To control the default open / close animation, also add a property `element` to each item that contains a node on the page. The active item's `element` will be where the animation opens from / closes to. If you're not using the default scale animation, this is not needed.
 
 ```js
-let items = [
-  {
-    img: 'example.jpg',
-    thumb: 'example_thumb.jpg',
-    alt: 'Example',
-    height: 2500,
-    width: 1667,
-    // if you're using the default intro animation
-    element: node,
-  },
-]
-
 bp.open({
-  items,
+  items: [
+    {
+      img: 'example.jpg',
+      thumb: 'example_thumb.jpg',
+      alt: 'Example',
+      height: 2500,
+      width: 1667,
+      // if you're using the default intro animation
+      element: node,
+    },
+  ],
 })
 ```
 
