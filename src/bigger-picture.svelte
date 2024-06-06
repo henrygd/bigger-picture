@@ -73,7 +73,6 @@
 	export const open = (options) => {
 		opts = options
 		inline = opts.inline
-		const openItems = opts.items
 		// add class to hide scroll if not inline gallery
 		if (!inline && html.scrollHeight > html.clientHeight) {
 			html.classList.add('bp-lock')
@@ -85,27 +84,22 @@
 			target === document.body ? window.innerHeight : target.clientHeight
 		smallScreen = container.w < 769
 		position = opts.position || 0
-		// make array w/ dataset to work with
-		if (Array.isArray(openItems)) {
-			// array was passed
-			items = openItems.map((item, i) => {
-				// override gallery position if needed
-				if (opts.el && opts.el === item.element) {
-					position = i
-				}
-				return { i, ...item }
-			})
-		} else {
-			// nodelist / node was passed
-			items = (openItems.length ? [...openItems] : [openItems]).map(
-				(element, i) => {
-					// override gallery position if needed
-					if (opts.el === element) {
-						position = i
-					}
-					return { element, i, ...element.dataset }
-				}
-			)
+		// set items
+		items = []
+		for (let i = 0; i < (opts.items.length || 1); i++) {
+			let item = opts.items[i] || opts.items
+			if ('dataset' in item) {
+				items.push({ element: item, i, ...item.dataset })
+			} else {
+				item.i = i
+				items.push(item)
+				// set item to element for position check below
+				item = item.element
+			}
+			// override gallery position if needed
+			if (opts.el && opts.el === item) {
+				position = i
+			}
 		}
 	}
 
