@@ -115,6 +115,10 @@ export interface BiggerPictureInstance {
 	prev: () => void
 	/** Changes to `position` item in gallery (zero-indexed). */
 	setPosition: (options: { position: number }) => void
+	/** Array of all items in currently active gallery */
+	items: item[]
+	/** Gallery target */
+	target: HTMLElement
 }
 
 interface initObject {

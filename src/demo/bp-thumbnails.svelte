@@ -97,7 +97,7 @@
 	}
 
 	const onMount = (bpWrap) => {
-		bp = new BiggerPicture({
+		bp = BiggerPicture({
 			target: bpWrap,
 		})
 		bp.open({
