@@ -6,7 +6,6 @@
 	*/
 
 	import Loading from './loading.svelte'
-	import { element, append, listen } from 'svelte/internal'
 	import { addAttributes, getThumbBackground } from '../stores'
 
 	export let props
@@ -34,7 +33,7 @@
 			for (const obj of arr) {
 				// create media element if it doesn't exist
 				if (!mediaElement) {
-					mediaElement = element(
+					mediaElement = document.createElement(
 						obj.type?.includes('audio') ? 'audio' : 'video'
 					)
 					addAttributes(mediaElement, {
@@ -46,20 +45,18 @@
 					addAttributes(mediaElement, activeItem.attr)
 				}
 				// add sources / tracks to media element
-				const el = element(tag)
+				const el = document.createElement(tag)
 				addAttributes(el, obj)
 				if (tag == 'source') {
-					listen(el, 'error', (error) =>
-						opts.onError?.(container, activeItem, error)
-					)
+					el.onError = (error) => opts.onError?.(container, activeItem, error)
 				}
-				append(mediaElement, el)
+				mediaElement.append(el)
 			}
 		}
 		appendToVideo('source', activeItem.sources)
 		appendToVideo('track', activeItem.tracks || [])
-		listen(mediaElement, 'canplay', () => (loaded = true))
-		append(node, mediaElement)
+		mediaElement.oncanplay = () => (loaded = true)
+		node.append(mediaElement)
 	}
 </script>
 

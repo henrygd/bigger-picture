@@ -8,7 +8,6 @@
 	import Video from './components/video.svelte'
 	import { writable } from 'svelte/store'
 	import { closing } from './stores'
-	import { listen, element as createEl } from 'svelte/internal'
 
 	/** items currently displayed in gallery */
 	export let items = undefined
@@ -187,7 +186,7 @@
 	/** loads / decodes image for item */
 	const loadImage = (item) => {
 		if (item.img) {
-			const image = createEl('img')
+			const image = document.createElement('img')
 			image.sizes = opts.sizes || `${calculateDimensions(item)[0]}px`
 			image.srcset = item.img
 			item.preload = true
@@ -260,12 +259,11 @@
 	/** code to run on mount / destroy */
 	const containerActions = (node) => {
 		container.el = node
-		let removeKeydownListener
 		let roActive
 		opts.onOpen?.(container.el, activeItem)
 		// don't use keyboard events for inline galleries
 		if (!inline) {
-			removeKeydownListener = listen(window, 'keydown', onKeydown)
+			window.addEventListener('keydown', onKeydown)
 		}
 		// set up resize observer
 		const ro = new ResizeObserver((entries) => {
@@ -287,7 +285,7 @@
 		return {
 			destroy() {
 				ro.disconnect()
-				removeKeydownListener?.()
+				window.removeEventListener('keydown', onKeydown)
 				closing.set(false)
 				// remove class hiding scroll
 				html.classList.remove('bp-lock')
