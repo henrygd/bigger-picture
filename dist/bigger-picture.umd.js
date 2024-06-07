@@ -1734,7 +1734,7 @@
     			for (const obj of arr) {
     				// create media element if it doesn't exist
     				if (!mediaElement) {
-    					mediaElement = element((obj.type?.includes('audio')) ? 'audio' : 'video');
+    					mediaElement = document.createElement((obj.type?.includes('audio')) ? 'audio' : 'video');
 
     					addAttributes(mediaElement, {
     						controls: true,
@@ -1747,22 +1747,22 @@
     				}
 
     				// add sources / tracks to media element
-    				const el = element(tag);
+    				const el = document.createElement(tag);
 
     				addAttributes(el, obj);
 
     				if (tag == 'source') {
-    					listen(el, 'error', error => opts.onError?.(container, activeItem, error));
+    					el.onError = error => opts.onError?.(container, activeItem, error);
     				}
 
-    				append(mediaElement, el);
+    				mediaElement.append(el);
     			}
     		};
 
     		appendToVideo('source', activeItem.sources);
     		appendToVideo('track', activeItem.tracks || []);
-    		listen(mediaElement, 'canplay', () => $$invalidate(0, loaded = true));
-    		append(node, mediaElement);
+    		mediaElement.oncanplay = () => $$invalidate(0, loaded = true);
+    		node.append(mediaElement);
     	};
 
     	
@@ -1903,7 +1903,7 @@
     	};
     }
 
-    // (319:199) {:else}
+    // (311:199) {:else}
     function create_else_block(ctx) {
     	let div;
     	let raw_value = (/*activeItem*/ ctx[6].html ?? /*activeItem*/ ctx[6].element.outerHTML) + "";
@@ -1927,7 +1927,7 @@
     	};
     }
 
-    // (319:165) 
+    // (311:165) 
     function create_if_block_5(ctx) {
     	let iframe;
     	let current;
@@ -1960,7 +1960,7 @@
     	};
     }
 
-    // (319:104) 
+    // (311:104) 
     function create_if_block_4(ctx) {
     	let video;
     	let current;
@@ -1993,7 +1993,7 @@
     	};
     }
 
-    // (319:4) {#if activeItem.img}
+    // (311:4) {#if activeItem.img}
     function create_if_block_3(ctx) {
     	let imageitem;
     	let current;
@@ -2033,7 +2033,7 @@
     	};
     }
 
-    // (319:299) {#if activeItem.caption}
+    // (311:299) {#if activeItem.caption}
     function create_if_block_2(ctx) {
     	let div;
     	let raw_value = /*activeItem*/ ctx[6].caption + "";
@@ -2068,7 +2068,7 @@
     	};
     }
 
-    // (308:43) {#key activeItem.i}
+    // (300:43) {#key activeItem.i}
     function create_key_block(ctx) {
     	let div;
     	let current_block_type_index;
@@ -2199,7 +2199,7 @@
     	};
     }
 
-    // (319:554) {#if items.length > 1}
+    // (311:554) {#if items.length > 1}
     function create_if_block_1(ctx) {
     	let div;
     	let raw_value = `${/*position*/ ctx[4] + 1} / ${/*items*/ ctx[0].length}` + "";
@@ -2356,7 +2356,6 @@
     	const open = options => {
     		$$invalidate(5, opts = options);
     		$$invalidate(8, inline = opts.inline);
-    		const openItems = opts.items;
 
     		// add class to hide scroll if not inline gallery
     		if (!inline && html.scrollHeight > html.clientHeight) {
@@ -2379,27 +2378,26 @@
     		$$invalidate(7, smallScreen = container.w < 769);
     		$$invalidate(4, position = opts.position || 0);
 
-    		// make array w/ dataset to work with
-    		if (Array.isArray(openItems)) {
-    			// array was passed
-    			$$invalidate(0, items = openItems.map((item, i) => {
-    				// override gallery position if needed
-    				if (opts.el && opts.el === item.element) {
-    					$$invalidate(4, position = i);
-    				}
+    		// set items
+    		$$invalidate(0, items = []);
 
-    				return { i, ...item };
-    			}));
-    		} else {
-    			// nodelist / node was passed
-    			$$invalidate(0, items = (openItems.length ? [...openItems] : [openItems]).map((element, i) => {
-    				// override gallery position if needed
-    				if (opts.el === element) {
-    					$$invalidate(4, position = i);
-    				}
+    		for (let i = 0; i < (opts.items.length || 1); i++) {
+    			let item = opts.items[i] || opts.items;
 
-    				return { element, i, ...element.dataset };
-    			}));
+    			if ('dataset' in item) {
+    				items.push({ element: item, i, ...item.dataset });
+    			} else {
+    				item.i = i;
+    				items.push(item);
+
+    				// set item to element for position check below
+    				item = item.element;
+    			}
+
+    			// override gallery position if needed
+    			if (opts.el && opts.el === item) {
+    				$$invalidate(4, position = i);
+    			}
     		}
     	};
 
@@ -2477,7 +2475,7 @@
     	/** loads / decodes image for item */
     	const loadImage = item => {
     		if (item.img) {
-    			const image = element('img');
+    			const image = document.createElement('img');
     			image.sizes = opts.sizes || `${calculateDimensions(item)[0]}px`;
     			image.srcset = item.img;
     			item.preload = true;
@@ -2552,13 +2550,12 @@
     	/** code to run on mount / destroy */
     	const containerActions = node => {
     		$$invalidate(19, container.el = node, container);
-    		let removeKeydownListener;
     		let roActive;
     		opts.onOpen?.(container.el, activeItem);
 
     		// don't use keyboard events for inline galleries
     		if (!inline) {
-    			removeKeydownListener = listen(globalThis, 'keydown', onKeydown);
+    			globalThis.addEventListener('keydown', onKeydown);
     		}
 
     		// set up resize observer
@@ -2586,7 +2583,7 @@
     		return {
     			destroy() {
     				ro.disconnect();
-    				removeKeydownListener?.();
+    				globalThis.removeEventListener('keydown', onKeydown);
     				closing.set(false);
 
     				// remove class hiding scroll
