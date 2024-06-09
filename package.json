@@ -1,6 +1,6 @@
 {
 	"name": "bigger-picture",
-	"version": "1.1.17",
+	"version": "1.1.18-rc1",
 	"type": "module",
 	"exports": {
 		".": {
