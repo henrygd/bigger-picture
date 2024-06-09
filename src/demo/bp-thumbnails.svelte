@@ -3,7 +3,6 @@
 	import { tweened } from 'svelte/motion'
 	import { fade } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
-	import { prefersReducedMotion } from '../stores'
 	import { resize } from './actions'
 
 	let opts
@@ -19,6 +18,10 @@
 	let dragPositions = []
 	let focusWrap
 	let closing
+
+	const prefersReducedMotion = globalThis.matchMedia?.(
+		'(prefers-reduced-motion: reduce)'
+	).matches
 
 	let translate = tweened(0, {
 		easing: cubicOut,
