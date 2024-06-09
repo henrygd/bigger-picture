@@ -16,7 +16,8 @@
 		"./dist/bigger-picture.css": "./dist/bigger-picture.css",
 		"./dist/bigger-picture.scss": "./dist/bigger-picture.scss",
 		"./css": "./dist/bigger-picture.css",
-		"./scss": "./dist/bigger-picture.scss"
+		"./scss": "./dist/bigger-picture.scss",
+		"./stores": "./src/stores.js"
 	},
 	"svelte": "./src/bigger-picture.js",
 	"types": "index.d.ts",
@@ -27,6 +28,9 @@
 			],
 			"svelte": [
 				"index.d.ts"
+			],
+			"stores": [
+				"src/stores.d.ts"
 			]
 		}
 	},
