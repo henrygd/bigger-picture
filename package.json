@@ -11,7 +11,11 @@
 			"types": "./index.d.ts"
 		},
 		"./src/bigger-picture.js": "./src/bigger-picture.js",
-		"./svelte": "./src/bigger-picture.js",
+		"./svelte": {
+			"types": "./index.d.ts",
+			"import": "./src/bigger-picture.js",
+			"default": "./src/bigger-picture.js"
+		},
 		"./vanilla": "./dist/bigger-picture.mjs",
 		"./dist/bigger-picture.css": "./dist/bigger-picture.css",
 		"./dist/bigger-picture.scss": "./dist/bigger-picture.scss",
