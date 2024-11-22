@@ -388,6 +388,23 @@ Use the source `.svelte` files directly by importing `bigger-picture/svelte`. Th
 import BiggerPicture from 'bigger-picture/svelte'
 ```
 
+### Svelte 5 compatibility
+
+This library was made with Svelte 4, so use the `compatibility.componentApi` compiler option to allow backwards compatibility.
+
+If I have time, I'll release a new major version with Svelte 5.
+
+```js
+/// svelte.config.js
+export default {
+  compilerOptions: {
+    compatibility: {
+      componentApi: 4,
+    },
+  },
+}
+```
+
 ## License
 
 MIT
