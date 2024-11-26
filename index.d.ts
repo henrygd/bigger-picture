@@ -114,7 +114,7 @@ export interface BiggerPictureInstance {
 	/** Changes to previous item in gallery. */
 	prev: () => void
 	/** Changes to `position` item in gallery (zero-indexed). */
-	setPosition: (options: { position: number }) => void
+	setPosition: (position: number) => void
 	/** Array of all items in currently active gallery */
 	items: item[]
 	/** Gallery target */
