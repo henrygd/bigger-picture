@@ -23,6 +23,7 @@ let bpThumbnails = new BiggerPictureThumbnails({
 })
 
 let imageLinks = document.querySelectorAll('#images a')
+let coverLinks = document.querySelectorAll('#cover a')
 let vidIframeLinks = document.querySelectorAll('#vids a')
 let htmlLinks = document.querySelectorAll('[data-html]')
 let captionLinks = document.querySelectorAll('#captions a')
@@ -57,6 +58,7 @@ function openBiggerPicture(items, e) {
 		el: e.currentTarget,
 		// position: 3,
 		items,
+		thumbs: true,
 		maxZoom: 3,
 		// scale: 0.8,
 		// noClose: true,
@@ -134,6 +136,7 @@ function initInlineGallery() {
 		noClose: true,
 		inline: true,
 		maxZoom: 4,
+		thumbs: true,
 		noPinch: (container) => container.clientWidth < 800,
 		onImageClick(inlineContainer, inlineActiveItem) {
 			if (!(inlineContainer.clientWidth < 800)) {
@@ -210,6 +213,7 @@ handleMasonry(document.querySelectorAll('.masonry'))
 
 // BiggerPicture setup
 handleNodes(imageLinks)
+handleNodes(coverLinks)
 handleNodes(captionLinks)
 handleNodes(responsiveExample)
 handleVids(vidIframeLinks)

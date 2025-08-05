@@ -5,69 +5,64 @@
 	a larger vanilla bundle size, so we make them ourselves.
 	*/
 
-	import Loading from './loading.svelte'
-	import { addAttributes, getThumbBackground } from '../stores'
+	import Loading from './loading.svelte';
+	import { addAttributes, getThumbBackground } from '../stores';
 
-	export let props
+	export let props;
+	export let activeDimensions;
 
-	let loaded, dimensions
+	let loaded = false;
 
-	const { activeItem, opts, container } = props
+	const { activeItem, opts, container } = props;
 
-	const setDimensions = () =>
-		(dimensions = props.calculateDimensions(activeItem))
-
-	setDimensions()
-
-	props.setResizeFunc(setDimensions)
-
-	/** create audo / video element */
+	/** create audio / video element */
 	const onMount = (node) => {
-		let mediaElement
+
+		let mediaElement;
 
 		/** takes supplied object and creates elements in video */
-		const appendToVideo = (tag, arr) => {
-			if (!Array.isArray(arr)) {
-				arr = JSON.parse(arr)
+		const appendToVideo = (tag, list) => {
+			if (!Array.isArray(list)) {
+				list = JSON.parse(list)
 			}
-			for (const obj of arr) {
+			for (let item of list) {
 				// create media element if it doesn't exist
 				if (!mediaElement) {
-					mediaElement = document.createElement(
-						obj.type?.includes('audio') ? 'audio' : 'video'
-					)
+					mediaElement = document.createElement(item.type?.includes('audio') ? 'audio' : 'video');
 					addAttributes(mediaElement, {
-						controls: true,
-						autoplay: true,
-						playsinline: true,
-						tabindex: '0',
-					})
-					addAttributes(mediaElement, activeItem.attr)
+						controls: true, autoplay: true, playsinline: true, tabindex: '0'
+					});
+					addAttributes(mediaElement, activeItem.attr);
 				}
 				// add sources / tracks to media element
-				const el = document.createElement(tag)
-				addAttributes(el, obj)
-				if (tag == 'source') {
-					el.onError = (error) => opts.onError?.(container, activeItem, error)
+				let el = document.createElement(tag);
+				addAttributes(el, item);
+				if (tag === 'source') {
+					el.onError = (error) => opts.onError?.(container, activeItem, error);
 				}
-				mediaElement.append(el)
+				mediaElement.append(el);
 			}
+		};
+
+		appendToVideo('source', activeItem.sources);
+
+		if (activeItem.tracks) {
+			appendToVideo('track', activeItem.tracks);
 		}
-		appendToVideo('source', activeItem.sources)
-		appendToVideo('track', activeItem.tracks || [])
-		mediaElement.oncanplay = () => (loaded = true)
-		node.append(mediaElement)
-	}
+
+		mediaElement.oncanplay = () => (loaded = true);
+
+		node.append(mediaElement);
+
+	};
 </script>
 
 <div
-	class="bp-vid"
+	class="bp-video"
 	use:onMount
+	style:width="{activeDimensions[0]}px"
+	style:height="{activeDimensions[1]}px"
 	style:background-image={getThumbBackground(activeItem)}
-	style="
-			width:{dimensions[0]}px;
-			height:{dimensions[1]}px;
-		"
 >
 	<Loading {activeItem} {loaded} />
 </div>

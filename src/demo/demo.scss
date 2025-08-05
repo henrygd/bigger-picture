@@ -28,7 +28,7 @@ body {
 	-webkit-tap-highlight-color: transparent;
 	font-size: 17px;
 	background: #fff;
-	background-image: url('../assets/pattern_waves.png');
+	background-image: url('assets/pattern_waves.png');
 }
 
 img {
@@ -265,7 +265,7 @@ h3 {
 		&:before {
 			content: '';
 			@include fillall;
-			background-image: url('../assets/pattern_waves.png');
+			background-image: url('assets/pattern_waves.png');
 			opacity: 0.05;
 		}
 		> * {
@@ -434,6 +434,47 @@ h3 {
 }
 .flexmasonry-break-7 {
 	order: 7;
+}
+
+.flexigrid {
+	display: flex;
+	position: relative;
+	flex-wrap: wrap;
+	margin: 0 -10px -10px 0;
+
+	a {
+		display: block;
+		width: calc(25% - 10px);
+		position: relative;
+		margin: 0 10px 10px 0;
+		flex-grow: 0;
+		flex-shrink: 0;
+		max-height: 300px;
+
+		&:nth-child(n + 5) {
+			max-height: none;
+
+			img {
+				object-fit: contain;
+			}
+
+		}
+
+	}
+
+	img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	@media (max-width: 640px) {
+		a {
+			width: calc(50% - 10px);
+		}
+	}
+
 }
 
 footer {
@@ -609,7 +650,7 @@ body:not(.using-mouse) {
 }
 
 .blur {
-	> div:first-child {
+	.bp-overlay {
 		background: rgba(0, 0, 0, 0.6);
 		backdrop-filter: blur(9px);
 	}

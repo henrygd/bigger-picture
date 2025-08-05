@@ -1,7 +1,7 @@
 <svelte:options accessors={true} />
 
 <script>
-	import { fade } from 'svelte/transition'
+	import { fly } from 'svelte/transition'
 
 	export let isClosing = false
 
@@ -34,7 +34,7 @@
 
 	{#if isClosing}
 		<img
-			in:fade
+			in:fly
 			src="https://assets.henrygd.me/bp/images/firewatch-2.png"
 			decoding="async"
 			alt=""

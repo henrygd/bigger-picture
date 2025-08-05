@@ -1,6 +1,6 @@
 [npm-image]: https://flat.badgen.net/npm/v/bigger-picture?color=blue
 [npm-url]: https://www.npmjs.com/package/bigger-picture
-[size-image]: https://flat.badgen.net/static/gzip%20size/8.4%20KB/green
+[size-image]: https://flat.badgen.net/static/gzip%20size/12.3%20KB/green
 
 <!-- [size-image]: https://flat.badgen.net/badgesize/gzip/henrygd/bigger-picture/master/dist/bigger-picture.min.mjs?color=green -->
 
@@ -123,6 +123,13 @@ Type: `number`<br>
 Default: `0`
 
 Start position of gallery. If using `el` this will be ignored.
+
+### types
+
+Type: `string` or `string[]`<br>
+Default: ``
+
+Defines which types should be included to the gallery. Supported values: `video`, `iframe`, `image`, and `html`
 
 > Note: This number is zero-indexed. The third item would be position 2.
 
@@ -258,15 +265,30 @@ Default: `1080`
 
 Largest possible height of media item in pixels. Not required for HTML, which can be sized via CSS.
 
+### link
+
+Type: `string` or `function`<br>
+
+A link to an image, video, audio, PDF, YouTube, Vimeo, SoundCloud, Google Drive, or Dropbox. It will be automatically parsed and displayed
+
+### fit
+
+Type: `string` or `function`<br>
+Default: `fill`
+
+Controls how images are sized during the open and close animations. Accepts: 'cover', 'contain', and 'fill'. If not specified, the fill state can be determined
+by `thumb` element or by the first inner image.
+
 ### thumb
 
-Type: `string`
+Type: `string`, `HTMLImageElement`, or `function`
 
-URL or path to image used for thumbnail displayed before media loads.
+An image element, image URL or path to image used for thumbnail displayed before media loads. If an image element is provided, it will be used to detect the fit
+mode
 
 ### img
 
-Type: `string`
+Type: `string` or `function`
 
 URL or path to full image. Can be a `srcset` value.
 
@@ -274,13 +296,13 @@ When using `srcset`, the `sizes` value will update automatically when an image i
 
 ### iframe
 
-Type: `string`
+Type: `string` or `function`
 
 URL or path to iframe source
 
 ### sources
 
-Type: `Array` or `string`
+Type: `Array`, `string`, or `function`
 
 For native video and audio, an array of objects specifying [`src`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-src) (required) and [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-type) (optional). A string may be used if it is JSON parsable. Each object will create a `source` element, and all key / value pairs in the object will be added as attributes.
 
@@ -291,7 +313,7 @@ For native video and audio, an array of objects specifying [`src`](https://devel
 
 ### html
 
-Type: `string`
+Type: `string` or `function`
 
 HTML that will be rendered in the container. When using HTML, please control dimensions with CSS. No need to pass `width` or `height`.
 
@@ -308,7 +330,7 @@ onOpen(container) {
 
 ### attr
 
-Type: `object` or `string`
+Type: `object`, `string`, or `function`
 
 Add or override default attributes on the `<img>`, `<iframe>`, `<video>`, or `<audio>` elements.
 
@@ -319,7 +341,7 @@ Add or override default attributes on the `<img>`, `<iframe>`, `<video>`, or `<a
 
 ### alt
 
-Type: `string`
+Type: `string` or `function`
 
 Image alternative text
 
@@ -331,7 +353,7 @@ Title attribute for iframes
 
 ### caption
 
-Type: `string`
+Type: `string` or `function`
 
 Text to be displayed using built in caption. You may pass html tags and styles can be overriden via CSS.
 

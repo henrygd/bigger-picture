@@ -1,7 +1,7 @@
 <script>
 	import BiggerPicture from '../bigger-picture.js'
 	import { tweened } from 'svelte/motion'
-	import { fade } from 'svelte/transition'
+	import { fly } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 	import { resize } from './actions'
 
@@ -19,7 +19,7 @@
 	let focusWrap
 	let closing
 
-	const prefersReducedMotion = globalThis.matchMedia?.(
+	const prefersReducedMotion = window.matchMedia?.(
 		'(prefers-reduced-motion: reduce)'
 	).matches
 
@@ -132,14 +132,14 @@
 			$translate = 0
 		}}
 	>
-		<div class="thumbnail-bp" use:onMount />
+		<div class="thumbnail-bp" use:onMount></div>
 		<div
 			class="thumbnails"
-			in:fade={{
+			in:fly={{
 				easing: cubicOut,
 				duration: prefersReducedMotion ? 0 : 480,
 			}}
-			out:fade={{
+			out:fly={{
 				easing: cubicOut,
 				duration: prefersReducedMotion ? 0 : 480,
 			}}
@@ -162,7 +162,7 @@
 							on:focus={(e) => scrollToButton(e.target)}
 							on:pointerup={() => !hasDragged && bp.setPosition(element.i)}
 							on:keyup={(e) => e.key === 'Enter' && bp.setPosition(element.i)}
-						/>
+						></button>
 					{/each}
 				</div>
 			</div>

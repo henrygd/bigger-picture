@@ -1,173 +1,157 @@
 <script>
-	import { tweened } from 'svelte/motion'
-	import {
-		addAttributes,
-		closing,
-		defaultTweenOptions,
-		getThumbBackground,
-	} from '../stores'
-	import { fly } from 'svelte/transition'
-	import Loading from './loading.svelte'
+	import { tweened } from 'svelte/motion';
+	import { addAttributes, closing, defaultTweenOptions, getThumbBackground } from '../stores';
 
-	export let props
-	export let smallScreen
+	import Loading from './loading.svelte';
 
-	let { activeItem, opts, prev, next, zoomed, container } = props
+	export let props;
+	export let smallScreen;
+	export let containerWidth;
+	export let containerHeight;
+	export let activeDimensions;
 
-	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10
+	let { activeItem, opts, prev, next, zoomed, container } = props;
 
-	let calculatedDimensions = props.calculateDimensions(activeItem)
+	let maxZoom = activeItem.maxZoom || opts.maxZoom || 10;
 
 	/** value of sizes attribute */
-	let sizes = calculatedDimensions[0]
+	let sizes = activeDimensions[0];
 
 	/** tracks load state of image */
-	let loaded, showLoader
+	let loaded, showLoader;
 
 	/** stores pinch info if multiple touch events active */
-	let pinchDetails
+	let pinchDetails;
 
 	/** image html element (.bp-img) */
-	let bpImg
+	let bpImg;
 
 	/** track distance for pinch events */
-	let prevDiff = 0
+	let prevDiff = 0;
 
-	let pointerDown, hasDragged
-	let dragStartX, dragStartY
+	let pointerDown, hasDragged;
+	let dragStartX, dragStartY;
 
 	/** zoomDragTranslate values on start of drag */
-	let dragStartTranslateX, dragStartTranslateY
+	let dragStartTranslateX, dragStartTranslateY;
 
 	/** if true, adds class to .bp-wrap to avoid image cropping */
-	let closingWhileZoomed
+	let closingWhileZoomed;
 
-	const naturalWidth = +activeItem.width
+	let naturalWidth = +activeItem.width;
 
 	/** store positions for drag inertia */
-	const dragPositions = []
+	const dragPositions = [];
 
 	/** cache pointer events to handle pinch */
-	const pointerCache = new Map()
+	const pointerCache = new Map();
 
 	/** tween to control image size */
-	const imageDimensions = tweened(
-		calculatedDimensions,
-		defaultTweenOptions(400)
-	)
-	/** translate transform for pointerDown */
-	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions(400))
+	const imageDimensions = tweened(activeDimensions, defaultTweenOptions(500));
 
-	$: zoomed.set($imageDimensions[0] - 10 > calculatedDimensions[0])
+	/** translate transform for pointerDown */
+	const zoomDragTranslate = tweened([0, 0], defaultTweenOptions(500));
+
+	$: zoomed.set($imageDimensions[0] - 10 > activeDimensions[0]);
 
 	// if zoomed while closing, zoom out image and add class
 	// to change contain value on .bp-wrap to avoid cropping
 	$: if ($closing && $zoomed && !opts.intro) {
-		const closeTweenOpts = defaultTweenOptions(480)
-		zoomDragTranslate.set([0, 0], closeTweenOpts)
-		imageDimensions.set(calculatedDimensions, closeTweenOpts)
-		closingWhileZoomed = true
+		const closeTweenOpts = defaultTweenOptions(500);
+		zoomDragTranslate.set([0, 0], closeTweenOpts);
+		imageDimensions.set(activeDimensions, closeTweenOpts);
+		closingWhileZoomed = true;
 	}
 
 	/** calculate translate position with bounds */
 	const boundTranslateValues = ([x, y], newDimensions = $imageDimensions) => {
 		// image drag translate bounds
-		const maxTranslateX = (newDimensions[0] - container.w) / 2
-		const maxTranslateY = (newDimensions[1] - container.h) / 2
+		let maxTranslateX = (newDimensions[0] - containerWidth) / 2,
+			maxTranslateY = (newDimensions[1] - containerHeight) / 2;
 		// x max drag
 		if (maxTranslateX < 0) {
-			x = 0
+			x = 0;
 		} else if (x > maxTranslateX) {
 			if (smallScreen) {
 				// bound to left side (allow slight over drag)
-				x = pointerDown
-					? maxTranslateX + (x - maxTranslateX) / 10
-					: maxTranslateX
+				x = pointerDown ? maxTranslateX + (x - maxTranslateX) / 10 : maxTranslateX;
 				// previous item if dragged past threshold
 				if (x > maxTranslateX + 20) {
 					// pointerdown = undefined to stop pointermove from running again
-					pointerDown = prev()
+					pointerDown = prev();
 				}
 			} else {
-				x = maxTranslateX
+				x = maxTranslateX;
 			}
 		} else if (x < -maxTranslateX) {
 			// bound to right side (allow slight over drag)
 			if (smallScreen) {
-				x = pointerDown
-					? -maxTranslateX - (-maxTranslateX - x) / 10
-					: -maxTranslateX
+				x = pointerDown ? -maxTranslateX - (-maxTranslateX - x) / 10 : -maxTranslateX;
 				// next item if dragged past threshold
 				if (x < -maxTranslateX - 20) {
 					// pointerdown = undefined to stop pointermove from running again
-					pointerDown = next()
+					pointerDown = next();
 				}
 			} else {
-				x = -maxTranslateX
+				x = -maxTranslateX;
 			}
 		}
 		// y max drag
 		if (maxTranslateY < 0) {
-			y = 0
+			y = 0;
 		} else if (y > maxTranslateY) {
-			y = maxTranslateY
+			y = maxTranslateY;
 		} else if (y < -maxTranslateY) {
-			y = -maxTranslateY
+			y = -maxTranslateY;
 		}
-		return [x, y]
-	}
+		return [x, y];
+	};
 
 	/** updates zoom level in or out based on amt value */
 	function changeZoom(amt = maxZoom, e) {
 		if ($closing) {
-			return
+			return;
 		}
 
-		const maxWidth = calculatedDimensions[0] * maxZoom
-
-		let newWidth = $imageDimensions[0] + $imageDimensions[0] * amt
-		let newHeight = $imageDimensions[1] + $imageDimensions[1] * amt
+		let maxWidth = activeDimensions[0] * maxZoom,
+			newWidth = $imageDimensions[0] + $imageDimensions[0] * amt,
+			newHeight = $imageDimensions[1] + $imageDimensions[1] * amt;
 
 		if (amt > 0) {
 			if (newWidth > maxWidth) {
 				// requesting size large than max zoom
-				newWidth = maxWidth
-				newHeight = calculatedDimensions[1] * maxZoom
+				newWidth = maxWidth;
+				newHeight = activeDimensions[1] * maxZoom;
 			}
 			if (newWidth > naturalWidth) {
 				// if requesting zoom larger than natural size
-				newWidth = naturalWidth
-				newHeight = +activeItem.height
+				newWidth = naturalWidth;
+				newHeight = +activeItem.height;
 			}
-		} else if (newWidth < calculatedDimensions[0]) {
+		} else if (newWidth < activeDimensions[0]) {
 			// if requesting image smaller than starting size
-			imageDimensions.set(calculatedDimensions)
-			return zoomDragTranslate.set([0, 0])
+			imageDimensions.set(activeDimensions);
+			return zoomDragTranslate.set([0, 0]);
 		}
 
-		let { x, y, width, height } = bpImg.getBoundingClientRect()
+		let { x, y, width, height } = bpImg.getBoundingClientRect();
 
 		// distance clicked from center of image
-		const offsetX = e ? e.clientX - x - width / 2 : 0
-		const offsetY = e ? e.clientY - y - height / 2 : 0
+		let offsetX = e ? e.clientX - x - width / 2 : 0,
+			offsetY = e ? e.clientY - y - height / 2 : 0;
 
-		x = -offsetX * (newWidth / width) + offsetX
-		y = -offsetY * (newHeight / height) + offsetY
+		x = -offsetX * (newWidth / width) + offsetX;
+		y = -offsetY * (newHeight / height) + offsetY;
 
-		const newDimensions = [newWidth, newHeight]
+		let newDimensions = [newWidth, newHeight];
 
 		// set new dimensions and update sizes property
 		imageDimensions.set(newDimensions).then(() => {
-			sizes = Math.round(Math.max(sizes, newWidth))
-		})
+			sizes = Math.round(Math.max(sizes, newWidth));
+		});
 
 		// update translate value
-		zoomDragTranslate.set(
-			boundTranslateValues(
-				[$zoomDragTranslate[0] + x, $zoomDragTranslate[1] + y],
-				newDimensions
-			)
-		)
+		zoomDragTranslate.set(boundTranslateValues([$zoomDragTranslate[0] + x, $zoomDragTranslate[1] + y], newDimensions));
 	}
 
 	// allow zoom to be read / set externally
@@ -180,181 +164,166 @@
 	const onWheel = (e) => {
 		// return if scrolling past inline gallery w/ wheel
 		if (opts.inline && !$zoomed) {
-			return
+			return;
 		}
 		// preventDefault to stop scrolling on zoomed inline image
-		e.preventDefault()
+		e.preventDefault();
 		// change zoom on wheel
-		changeZoom(e.deltaY / -300, e)
-	}
+		changeZoom(e.deltaY / -300, e);
+	};
 
 	/** on drag start, store initial position and image translate values */
 	const onPointerDown = (e) => {
 		// don't run if right click
 		if (e.button !== 2) {
-			e.preventDefault()
-			pointerDown = true
-			pointerCache.set(e.pointerId, e)
-			dragStartX = e.clientX
-			dragStartY = e.clientY
-			dragStartTranslateX = $zoomDragTranslate[0]
-			dragStartTranslateY = $zoomDragTranslate[1]
+			e.preventDefault();
+			pointerDown = true;
+			pointerCache.set(e.pointerId, e);
+			dragStartX = e.clientX;
+			dragStartY = e.clientY;
+			dragStartTranslateX = $zoomDragTranslate[0];
+			dragStartTranslateY = $zoomDragTranslate[1];
 		}
-	}
+	};
 
 	/** on drag, update image translate val */
 	const onPointerMove = (e) => {
 		if (pointerCache.size > 1) {
 			// if multiple pointer events, pass to handlePinch function
-			pointerDown = false
-			return opts.noPinch?.(container.el) || handlePinch(e)
+			pointerDown = false;
+			return opts.noPinch?.(container) || handlePinch(e);
 		}
 
 		if (!pointerDown) {
-			return
+			return;
 		}
 
-		let x = e.clientX
-		let y = e.clientY
+		let x = e.clientX;
+		let y = e.clientY;
 
 		// store positions in dragPositions for inertia
 		// set hasDragged if > 2 pointer move events
-		hasDragged = dragPositions.push({ x, y }) > 2
+		hasDragged = dragPositions.push({ x, y }) > 2;
 
 		// overall drag diff from start location
-		x = x - dragStartX
-		y = y - dragStartY
+		x = x - dragStartX;
+		y = y - dragStartY;
 
 		// handle unzoomed left / right / up swipes
 		if (!$zoomed) {
 			// close if swipe up
 			if (y < -90) {
-				pointerDown = !opts.noClose && props.close()
+				pointerDown = !opts.noClose && props.close();
 			}
 			// only handle left / right if not swiping vertically
 			if (Math.abs(y) < 30) {
 				// previous if swipe left
 				if (x > 40) {
 					// pointerdown = undefined to stop pointermove from running again
-					pointerDown = prev()
+					pointerDown = prev();
 				}
 				// next if swipe right
 				if (x < -40) {
 					// pointerdown = undefined to stop pointermove from running again
-					pointerDown = next()
+					pointerDown = next();
 				}
 			}
 		}
 
 		// image drag when zoomed
 		if ($zoomed && hasDragged && !$closing) {
-			zoomDragTranslate.set(
-				boundTranslateValues([
-					dragStartTranslateX + x,
-					dragStartTranslateY + y,
-				]),
-				{ duration: 0 }
-			)
+			zoomDragTranslate.set(boundTranslateValues([dragStartTranslateX + x, dragStartTranslateY + y]), { duration: 0 });
 		}
-	}
+	};
 
 	const handlePinch = (e) => {
 		// update event in cache and get values
-		const [p1, p2] = pointerCache.set(e.pointerId, e).values()
+		const [p1, p2] = pointerCache.set(e.pointerId, e).values();
 
 		// Calculate the distance between the two pointers
-		const dx = p1.clientX - p2.clientX
-		const dy = p1.clientY - p2.clientY
-		const curDiff = Math.hypot(dx, dy)
+		const dx = p1.clientX - p2.clientX;
+		const dy = p1.clientY - p2.clientY;
+		const curDiff = Math.hypot(dx, dy);
 
 		// cache the original pinch center
 		pinchDetails = pinchDetails || {
-			clientX: (p1.clientX + p2.clientX) / 2,
-			clientY: (p1.clientY + p2.clientY) / 2,
-		}
+			clientX: (p1.clientX + p2.clientX) / 2, clientY: (p1.clientY + p2.clientY) / 2
+		};
 
 		// scale image
-		changeZoom(((prevDiff || curDiff) - curDiff) / -35, pinchDetails)
+		changeZoom(((prevDiff || curDiff) - curDiff) / -35, pinchDetails);
 
 		// Cache the distance for the next move event
-		prevDiff = curDiff
-	}
+		prevDiff = curDiff;
+	};
 
 	/** remove event from pointer event cache */
-	const removeEventFromCache = (e) => pointerCache.delete(e.pointerId)
+	const removeEventFromCache = (e) => pointerCache.delete(e.pointerId);
 
-	function onPointerUp(e) {
-		removeEventFromCache(e)
+	const onPointerUp = function(e) {
+		removeEventFromCache(e);
 
 		if (pinchDetails) {
 			// reset prevDiff and clear pointerDown to trigger return below
-			pointerDown = prevDiff = 0
+			pointerDown = prevDiff = 0;
 			// set pinchDetails to null after last finger lifts
-			pinchDetails = pointerCache.size ? pinchDetails : null
+			pinchDetails = pointerCache.size ? pinchDetails : null;
 		}
 
 		// make sure pointer events don't carry over to next image
 		if (!pointerDown) {
-			return
+			return;
 		}
 
-		pointerDown = false
+		pointerDown = false;
 
 		// close if overlay is clicked
 		if (e.target === this && !opts.noClose) {
-			return props.close()
+			return props.close();
 		}
 
 		// add drag inertia / snap back to bounds
 		if (hasDragged) {
-			const [posOne, posTwo, posThree] = dragPositions.slice(-3)
-			const xDiff = posTwo.x - posThree.x
-			const yDiff = posTwo.y - posThree.y
+			const [posOne, posTwo, posThree] = dragPositions.slice(-3);
+			const xDiff = posTwo.x - posThree.x;
+			const yDiff = posTwo.y - posThree.y;
 			if (Math.hypot(xDiff, yDiff) > 5) {
-				zoomDragTranslate.set(
-					boundTranslateValues([
-						$zoomDragTranslate[0] - (posOne.x - posThree.x) * 5,
-						$zoomDragTranslate[1] - (posOne.y - posThree.y) * 5,
-					])
-				)
+				zoomDragTranslate.set(boundTranslateValues([$zoomDragTranslate[0] - (posOne.x - posThree.x) * 5, $zoomDragTranslate[1] - (posOne.y - posThree.y) * 5]));
 			}
-		} else if (!opts.onImageClick?.(container.el, activeItem)) {
-			changeZoom($zoomed ? -maxZoom : maxZoom, e)
+		} else if (!opts.onImageClick?.(container, activeItem)) {
+			changeZoom($zoomed ? -maxZoom : maxZoom, e);
 		}
 
 		// reset pointer states
-		hasDragged = false
+		hasDragged = false;
 		// reset dragPositions
-		dragPositions.length = 0
-	}
+		dragPositions.length = 0;
+	};
 
 	const onMount = (node) => {
-		bpImg = node
-		// handle window resize
-		props.setResizeFunc(() => {
-			calculatedDimensions = props.calculateDimensions(activeItem)
-			// adjust image size / zoom on resize, but not on mobile because
-			// some browsers (ios safari 15) constantly resize screen on drag
-			if (opts.inline || !smallScreen) {
-				imageDimensions.set(calculatedDimensions)
-				zoomDragTranslate.set([0, 0])
-			}
-		})
+		bpImg = node;
+
 		// decode initial image before rendering
 		props.loadImage(activeItem).then(() => {
-			loaded = true
-			props.preloadNext()
-		})
+			naturalWidth = +activeItem.width;
+			loaded = true;
+			props.preloadNext();
+		});
 		// show loading indicator if needed
 		setTimeout(() => {
-			showLoader = !loaded
-		}, 250)
-	}
+			showLoader = !loaded;
+		}, 250);
+	};
 
 	const addSrc = (node) => {
-		addAttributes(node, activeItem.attr)
-		node.srcset = activeItem.img
+		addAttributes(node, activeItem.attr);
+	};
+
+	$: if (activeDimensions && (opts.inline || !smallScreen)) {
+		imageDimensions.set(activeDimensions);
+		zoomDragTranslate.set([0, 0]);
 	}
+
 </script>
 
 <div
@@ -386,7 +355,6 @@
 				sizes={opts.sizes || `${sizes}px`}
 				alt={activeItem.alt}
 				on:error={(error) => opts.onError?.(container, activeItem, error)}
-				out:fly|global
 			/>
 		{/if}
 		{#if showLoader}

@@ -1,7 +1,7 @@
 import svelte from 'rollup-plugin-svelte'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'
 import size from 'rollup-plugin-size'
 import modify from 'rollup-plugin-modify'
 
@@ -12,7 +12,7 @@ const terserOptions = {
 	mangle: {
 		properties: {
 			regex:
-				/^(duration|easing|delay|activeItem|calculateDimensions|dirty|tick|preloadNext|opts|prev|next|close|loadImage|smallScreen|props|setResizeFunc|before_update|after_update|ctx|\$\$set|\$set|invalidate|skip_bound|callbacks|on_disconnect|on_mount|not_equal|on_destroy|fragment|\$\$)$/,
+				/^(duration|easing|delay|activeItem|calculateDimensions|dirty|tick|preloadNext|opts|prev|next|close|loadImage|smallScreen|props|before_update|after_update|ctx|\$\$set|\$set|invalidate|skip_bound|callbacks|on_disconnect|on_mount|not_equal|on_destroy|fragment|\$\$)$/,
 		},
 	},
 	compress: {
@@ -61,7 +61,6 @@ const findReplaceOptions = [
 	[': blank_object()', ': {}'],
 	['__svelte', '_bp'],
 	[`typeof window !== 'undefined'`, 'true'],
-	['window', 'globalThis'],
 	['const doc = get_root_for_style(node)', 'const doc = document'],
 	[/get_root_for_style\(node\),/g, 'document,'],
 ].map(([find, replace]) => modify({ find, replace }))

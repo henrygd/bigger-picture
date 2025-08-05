@@ -1,6 +1,6 @@
 {
 	"name": "bigger-picture",
-	"version": "1.1.19",
+	"version": "1.1.20",
 	"type": "module",
 	"exports": {
 		".": {
@@ -74,20 +74,20 @@
 		"sass-watch-demo": "sass --watch --no-source-map src/demo/demo.scss:public/demo.css",
 		"sass-build": "sass --style expanded --no-source-map src/demo/_bigger-picture.scss:dist/bigger-picture.css && sass --style compressed --no-source-map src/demo/demo.scss:public/demo.css && cp src/demo/_bigger-picture.scss dist/bigger-picture.scss"
 	},
-	"packageManager": "pnpm@8.12.0",
+	"packageManager": "pnpm@10.13.1",
 	"devDependencies": {
-		"@rollup/plugin-commonjs": "^25.0.7",
-		"@rollup/plugin-node-resolve": "^15.2.3",
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-commonjs": "^28.0.6",
+		"@rollup/plugin-node-resolve": "^16.0.1",
 		"flexmasonry": "^0.2.3",
 		"live-server": "^1.2.2",
-		"npm-run-all2": "^7.0.2",
-		"prismjs": "^1.28.0",
-		"rollup": "^4.10.0",
+		"npm-run-all2": "^8.0.4",
+		"prismjs": "^1.30.0",
+		"rollup": "^4.44.2",
 		"rollup-plugin-modify": "^3.0.0",
-		"rollup-plugin-size": "^0.2.2",
-		"rollup-plugin-svelte": "^7.1.0",
-		"rollup-plugin-terser": "^7.0.2",
-		"sass": "^1.51.0",
-		"svelte": "3.55.1"
+		"rollup-plugin-size": "^0.3.1",
+		"rollup-plugin-svelte": "^7.2.2",
+		"sass": "^1.89.2",
+		"svelte": "4.2.20"
 	}
 }
