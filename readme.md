@@ -7,6 +7,9 @@
 [license-image]: https://flat.badgen.net/github/license/henrygd/bigger-picture?color=purple
 [license-url]: /license
 
+> [!NOTE]
+> I no longer have time to maintain this project outside of bug fixes. Check out [TwistedAndy/bigger-picture](https://github.com/TwistedAndy/bigger-picture) if you're interested in a fork with additional features and more recent development.
+
 # Bigger Picture
 
 [![npm][npm-image]][npm-url] ![File Size][size-image] [![MIT license][license-image]][license-url]
