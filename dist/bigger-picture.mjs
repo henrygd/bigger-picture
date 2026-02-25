@@ -685,12 +685,14 @@ function tweened(value, defaults = {}) {
 /** true if gallery is in the process of closing */
 const closing = writable(0);
 
-/** store if user prefers reduced motion  */
+/** if user prefers reduced motion  */
 const prefersReducedMotion = globalThis.matchMedia?.(
 	'(prefers-reduced-motion: reduce)'
 ).matches;
 
-/** default options for tweens / transitions */
+/** default options for tweens / transitions
+ * @param {number} duration
+ */
 const defaultTweenOptions = (duration) => ({
 	easing: cubicOut,
 	duration: prefersReducedMotion ? 0 : duration,
@@ -1333,9 +1335,10 @@ function instance$3($$self, $$props, $$invalidate) {
 		let x = e.clientX;
 		let y = e.clientY;
 
-		// store positions in dragPositions for inertia
-		// set hasDragged if > 2 pointer move events
-		hasDragged = dragPositions.push({ x, y }) > 2;
+		// store positions for drag inertia, flag drag by distance 
+		dragPositions.push({ x, y });
+
+		hasDragged ||= Math.hypot(x - dragStartX, y - dragStartY) > 5;
 
 		// overall drag diff from start location
 		x = x - dragStartX;
